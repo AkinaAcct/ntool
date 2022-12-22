@@ -16,8 +16,8 @@ arch="`uname -m`"
 update()
 {
 	cd ~
-	git clone https://github.com/nnyyaa/ntool.git
-	chmod +x ~/ntool/install.sh
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
+	chmod +x ~/install.sh
 	~/install.sh
 }
 cos()

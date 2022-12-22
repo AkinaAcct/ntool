@@ -4,25 +4,26 @@
 #属于是离谱了属于是
 set -e
 
-if [ ! -d "~/.ntool" ];then
+if [ -d "~/.ntool" ];then
 	echo "看起来你似乎已经安装过ntool了"
 	echo "你确定要安装/升级吗？"
 	read -p "按回车继续"
 fi
 cd ~
-git clone https://github.com/nnyyaa/ntool.git
 while true
 do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
                 echo "installing..."
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
                 apt update
                 apt upgrade
                 apt install git wget curl -y
 		mkdir -p .ntool
-		chmod +x ~/ntool/ntool
-		mv ~/ntool/ntool $PREFIX/bin
+		chmod +x ~/ntool
+		rm $PREFIX/bin/ntool
+		mv ~/ntool $PREFIX/bin
                 echo "完成"
                 echo "输入ntool测试启动"
 		break
