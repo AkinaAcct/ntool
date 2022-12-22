@@ -20,6 +20,7 @@ case $answer in
                 apt install git wget curl -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
+		rm $PREFIX/bin/ntool
 		chmod +x ~/ntool
 		mv ~/ntool $PREFIX/bin
                 echo "完成"
