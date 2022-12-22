@@ -1,0 +1,106 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+####################
+#                  #
+#  屎  山  代  码  #
+#                  #
+####################
+#也许你不知道，但是我在2022你才刚高一
+#在高一时的我属于是真正的大屎山代码创造者
+#(虽然现在也还是)
+#代码虽然是自己敲的
+#但是真的好jb的乱
+#也许这以后会成为一个烂尾工程吧
+
+arch="`uname -m`"
+
+update()
+{
+	cd ~
+	git clone https://github.com/nnyyaa/ntool.git
+	chmod +x ~/ntool/install.sh
+	~/install.sh
+}
+cos()
+{
+	echo "1. Ubuntu22.04"
+	echo "2. 退出"
+	read -p "输入你的选择:" osc
+	case $osc in
+                1)
+                        ub2204
+                        ;;
+		2)
+			echo "退出"
+			exit 0
+			;;
+                *)
+                        echo "未知选项"
+			exit 0
+                        ;;
+	esac
+}
+ub2204()
+{
+	if [ -d "~/.ntool/ubuntu-fs" ];
+	then
+		echo "看起来你可能安装过了"
+		echo "重复安装会导致错误"
+		echo "故终止该脚本运行"
+		echo "如果需重新安装"
+		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs"
+		exit 0
+	else
+		cd ~
+		apt update
+		apt upgrade
+		apt install git tar zip unzip wget curl -y
+		sleep 2
+		echo "请耐心等待......"
+		wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/22.04/release/ubuntu-base-22.04-base-arm64.tar.gz
+		mkdir -p ~/.ntool/ubuntu-fs
+		mv ubuntu-base-22.04-base-arm64.tar.gz ~/.ntool/ubuntu-fs
+		cd ~/.ntool/ubuntu-fs
+		tar -xvzf ubuntu-base-22.04-base-arm64.tar.gz
+		cd ~
+		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/sources.list
+		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
+		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/startubuntu
+		cd ~/.ntool/ubuntu-fs/etc/
+		rm resolv.conf apt/sources.list
+		mv ~/resolv.conf .
+		mv ~/sources.list apt/
+		cd ~
+		chmod +x startubuntu
+		mv ~/startubuntu $PREFIX/bin
+		echo "完成！"
+		echo "输入 "startubuntu" 来启动"
+	fi
+}
+
+cd ~
+clear
+echo "当前版本:v0.0.1"
+echo "你的架构为:${arch}"
+echo "1. 安装一个proot容器"
+echo "0. 退出"
+echo "00. 升级脚本"
+read -p "输入你的选择:" choice
+case $choice in
+	0)
+		echo "退出"
+		exit 0
+		;;
+	1)
+		cos
+		;;
+	00)
+		update
+		;;
+	*)
+		echo "输入一个没有的选项是在为难我嘛！"
+		exit 0
+		;;
+
+esac
+echo "完成运行  退出"
+exit 0
