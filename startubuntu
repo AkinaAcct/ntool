@@ -1,0 +1,34 @@
+#!/data/data/com.termux/files/usr/bin/bash
+#benl脚本来自我的另一个仓库:
+#
+#https://github.com/nnyyaa/ubuntu-on-droid(现已只读)
+#
+## unset LD_PRELOAD in case termux-exec is installed
+#嘿，你在编辑这个配置文件
+#说实话，我不推荐你改这个文件
+#因为有无数人都因为乱改配置导致proot容器无法启动
+#不过如果你想的话
+#可以把下面的注释掉的一行
+#给改回来
+#这样就可以在容器里直接访问手机内存
+unset LD_PRELOAD
+command="proot"
+command+=" --link2symlink"
+command+=" -0"
+command+=" -r ~/.ntool/ubuntu-fs"
+command+=" -b /dev"
+command+=" -b /proc"
+#command+=" -b /sdcard"
+#就是上面那一行啦
+#去掉前面的#就行了
+command+=" -b ubuntu-fs/root:/dev/shm"
+command+=" -w /root"
+command+=" /usr/bin/env -i"
+command+=" HOME=/root"
+command+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
+command+=" TERM=$TERM"
+command+=" LANG=C.UTF-8"
+command+=" /bin/bash --login"
+echo '------------------------------------'
+echo 'started!'
+exec $command

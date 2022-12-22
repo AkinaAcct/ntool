@@ -47,7 +47,7 @@ ub2204()
 		echo "重复安装会导致错误"
 		echo "故终止该脚本运行"
 		echo "如果需重新安装"
-		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs"
+		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/bin/startubuntu"
 		exit 0
 	else
 		cd ~
@@ -64,7 +64,7 @@ ub2204()
 		cd ~
 		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/sources.list
 		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
-		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/startubuntu
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
 		cd ~/.ntool/ubuntu-fs/etc/
 		rm resolv.conf apt/sources.list
 		mv ~/resolv.conf .
