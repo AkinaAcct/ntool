@@ -24,6 +24,7 @@ case $answer in
 		mv ~/ntool $PREFIX/bin
                 echo "完成"
                 echo "输入ntool测试启动"
+		rm ~/install.sh
 		break
 		;;
 	N|n)
