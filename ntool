@@ -28,10 +28,26 @@ chooseos()
 	read -p "输入你的选择:" cos
 	case $cos in
                 1)
-                        wget 
+			cd ~/.ntool
+                        if [ -a ub-i.sh ];
+			then
+				chmod +x ub-i.sh
+				./ub-i.sh
+			else
+				wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
+				chmod +x ub-i.sh
+				./ub-i.sh
+			fi
                         ;;
 		2)
-			deinstall
+			cd ~/.ntool
+			if [ -a de-i.sh];
+			then
+				chmod +x de-i.sh
+				./de-i.sh
+			else wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
+				chmod +x de-i.sh
+				./de-i.sh
 			exit 0
 			;;
                 *)
