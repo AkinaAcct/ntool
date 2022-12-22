@@ -22,12 +22,13 @@ update()
 }
 cos()
 {
-	echo "1. Ubuntu22.04"
-	echo "2. 退出"
+	echo "0. 退出"
+	echo "1. Ubuntu"
+	echo "2. debian"
 	read -p "输入你的选择:" osc
 	case $osc in
                 1)
-                        ub2204
+                        ubi
                         ;;
 		2)
 			echo "退出"
@@ -39,7 +40,7 @@ cos()
                         ;;
 	esac
 }
-ub2204()
+ubi()
 {
 	if [ -d "~/.ntool/ubuntu-fs" ];
 	then
