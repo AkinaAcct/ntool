@@ -10,4 +10,5 @@ wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 chmod +x install.sh  
 ./install.sh
 ```
-享受屎山代码的运行吧！
+~~享受屎山代码的运行吧！~~
+
