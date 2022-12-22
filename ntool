@@ -42,7 +42,7 @@ chooseos()
 }
 ubinstall()
 {
-	if [ -d "~/.ntool/ubuntu-fs" ];
+	if [ -d ~/.ntool/ubuntu-fs ];
 	then
 		echo "看起来你可能安装过了"
 		echo "重复安装会导致错误"
