@@ -35,5 +35,5 @@ else
         chmod +x startubuntu
         mv ~/startubuntu $PREFIX/bin
         echo "完成！"
-        echo "输入 "startubuntu" 来启动"
+        echo "输入 "startubuntu" 启动"
 fi
