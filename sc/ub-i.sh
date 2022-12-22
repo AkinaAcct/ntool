@@ -32,7 +32,7 @@ else
 			version="22.04"
 			break
 			;;
-		)*
+		*)
 			echo "未知选择，请确认输入无误"
 			sleep 2
 			;;
