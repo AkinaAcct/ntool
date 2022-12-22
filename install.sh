@@ -17,7 +17,7 @@ case $answer in
                 echo "installing..."
                 apt update
                 apt upgrade
-                apt install git wget curl -y
+                apt install git wget curl neofetch -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm -rf /data/data/com.termux/files/usr/bin/ntool
