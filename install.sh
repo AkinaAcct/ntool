@@ -20,12 +20,12 @@ case $answer in
                 apt install git wget curl -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
-		rm $PREFIX/bin/ntool
-		mv ~/ntool $PREFIX/bin
-		chmod 777 $PREFIX/bin/ntool
+		rm -rf /data/data/com.termux/files/usr/bin/ntool
+		mv ntool /data/data/com.termux/files/usr/bin
+		chmod 777 /data/data/com.termux/files/usr/bin/ntool
                 echo "完成"
                 echo "输入ntool测试启动"
-		rm ~/install.sh
+		rm -rf install.sh
 		break
 		;;
 	N|n)
