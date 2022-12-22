@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env bash
 
 cd ~/.ntool
-if [ -d ubuntu-fs ];
+if [ ! -d "ubuntu-fs" ];
 then
 	echo "看起来你可能安装过了"
 	echo "重复安装会导致错误"
@@ -10,12 +10,34 @@ then
 	echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/startubuntu"
 	exit 0
 else
-        echo "请花一点时间，到百度搜索一下你所要安装的ubuntu的版本号"
-        echo "输错将导致安装失败!"
+	while true
+	do
+	echo "注意：现只支持安装单个容器"
+	echo "无法同时安装多个同系统容器"
         echo "推荐lts版本:22.04"
-        echo "由于远程拉取sources.list易造成错误，故换源要您自行进行"
-        echo "由于后面使用版本号来进行下载rootfs，故下方的版本号填写务必不可错"
-	read -p "请输入正确的版本号(数字，带点)!:" version
+	echo "1. 20.04"
+	echo "2. 21.10"
+	echo "3. 22.04(推荐)"
+	read -p "输入你的选择: " answer
+	case $answer in
+		1)
+			version="20.04"
+			break
+			;;
+		2)
+			version="21.10"
+			break
+			;;
+		3)
+			version="22.04"
+			break
+			;;
+		)*
+			echo "未知选择，请确认输入无误"
+			sleep 2
+			;;
+	esac
+	done
 	cd ~
 	apt update
         apt upgrade
@@ -31,7 +53,7 @@ else
         cd ~
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         cd ubuntu-fs/etc
-        echo "nameserver 8.8.8.8" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/resolv.conf
+        echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         chmod +x startubuntu
         mv ~/startubuntu $PREFIX/bin

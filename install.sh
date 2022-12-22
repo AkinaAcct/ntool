@@ -12,6 +12,7 @@ cd ~
 while true
 do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
+clear
 case $answer in
 	Y|y)
                 echo "installing..."
@@ -23,6 +24,8 @@ case $answer in
 		rm -rf /data/data/com.termux/files/usr/bin/ntool
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod 777 /data/data/com.termux/files/usr/bin/ntool
+		cd ~/.ntool
+		rm -rf de-i.sh ub-i.sh
                 echo "完成"
                 echo "输入ntool测试启动"
 		rm -rf install.sh
@@ -33,7 +36,7 @@ case $answer in
 		break
 		;;
 	*)
-		echo "未知的输入:"$answer" 请确认输入无误"
+		echo "未知的输入: $answer 请确认输入无误"
 		;;
 esac
 done
