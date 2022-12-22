@@ -51,10 +51,13 @@ ubinstall()
 		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/startubuntu"
 		exit 0
 	else
+		set -e
 		echo "请花一点时间，到百度搜索一下你所要安装的ubuntu的版本号"
 		echo "输错将导致安装失败!"
 		echo "推荐lts版本:22.04"
-		read -p "请输入正确的版本号(数字)!:" version
+		echo "由于远程拉取sources.list易造成错误，故换源要您自行进行"
+		echo "由于后面使用版本号来进行下载rootfs，故下方的版本号填写务必不可错"
+		read -p "请输入正确的版本号(数字，带点)!:" version
 		cd ~
 		apt update
 		apt upgrade
@@ -67,11 +70,7 @@ ubinstall()
 		cd ~/.ntool/ubuntu-fs
 		tar -xvzf ubuntu-base-${version}-base-arm64.tar.gz
 		cd ~
-		cd ubuntu-fs/etc
-		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
-		cd ~
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-		mv sources.list ./apt/
 		chmod +x startubuntu
 		mv ~/startubuntu $PREFIX/bin
 		echo "完成！"
