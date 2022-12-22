@@ -48,7 +48,7 @@ ubinstall()
 		echo "重复安装会导致错误"
 		echo "故终止该脚本运行"
 		echo "如果需重新安装"
-		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/bin/startubuntu"
+		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/startubuntu"
 		exit 0
 	else
 		echo "请花一点时间，到百度搜索一下你所要安装的ubuntu的版本号"
@@ -61,15 +61,15 @@ ubinstall()
 		apt install git tar zip unzip wget curl -y
 		sleep 2
 		echo "请耐心等待......"
-		wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/${version}/release/ubuntu-base-${version}-base-${arch}.tar.gz
+		wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/${version}/release/ubuntu-base-${version}-base-arm64.tar.gz
 		mkdir -p ~/.ntool/ubuntu-fs
-		mv ubuntu-base-${version}-base-${arch}.tar.gz ~/.ntool/ubuntu-fs
+		mv ubuntu-base-${version}-base-arm64.tar.gz ~/.ntool/ubuntu-fs
 		cd ~/.ntool/ubuntu-fs
-		tar -xvzf ubuntu-base-${version}-base-${arch}.tar.gz
+		tar -xvzf ubuntu-base-${version}-base-arm64.tar.gz
 		cd ~
 		cd ubuntu-fs/etc
 		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
-		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sources-${vesion}.list-O sources.list
+		wget -O sources.list https://raw.githubusercontent.com/nnyyaa/ntool/main/sources-${vesion}.list
 		mv sources.list ./apt/
 		chmod +x startubuntu
 		mv ~/startubuntu $PREFIX/bin
