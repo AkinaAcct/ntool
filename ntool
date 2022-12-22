@@ -69,7 +69,6 @@ ubinstall()
 		cd ~
 		cd ubuntu-fs/etc
 		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
-		wget -O sources.list https://raw.githubusercontent.com/nnyyaa/ntool/main/sources-${version}.list
 		cd ~
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
 		mv sources.list ./apt/
