@@ -21,7 +21,7 @@ else
 	read -p "输入你的选择: " answer
 	case $answer in
 		1)
-			version="20.04"
+			version="20.04.5"
 			break
 			;;
 		2)
