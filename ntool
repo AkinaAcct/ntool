@@ -29,7 +29,7 @@ chooseos()
 	case $cos in
                 1)
 			cd ~/.ntool
-                        if [ ! -a "ub-i.sh" ];
+                        if [ -a "ub-i.sh" ];
 			then
 				chmod +x ub-i.sh
 				./ub-i.sh
@@ -41,7 +41,7 @@ chooseos()
                         ;;
 		2)
 			cd ~/.ntool
-			if [ ! -a "de-i.sh" ];
+			if [ -a "de-i.sh" ];
 			then
 				chmod +x de-i.sh
 				./de-i.sh

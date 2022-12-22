@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env bash
 
 cd ~/.ntool
-if [ ! -d "ubuntu-fs" ];
+if [ -d "ubuntu-fs" ];
 then
 	echo "看起来你可能安装过了"
 	echo "重复安装会导致错误"
