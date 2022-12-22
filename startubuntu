@@ -1,9 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
-#benl脚本来自我的另一个仓库:
-#
+cd ~/.ntool
+#该脚本来自我的另一个仓库:
 #https://github.com/nnyyaa/ubuntu-on-droid(现已只读)
 #
-## unset LD_PRELOAD in case termux-exec is installed
+#
 #嘿，你在编辑这个配置文件
 #说实话，我不推荐你改这个文件
 #因为有无数人都因为乱改配置导致proot容器无法启动
@@ -15,7 +15,7 @@ unset LD_PRELOAD
 command="proot"
 command+=" --link2symlink"
 command+=" -0"
-command+=" -r ~/.ntool/ubuntu-fs"
+command+=" -r ubuntu-fs"
 command+=" -b /dev"
 command+=" -b /proc"
 #command+=" -b /sdcard"
