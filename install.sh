@@ -22,7 +22,6 @@ case $answer in
                 apt install git wget curl -y
 		mkdir -p .ntool
 		chmod +x ~/ntool
-		rm $PREFIX/bin/ntool
 		mv ~/ntool $PREFIX/bin
                 echo "完成"
                 echo "输入ntool测试启动"

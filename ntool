@@ -78,6 +78,8 @@ ub2204()
 }
 
 cd ~
+while true
+do
 clear
 echo "当前版本:v0.0.1"
 echo "你的架构为:${arch}"
@@ -88,19 +90,22 @@ read -p "输入你的选择:" choice
 case $choice in
 	0)
 		echo "退出"
-		exit 0
+		break
 		;;
 	1)
 		cos
+		break
 		;;
 	00)
 		update
+		break
 		;;
 	*)
 		echo "输入一个没有的选项是在为难我嘛！"
-		exit 0
+		sleep 3
 		;;
 
 esac
+done
 echo "完成运行  退出"
 exit 0
