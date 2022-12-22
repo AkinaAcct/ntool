@@ -15,10 +15,10 @@ read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
                 echo "installing..."
-		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
                 apt update
                 apt upgrade
                 apt install git wget curl -y
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		chmod +x ~/ntool
 		mv ~/ntool $PREFIX/bin
