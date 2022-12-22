@@ -48,6 +48,7 @@ chooseos()
 			else wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
 				chmod +x de-i.sh
 				./de-i.sh
+			fi
 			exit 0
 			;;
                 *)
