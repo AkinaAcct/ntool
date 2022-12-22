@@ -28,10 +28,10 @@ chooseos()
 	read -p "输入你的选择:" cos
 	case $cos in
                 1)
-                        ubi
+                        ubinstall
                         ;;
 		2)
-			dei
+			deinstall
 			exit 0
 			;;
                 *)
@@ -77,7 +77,7 @@ ubinstall()
 		echo "输入 "startubuntu" 来启动"
 	fi
 }
-dei()
+deinstall()
 {
 	echo "等待开发..."
 }
