@@ -9,7 +9,7 @@
 #(虽然现在也还是)
 #代码虽然是自己敲的
 #但是真的好jb的乱
-#也许这以后会成为一个烂尾工程吧
+#也许这以后会成为一个烂尾工程吧(确信)
 
 arch="`uname -m`"
 
@@ -20,18 +20,18 @@ update()
 	chmod +x ~/install.sh
 	~/install.sh
 }
-cos()
+chooseos()
 {
 	echo "0. 退出"
 	echo "1. Ubuntu"
 	echo "2. debian"
-	read -p "输入你的选择:" osc
-	case $osc in
+	read -p "输入你的选择:" cos
+	case $cos in
                 1)
                         ubi
                         ;;
 		2)
-			echo "退出"
+			dei
 			exit 0
 			;;
                 *)
@@ -40,7 +40,7 @@ cos()
                         ;;
 	esac
 }
-ubi()
+ubinstall()
 {
 	if [ -d "~/.ntool/ubuntu-fs" ];
 	then
@@ -51,31 +51,35 @@ ubi()
 		echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/bin/startubuntu"
 		exit 0
 	else
+		echo "请花一点时间，到百度搜索一下你所要安装的ubuntu的版本号"
+		echo "输错将导致安装失败!"
+		echo "推荐lts版本:22.04"
+		read -p "请输入正确的版本号(数字)!:" version
 		cd ~
 		apt update
 		apt upgrade
 		apt install git tar zip unzip wget curl -y
 		sleep 2
 		echo "请耐心等待......"
-		wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/22.04/release/ubuntu-base-22.04-base-arm64.tar.gz
+		wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/${version}/release/ubuntu-base-${version}-base-${arch}.tar.gz
 		mkdir -p ~/.ntool/ubuntu-fs
-		mv ubuntu-base-22.04-base-arm64.tar.gz ~/.ntool/ubuntu-fs
+		mv ubuntu-base-${version}-base-${arch}.tar.gz ~/.ntool/ubuntu-fs
 		cd ~/.ntool/ubuntu-fs
-		tar -xvzf ubuntu-base-22.04-base-arm64.tar.gz
+		tar -xvzf ubuntu-base-${version}-base-${arch}.tar.gz
 		cd ~
-		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/sources.list
+		cd ubuntu-fs/etc
 		wget https://raw.githubusercontent.com/nnyyaa/ubuntu-on-droid/main/resolv.conf
-		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-		cd ~/.ntool/ubuntu-fs/etc/
-		rm resolv.conf apt/sources.list
-		mv ~/resolv.conf .
-		mv ~/sources.list apt/
-		cd ~
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sources-${vesion}.list-O sources.list
+		mv sources.list ./apt/
 		chmod +x startubuntu
 		mv ~/startubuntu $PREFIX/bin
 		echo "完成！"
 		echo "输入 "startubuntu" 来启动"
 	fi
+}
+dei()
+{
+	echo "等待开发..."
 }
 
 cd ~
@@ -94,7 +98,7 @@ case $choice in
 		break
 		;;
 	1)
-		cos
+		chooseos
 		break
 		;;
 	00)
