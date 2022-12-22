@@ -21,8 +21,8 @@ case $answer in
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm $PREFIX/bin/ntool
-		chmod +x ~/ntool
 		mv ~/ntool $PREFIX/bin
+		chmod 777 $PREFIX/bin/ntool
                 echo "完成"
                 echo "输入ntool测试启动"
 		rm ~/install.sh
