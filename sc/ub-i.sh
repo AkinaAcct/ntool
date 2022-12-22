@@ -27,6 +27,7 @@ else
         mv ubuntu-base-${version}-base-arm64.tar.gz ~/.ntool/ubuntu-fs
         cd ~/.ntool/ubuntu-fs
         tar -xvzf ubuntu-base-${version}-base-arm64.tar.gz
+	set -e
         cd ~
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         cd ubuntu-fs/etc
