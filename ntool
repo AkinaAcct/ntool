@@ -4,89 +4,148 @@
 #  屎  山  代  码  #
 #                  #
 ####################
-#也许你不知道，但是我在2022你才刚高一
-#在高一时的我属于是真正的大屎山代码创造者
-#(虽然现在也还是)
+#也许你不知道，但这是一个高中生在课余时间写的一个垃圾屎山脚本
 #代码虽然是自己敲的
 #但是真的好jb的乱
-#也许这以后会成为一个烂尾工程吧(确信)
+#也许这以后会成为一个烂尾工程吧(一定)
 
 arch="`uname -m`"
 
+cho()
+{
+	clear
+        echo "this is a bad page that i even want to delete it"
+        echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
+        echo "该页面不在更新，**不要**提关于容器功能的issue，因为我也不会去修"
+        echo "只有Ubuntu的原因是我写脚本时只需要一个差不多的proot容器:D"
+        echo "0. 返回上一个页面"
+        echo "1. Ubuntu"
+        echo "2. debian(已烂尾)"
+        read -p "输入你的选择:" cos
+        case $cos in
+                0)
+                        ntool
+                        break
+                        ;;
+                1)
+                        cd ~/.ntool
+                        if [ -a "ub-i.sh" ];
+                        then
+                                chmod +x ub-i.sh
+                                ./ub-i.sh
+                        else
+                                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
+                                chmod +x ub-i.sh
+                                ./ub-i.sh
+                        fi
+                        break
+                        ;;
+                2)
+                        cd ~/.ntool
+                        if [ -a "de-i.sh"];
+                        then
+                                chmod +x de-i.sh
+                                ./de-i.sh
+                        else
+                                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
+                                chmod +x de-i.sh
+                                ./de-i.sh
+                        fi
+			;;
+                *)
+                        echo "未知选项"
+			sleep 2
+			cho
+                        ;;
+        esac
+}
+ofp()
+{
+	clear
+	echo "此页面进行分类"
+	echo "0. 返回脚本首页"
+        echo "1. 网络类"
+        read -p -n1 "输入你的选择" ofc    #of是other function的缩写
+        case $ofc in
+                0)
+			ntool
+                        ;;
+                1)
+                        webp
+                        ;;
+                *)
+                        echo "未知选择"
+			sleep 2
+			ofp
+                        ;;
+        esac
+}
+
 update()
 {
+	clear
 	cd ~
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 	chmod +x ~/install.sh
 	~/install.sh
 }
-chooseos()
-{
-	echo "0. 退出"
-	echo "1. Ubuntu"
-	echo "2. debian"
-	read -p "输入你的选择:" cos
-	case $cos in
-                1)
-			cd ~/.ntool
-                        if [ -a "ub-i.sh" ];
-			then
-				chmod +x ub-i.sh
-				./ub-i.sh
-			else
-				wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
-				chmod +x ub-i.sh
-				./ub-i.sh
-			fi
-                        ;;
-		2)
-			cd ~/.ntool
-			if [ -a "de-i.sh" ];
-			then
-				chmod +x de-i.sh
-				./de-i.sh
-			else wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
-				chmod +x de-i.sh
-				./de-i.sh
-			fi
-			exit 0
+
+webp()
+{	
+	clear
+	echo "0. 返回上个页面"
+	echo "1. 安装Nginx"
+	echo "2. 安装Apache2"
+	read -p "输入你的选择:" webc
+	case $webc in
+		0)
+			ofp
 			;;
-                *)
-                        echo "未知选项"
-			exit 0
-                        ;;
+		1)
+			pkg i nginx -y
+			;;
+		2)
+			pkg i apache2 -y
+			;;
+		*)
+			echo "未知选择"
+			sleep 2
+			webp
+			;;
 	esac
 }
 
-while true
-do
+
 clear
 neofetch
-echo "当前版本:v0.0.2"
+echo "当前版本:v0.1.0"
 echo "你的架构为:${arch}"
-echo "1. 安装一个proot容器"
 echo "0. 退出"
-echo "00. 升级脚本"
+echo "00. 更新"
+echo "1. 安装一个proot容器"
+echo "2. 其他功能"
 read -p "输入你的选择:" choice
 case $choice in
+	00)
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
+		chmod +x install.sh
+		./install.sh
+		;;
 	0)
-		echo "退出"
-		break
+		echo "bye"
 		;;
 	1)
-		chooseos
-		break
+		cho
 		;;
-	00)
-		update
-		break
+	2)
+		ofp
 		;;
+
 	*)
 		echo "输入一个没有的选项是在为难我嘛！"
-		sleep 3
+		sleep 2
+		ntool
 		;;
 
 esac
-done
-echo "完成运行  退出"
 exit 0

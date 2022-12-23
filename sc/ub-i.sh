@@ -18,8 +18,12 @@ else
 	echo "1. 20.04"
 	echo "2. 21.10"
 	echo "3. 22.04(推荐)"
+	echo "00. 返回"
 	read -p "输入你的选择: " answer
 	case $answer in
+		00)
+			ntool
+			;;
 		1)
 			version="20.04.5"
 			break
@@ -51,22 +55,10 @@ else
         tar -xvzf ubuntu-base-${version}-base-arm64.tar.gz
 	set -e
         cd ~
-        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-	echo "进行伪装proc..."
-	echo "脚本使用来自2moe大佬"
-	sleep 2
-	wget https://gitee.com/yudezeng/proot_proc/raw/master/proc.tar.xz
-	echo "正在解压伪造文件"
-	tar -xJvf proc.tar.xz 
-	echo "复制文件"
-	rm -rf ~/.ntool/ubuntu-fs/proc/*
-	mv usr/local/etc/tmoe-linux/proot_proc/* ~/.ntool/ubuntu-fs/proc/
-	rm -rf usr proc.tar.xz
-        echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
-	echo "echo '注意！现在你的dns解析服务器已被锁定至8.8.8.8。如需更改，请删除于bash.bashrc最后一行的内容'" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
+        echo "nameserver 8.8.8.8"> /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/resolv.conf
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         mv ~/startubuntu $PREFIX/bin
-	rm ~/.ntool/ubuntu-fs/*.tar.gz
+	rm ~/.ntool/ubuntu-fs/ubuntu-base-${version}-base-arm64.tar.gz
 	chmod 777 $PREFIX/bin/startubuntu
         echo "完成！"
         echo "输入 'startubuntu' 启动"

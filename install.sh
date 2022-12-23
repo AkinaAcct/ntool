@@ -12,7 +12,6 @@ cd ~
 while true
 do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
-clear
 case $answer in
 	Y|y)
                 echo "installing..."
