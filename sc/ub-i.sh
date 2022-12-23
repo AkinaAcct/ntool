@@ -52,7 +52,7 @@ else
 	set -e
         cd ~
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-        cd ubuntu-fs/etc
+        cd .ntool/ubuntu-fs/etc
         echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         chmod +x startubuntu
