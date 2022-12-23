@@ -11,10 +11,9 @@
 
 arch="`uname -m`"
 
-cho()
-{
+cho(){
 	clear
-        echo "this is a bad page that i even want to delete it"
+	echo "this is a bad page that i even want to delete it"
         echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
         echo "该页面不在更新，**不要**提关于容器功能的issue，因为我也不会去修"
         echo "只有Ubuntu的原因是我写脚本时只需要一个差不多的proot容器:D"
@@ -59,12 +58,12 @@ cho()
                         ;;
         esac
 }
-ofp()
-{
+ofp(){
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
         echo "1. 网络类"
+	echo "2. 工具类"
         read -p "输入你的选择" ofc    #of是other function的缩写
         case $ofc in
                 0)
@@ -73,6 +72,9 @@ ofp()
                 1)
                         webp
                         ;;
+		2)
+			toolp
+			;;
                 *)
                         echo "未知选择"
 			sleep 2
@@ -80,9 +82,74 @@ ofp()
                         ;;
         esac
 }
-
-update()
-{
+toolp(){
+	clear
+	echo "0. 返回上一页"
+	echo "1. ping"
+	echo "2. ping6(即ipv6 ping)"
+	echo "3. 寻找文件(find)"
+	echo "4. 在termux原系统里安装jdk"
+	echo "5. 备份termux(实验性功能)"
+	read -p "输入你的选择:" answer
+	case $answer in
+		0)
+			ofp
+			;;
+		1)
+			if command -v ping >> /dev/null;then
+				read -p "输入要进行ping的IP/域名:" ip
+				read -p "输入要ping的次数:" times
+				read -p "输入ping的速度（以秒为单位，省略符号，无root最快0.2）:" speed
+				echo "start ping..."
+				ping -i ${speed} -c${times} ${ip}
+				echo "stop ping."
+			else
+				echo "未安装ping，正在安装..."
+				pkg i termux-tools -y
+				toolp
+			fi
+			;;
+		2)
+			if command -v ping6 >> /dev/null;then
+                                read -p "输入要进行ping6的IP/域名:" ip
+                                read -p "输入要ping6的次数:" times
+                                read -p "输入ping6的速度（以秒为单位，省略符号，无root最快0.2）:" speed
+                                echo "start ping..."
+                                ping6 -i ${speed} -c${times} ${ip}
+                                echo "stop ping."
+			else
+				echo "ping6未安装,正在安装..."
+				pkg i termux-tools -y
+				toolp
+			fi
+			;;
+		3)
+			read -p "输入你要搜索的文件:" filename
+			read -p "输入你要搜索的目录:" filepath
+			echo "searching..."
+			find -name ${filename} ${filepath}
+			;;
+		4)
+			echo "只支持openjdk17"
+			read -p "按回车以继续"
+			pkg i opemjdk-17 -y
+			echo "安装完成"
+			;;
+		5)
+			echo "你在使用一个**实验性**功能"
+			read -p "按回车以继续"
+			echo "备份文件将保存在/sdcard/Downloads/backup"
+			tar -zcvf /data/data/com.termux/files ~/storage/downloads/backup 
+			echo "done"
+			;;
+		*)
+			echo "未知选择"
+			sleep 2
+			toolp
+			;;
+	esac
+}
+update(){
 	cd ~
 	rm ~/install.sh
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
@@ -91,8 +158,7 @@ update()
 	rm ~/install.sh
 }
 
-webp()
-{	
+webp(){	
 	clear
 	echo "0. 返回上个页面"
 	echo "1. 安装Nginx"
