@@ -11,6 +11,7 @@
 
 arch="`uname -m`"
 
+#以下是标准屎山之我自己都不认识的function
 cho(){
 	clear
 	echo "this is a bad page that i even want to delete it"
