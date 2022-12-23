@@ -65,7 +65,7 @@ ofp()
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
         echo "1. 网络类"
-        read -p -n1 "输入你的选择" ofc    #of是other function的缩写
+        read -p "输入你的选择" ofc    #of是other function的缩写
         case $ofc in
                 0)
 			ntool
