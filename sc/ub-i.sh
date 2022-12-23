@@ -52,23 +52,17 @@ else
 	set -e
         cd ~
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-	
-        cd .ntool/ubuntu-fs/etc
-	sleep 3
 	mkdir proot_proc
 	echo "进行伪装proc..."
 	echo "脚本使用来自2moe大佬"
 	sleep 2
 	wget https://gitee.com/yudezeng/proot_proc/raw/master/proc.tar.xz
-	mkdir tmp
-	echo 正在解压伪造文件
-	tar xJf proc.tar.xz -C tmp 
-	echo 复制文件
-	cp -r tmp/usr/local/etc/tmoe-linux/proot_proc/ ubuntu-fs/proot_proc
-	rm -rf ubuntu-fs/proc/*
-	mv ubuntu-fs/proot_proc/* ubuntu-fs/proc
-	rm -rf proot_proc tmp 
-	rm -rf proc.tar.xz
+	echo "正在解压伪造文件"
+	tar -xJvf proc.tar.xz 
+	echo "复制文件"
+	rm -rf ~/.ntool/ubuntu-fs/proc/*
+	mv usr/local/etc/tmoe-linux/proot_proc/* ~/.ntool/proc/
+	rm -rf usr proc.tar.xz
         echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
 	echo "echo '注意！现在你的dns解析服务器已被锁定至8.8.8.8。如需更改，请删除于bash.bashrc最后一行的内容'" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
