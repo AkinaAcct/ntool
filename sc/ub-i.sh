@@ -61,7 +61,7 @@ else
 	tar -xJvf proc.tar.xz 
 	echo "复制文件"
 	rm -rf ~/.ntool/ubuntu-fs/proc/*
-	mv usr/local/etc/tmoe-linux/proot_proc/* ~/.ntool/proc/
+	mv usr/local/etc/tmoe-linux/proot_proc/* ~/.ntool/ubuntu-fs/proc/
 	rm -rf usr proc.tar.xz
         echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
 	echo "echo '注意！现在你的dns解析服务器已被锁定至8.8.8.8。如需更改，请删除于bash.bashrc最后一行的内容'" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
