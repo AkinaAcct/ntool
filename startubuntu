@@ -17,7 +17,7 @@ command+=" --link2symlink"
 command+=" -0"
 command+=" -r ubuntu-fs"
 command+=" -b /dev"
-command+=" -b /proc"
+command+=" -b /data/data/com.termux/files/home/.ntool/ubuntu-fs/proc"
 #command+=" -b /sdcard"
 #就是上面那一行啦
 #去掉前面的#就行了
