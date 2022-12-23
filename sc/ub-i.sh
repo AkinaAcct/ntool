@@ -54,9 +54,10 @@ else
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
         cd .ntool/ubuntu-fs/etc
         echo "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
+	echo "echo '注意！现在你的dns解析服务器已被锁定至8.8.8.8。如需更改，请删除于bash.bashrc最后一行的内容'" > /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/bash.bashrc
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
-        chmod +x startubuntu
         mv ~/startubuntu $PREFIX/bin
+	chmod 777 $PREFIX/bin/startubuntu
         echo "完成！"
         echo "输入 "startubuntu" 启动"
 fi
