@@ -14,6 +14,7 @@ do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
+		rm ~/install.sh
                 echo "installing..."
                 apt update
                 apt upgrade

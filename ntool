@@ -83,11 +83,12 @@ ofp()
 
 update()
 {
-	clear
 	cd ~
+	rm ~/install.sh
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 	chmod +x ~/install.sh
 	~/install.sh
+	rm ~/install.sh
 }
 
 webp()
