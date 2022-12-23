@@ -132,7 +132,7 @@ toolp(){
 		4)
 			echo "只支持openjdk17"
 			read -p "按回车以继续"
-			pkg i opemjdk-17 -y
+			pkg i openjdk-17 -y
 			echo "安装完成"
 			;;
 		5)
