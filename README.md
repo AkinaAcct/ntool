@@ -10,5 +10,6 @@ wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 chmod +x install.sh  
 ./install.sh
 ```
-~~享受屎山代码的运行吧！~~
+~~享受屎山代码的运行吧！~~  
 
+现容器功能已烂尾(bad container shell)
