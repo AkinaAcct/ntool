@@ -24,7 +24,6 @@ choose_os_page() {
         case $cos in
                 0)
                         ntool
-                        break
                         ;;
                 1)
                         cd ~/.ntool
@@ -37,7 +36,6 @@ choose_os_page() {
                                 chmod +x ub-i.sh
                                 ./ub-i.sh
                         fi
-                        break
                         ;;
                 2)
                         cd ~/.ntool
