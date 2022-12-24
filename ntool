@@ -140,24 +140,51 @@ toolp(){			#这里是其它工具-工具类页面的function
 			echo "你在使用一个**实验性**功能"
 			echo "备份文件将保存在/sdcard/Download/backup"
 			read -p "按回车以继续"
+			read -p "输入备份名:" name
 			cd ~
-			if [ -d storage ];then
-				echo "可能较慢，请耐心等待"
-				echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
-				read -p "按回车以继续"
-				tar -cvpzf ~/storage/downloads/backup/termux-${arch}-backup.tgz /data/data/com.termux/files
-				echo "完成备份"
+			if command -v tar >> /dev/null;then
+				if [ -d storage ];then
+					echo "可能较慢，请耐心等待"
+					echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
+					read -p "按回车以继续"
+					tar -cvpzf ~/storage/downloads/backup/${name}.tgz /data/data/com.termux/files
+					cd ~/.ntool
+					echo "计算sha256..."
+					sha256sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
+					echo "${name} 时间:`date`" >> ~/.ntool/backups.txt
+					echo "完成备份"
+				else
+					echo "termux-setup-storage未执行"
+					echo "执行中..."
+					sleep 2
+					termux-setup-storage
+					echo "done"
+					sleep 1
+					toolp
+				fi
 			else
-				echo "termux-setup-storage未执行"
-				echo "执行中..."
-				sleep 2
-				termux-setup-storage
-				echo "done"
-				sleep 1
-				ofp
+				echo "tar未安装"
+				echo "start installing..."
+				pkg i tar -y
+				toolp
 			fi
 			;;
 		6)
+			cd ~
+			echo "你的备份有:"
+			cat backups.txt
+			read -p "输入你要恢复的备份:" name
+			echo "比对sha256中..."
+			sha256sum -c ${name}-termux-sha.txt >> /dev/null
+			if [ $? = 0 ];then
+				echo "开始恢复"
+				tar -xvpzf ${name}.tgz -C /
+				read -p "完成，重启生效，按回车以继续"
+			elif [ $? = 1 ];then
+				echo "错误的sha值！不进行恢复！"
+				read -p "按回车以继续"
+				toolp
+			fi
 			;;
 		*)
 			echo "未知选择"
@@ -203,7 +230,7 @@ webp(){				#这里是其他功能-网络类页面function
 clear
 neofetch
 cd ~
-echo "当前版本:v0.1.0"
+echo "当前版本:v0.1.1"
 echo "你的架构为:${arch}"
 echo "现在是北京时间`date`"
 echo "0. 退出"
