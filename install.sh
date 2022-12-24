@@ -28,7 +28,7 @@ case $answer in
 		rm -rf de-i.sh ub-i.sh
                 echo "完成"
                 echo "输入ntool测试启动"
-		rm -rf install.sh >> /dev/null
+		rm ~/install.sh >> /dev/null
 		break
 		;;
 	N|n)

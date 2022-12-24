@@ -234,7 +234,7 @@ cd ~/.ntool
 if [ -a version ];then
 	echo "最新版本:`cat ~/.ntool/version`"
 else
-	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version >> /dev/null
 	echo "最新版本:`cat ~/.ntool/version`"
 fi
 cd ~
