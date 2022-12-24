@@ -189,6 +189,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		7)
 			echo "starting..."
+			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool
 			;;
 		*)
 			echo "未知选择"
