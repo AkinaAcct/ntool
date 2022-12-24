@@ -57,6 +57,7 @@ choose_os_page() {
 			choose_os_page
                         ;;
         esac
+	ntool
 }
 other_function_page(){			#这里是其他功能页的function
 	clear
