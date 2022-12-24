@@ -25,7 +25,7 @@ case $answer in
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod 777 /data/data/com.termux/files/usr/bin/ntool
 		cd ~/.ntool
-		rm de-i.sh ub-i.sh
+		rm de-i.sh ub-i.sh >> /dev/null
                 echo "完成"
                 echo "输入ntool测试启动"
 		cd ~

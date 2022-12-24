@@ -200,11 +200,11 @@ tool_page(){			#这里是其它工具-工具类页面的function
 }
 update(){			#这里是升级的function
 	cd ~
-	rm ~/install.sh > /dev/null
+	rm install.sh > /dev/null
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 	chmod +x ~/install.sh
 	~/install.sh
-	rm ~/install.sh > /dev/null
+	rm install.sh > /dev/null
 }
 
 web_page(){				#这里是其他功能-网络类页面function
