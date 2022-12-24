@@ -249,7 +249,7 @@ echo "你的架构为:${arch}"
 echo "当前时间:`date`"
 echo "0. 退出"
 echo "00. 更新"
-echo "1. 安装一个proot容器"
+echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 read -p "输入你的选择:" choice
 case $choice in
