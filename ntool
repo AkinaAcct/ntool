@@ -240,7 +240,7 @@ wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_versi
 echo "最新版本:`cat ${mainpath}/latest_version`"
 echo "本地版本:`cat ${mainpath}/local_version`"
 echo "你的架构为:${arch}"
-echo "当前时间:`date`"
+echo "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
 echo "0. 退出"
 echo "00. 更新"
 echo "1. 容器功能(已烂尾)"
