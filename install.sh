@@ -14,7 +14,7 @@ do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
-		rm .ntool/version >> /dev/null 2>&1
+		rm .ntool/version > /dev/null 2>&1
                 echo "installing..."
                 apt update
                 apt upgrade
@@ -25,12 +25,12 @@ case $answer in
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod 777 /data/data/com.termux/files/usr/bin/ntool
 		cd ~/.ntool
-		rm de-i.sh ub-i.sh >> /dev/null 2>&1
+		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O local_version > /dev/null 2>&1
+		rm de-i.sh ub-i.sh > /dev/null 2>&1
+		cd ~
+		rm install.sh > /dev/null 2>&1
                 echo "完成"
                 echo "输入ntool测试启动"
-		cd ~
-		rm install.sh >> /dev/null 2>&1
-		break
 		;;
 	N|n)
 		echo "exiting..."

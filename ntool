@@ -10,7 +10,9 @@
 #也许这以后会成为一个烂尾工程吧(一定)
 
 arch="`uname -m`"
-#以下是标准屎山之我自己都不认识的function
+mainpath="~/.ntool"  #用隐藏目录是为了防止有小可爱rm -rf ~/*
+
+#以下是标准屎山之我自己都不认识的function（）
 choose_os_page() {
 	clear 		#这里是选择容器版本的页面function
 	echo "this is a bad page that i even want to delete it"
@@ -26,7 +28,7 @@ choose_os_page() {
                         ntool
                         ;;
                 1)
-                        cd ~/.ntool
+                        cd $mainpath
                         if [ -a "ub-i.sh" ];	#检测有无两个安装脚本
                         then
                                 chmod +x ub-i.sh
@@ -38,8 +40,8 @@ choose_os_page() {
                         fi
                         ;;
                 2)
-                        cd ~/.ntool
-                        if [ -a "de-i.sh"];
+                        cd $mainpath
+                        if [ -a "de-i.sh"];	#同上
                         then
                                 chmod +x de-i.sh
                                 ./de-i.sh
@@ -147,10 +149,10 @@ tool_page(){			#这里是其它工具-工具类页面的function
 					echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
 					read -p "按回车以继续"
 					tar -cvpzf ~/storage/downloads/backup/${name}.tgz /data/data/com.termux/files
-					cd ~/.ntool
+					cd ${mainpath}
 					echo "计算sha256..."
 					sha256sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
-					echo "名称:${name} 时间:`date`" >> ~/.ntool/backups.txt
+					echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
 					echo "完成备份"
 				else
 					echo "termux-setup-storage未执行"
@@ -171,10 +173,10 @@ tool_page(){			#这里是其它工具-工具类页面的function
 		6)
 			cd ~
 			echo "你的备份有:"
-			cat ~/.ntool/backups.txt
+			cat ${mainpath}/backups.txt
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
-			sha256sum -c ${name}-termux-sha.txt >> /dev/null
+			sha256sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
 			if [ $? = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ${name}.tgz -C /
@@ -233,15 +235,16 @@ web_page(){				#这里是其他功能-网络类页面function
 
 
 clear
-cd ~/.ntool
-if [ -a version ];then
-	echo "最新版本:`cat ~/.ntool/version`"
+cd ${mainpath}
+if [ -a latest_version ];then
+	echo "最新版本:`cat ${mainpath}/latest_version`"
 else
-	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version >> /dev/null 2>&1
-	echo "最新版本:`cat ~/.ntool/version`"
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version >> /dev/null 2>&1
+	echo "最新版本:`cat ${mainpath}/latest_version`"
 fi
 cd ~
-echo "当前版本:`cat version_local`"
+cp ${mainpath}/version ${mainpath}/local_version
+echo "当前版本:`cat ${mainpath}/local_version`"
 echo "你的架构为:${arch}"
 echo "当前时间:`date`"
 echo "0. 退出"
