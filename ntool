@@ -10,7 +10,7 @@
 #也许这以后会成为一个烂尾工程吧(一定)
 
 arch="`uname -m`"
-mainpath="~/.ntool"  #用隐藏目录是为了防止有小可爱rm -rf ~/*
+mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录是为了防止有小可爱rm -rf ~
 
 #以下是标准屎山之我自己都不认识的function（）
 choose_os_page() {
@@ -25,7 +25,7 @@ choose_os_page() {
         read -p "输入你的选择:" cos
         case $cos in
                 0)
-                        ntool
+        		ntool
                         ;;
                 1)
                         cd $mainpath
