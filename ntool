@@ -13,7 +13,7 @@ arch="`uname -m`"
 
 #以下是标准屎山之我自己都不认识的function
 cho(){
-	clear
+	clear 		#这里是选择容器版本的页面function
 	echo "this is a bad page that i even want to delete it"
         echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
         echo "该页面不在更新，**不要**提关于容器功能的issue，因为我也不会去修"
@@ -29,7 +29,7 @@ cho(){
                         ;;
                 1)
                         cd ~/.ntool
-                        if [ -a "ub-i.sh" ];
+                        if [ -a "ub-i.sh" ];	#检测有无两个安装脚本
                         then
                                 chmod +x ub-i.sh
                                 ./ub-i.sh
@@ -59,7 +59,7 @@ cho(){
                         ;;
         esac
 }
-ofp(){
+ofp(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
@@ -83,7 +83,7 @@ ofp(){
                         ;;
         esac
 }
-toolp(){
+toolp(){			#这里是其它工具-工具类页面的function
 	clear
 	echo "0. 返回上一页"
 	echo "1. ping"
@@ -138,10 +138,21 @@ toolp(){
 			;;
 		5)
 			echo "你在使用一个**实验性**功能"
+			echo "备份文件将保存在/sdcard/Download/backup"
 			read -p "按回车以继续"
-			echo "备份文件将保存在/sdcard/Downloads/backup"
-			tar -zcvf /data/data/com.termux/files ~/storage/downloads/backup 
-			echo "done"
+			cd ~
+			if [ -d storage ];then
+				tar -zcvf /data/data/com.termux/files ~/storage/downloads/backup 
+				echo "done"
+			else
+				echo "termux-setup-storage未执行"
+				echo "执行中..."
+				sleep 2
+				termux-setup-storage
+				echo "done"
+				sleep 1
+				ofp
+			fi
 			;;
 		*)
 			echo "未知选择"
@@ -150,7 +161,7 @@ toolp(){
 			;;
 	esac
 }
-update(){
+update(){			#这里是升级的function
 	cd ~
 	rm ~/install.sh
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
@@ -159,7 +170,7 @@ update(){
 	rm ~/install.sh
 }
 
-webp(){	
+webp(){				#这里是其他功能-网络类页面function
 	clear
 	echo "0. 返回上个页面"
 	echo "1. 安装Nginx"
