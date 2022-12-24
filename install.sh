@@ -31,6 +31,7 @@ case $answer in
 		rm install.sh > /dev/null 2>&1
                 echo "完成"
                 echo "输入ntool测试启动"
+		break
 		;;
 	N|n)
 		echo "exiting..."
