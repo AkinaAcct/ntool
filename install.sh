@@ -14,7 +14,7 @@ do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
-		rm .ntool/version > /dev/null 2>&1
+		rm .ntool/local_version > /dev/null 2>&1
                 echo "installing..."
                 apt update
                 apt upgrade
