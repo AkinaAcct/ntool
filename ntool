@@ -214,9 +214,11 @@ webp(){				#这里是其他功能-网络类页面function
 			;;
 		1)
 			pkg i nginx -y
+			echo "done"
 			;;
 		2)
 			pkg i apache2 -y
+			echo "done"
 			;;
 		*)
 			echo "未知选择"
@@ -228,11 +230,17 @@ webp(){				#这里是其他功能-网络类页面function
 
 
 clear
-neofetch
+cd ~/.ntool
+if [ -a version ];then
+	echo "最新版本:`cat ~/.ntool/version`"
+else
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version
+	echo "最新版本:`cat ~/.ntool/version`"
+fi
 cd ~
 echo "当前版本:v0.1.1"
 echo "你的架构为:${arch}"
-echo "现在是北京时间`date`"
+echo "当前时间:`date`"
 echo "0. 退出"
 echo "00. 更新"
 echo "1. 安装一个proot容器"
