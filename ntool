@@ -10,7 +10,6 @@
 #也许这以后会成为一个烂尾工程吧(一定)
 
 arch="`uname -m`"
-
 #以下是标准屎山之我自己都不认识的function
 cho(){
 	clear 		#这里是选择容器版本的页面function
@@ -91,6 +90,7 @@ toolp(){			#这里是其它工具-工具类页面的function
 	echo "3. 寻找文件(find)"
 	echo "4. 在termux原系统里安装jdk"
 	echo "5. 备份termux(实验性功能)"
+	echo "6. 恢复备份"
 	read -p "输入你的选择:" answer
 	case $answer in
 		0)
@@ -142,8 +142,11 @@ toolp(){			#这里是其它工具-工具类页面的function
 			read -p "按回车以继续"
 			cd ~
 			if [ -d storage ];then
-				tar -zcvf /data/data/com.termux/files ~/storage/downloads/backup 
-				echo "done"
+				echo "可能较慢，请耐心等待"
+				echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
+				read -p "按回车以继续"
+				tar -cvpzf ~/storage/downloads/backup/termux-${arch}-backup.tgz /data/data/com.termux/files
+				echo "完成备份"
 			else
 				echo "termux-setup-storage未执行"
 				echo "执行中..."
@@ -153,6 +156,8 @@ toolp(){			#这里是其它工具-工具类页面的function
 				sleep 1
 				ofp
 			fi
+			;;
+		6)
 			;;
 		*)
 			echo "未知选择"
@@ -200,6 +205,7 @@ neofetch
 cd ~
 echo "当前版本:v0.1.0"
 echo "你的架构为:${arch}"
+echo "现在是北京时间`date`"
 echo "0. 退出"
 echo "00. 更新"
 echo "1. 安装一个proot容器"
