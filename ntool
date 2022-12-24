@@ -98,7 +98,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			other_function_page
 			;;
 		1)
-			if command -v ping >> /dev/null;then
+			if command -v ping > /dev/null;then
 				read -p "输入要进行ping的IP/域名:" ip
 				read -p "输入要ping的次数:" times
 				read -p "输入ping的速度（以秒为单位，省略符号，无root最快0.2）:" speed
@@ -112,7 +112,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			fi
 			;;
 		2)
-			if command -v ping6 >> /dev/null;then
+			if command -v ping6 > /dev/null;then
                                 read -p "输入要进行ping6的IP/域名:" ip
                                 read -p "输入要ping6的次数:" times
                                 read -p "输入ping6的速度（以秒为单位，省略符号，无root最快0.2）:" speed
@@ -143,7 +143,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			read -p "按回车以继续"
 			read -p "输入备份名:" name
 			cd ~
-			if command -v tar >> /dev/null;then
+			if command -v tar > /dev/null;then
 				if [ -d storage ];then
 					echo "可能较慢，请耐心等待"
 					echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
@@ -239,7 +239,7 @@ cd ${mainpath}
 if [ -a latest_version ];then
 	echo "最新版本:`cat ${mainpath}/latest_version`"
 else
-	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version >> /dev/null 2>&1
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 	echo "最新版本:`cat ${mainpath}/latest_version`"
 fi
 cd ~
