@@ -11,7 +11,7 @@
 
 arch="`uname -m`"
 #以下是标准屎山之我自己都不认识的function
-cho(){
+choose_os_page() {
 	clear 		#这里是选择容器版本的页面function
 	echo "this is a bad page that i even want to delete it"
         echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
@@ -54,11 +54,11 @@ cho(){
                 *)
                         echo "未知选项"
 			sleep 2
-			cho
+			choose_os_page
                         ;;
         esac
 }
-ofp(){			#这里是其他功能页的function
+other_function_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
@@ -70,19 +70,19 @@ ofp(){			#这里是其他功能页的function
 			ntool
                         ;;
                 1)
-                        webp
+                        web_page
                         ;;
 		2)
-			toolp
+			tool_page
 			;;
                 *)
                         echo "未知选择"
 			sleep 2
-			ofp
+			other_function_page
                         ;;
         esac
 }
-toolp(){			#这里是其它工具-工具类页面的function
+tool_page(){			#这里是其它工具-工具类页面的function
 	clear
 	echo "0. 返回上一页"
 	echo "1. ping"
@@ -91,10 +91,11 @@ toolp(){			#这里是其它工具-工具类页面的function
 	echo "4. 在termux原系统里安装jdk"
 	echo "5. 备份termux(实验性功能)"
 	echo "6. 恢复备份"
+	echo "7. 打开该项目github地址（夹 带 私 货）"
 	read -p "输入你的选择:" answer
 	case $answer in
 		0)
-			ofp
+			other_function_page
 			;;
 		1)
 			if command -v ping >> /dev/null;then
@@ -107,7 +108,7 @@ toolp(){			#这里是其它工具-工具类页面的function
 			else
 				echo "未安装ping，正在安装..."
 				pkg i termux-tools -y
-				toolp
+				tool_page
 			fi
 			;;
 		2)
@@ -121,7 +122,7 @@ toolp(){			#这里是其它工具-工具类页面的function
 			else
 				echo "ping6未安装,正在安装..."
 				pkg i termux-tools -y
-				toolp
+				tool_page
 			fi
 			;;
 		3)
@@ -151,7 +152,7 @@ toolp(){			#这里是其它工具-工具类页面的function
 					cd ~/.ntool
 					echo "计算sha256..."
 					sha256sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
-					echo "${name} 时间:`date`" >> ~/.ntool/backups.txt
+					echo "名称:${name} 时间:`date`" >> ~/.ntool/backups.txt
 					echo "完成备份"
 				else
 					echo "termux-setup-storage未执行"
@@ -160,19 +161,19 @@ toolp(){			#这里是其它工具-工具类页面的function
 					termux-setup-storage
 					echo "done"
 					sleep 1
-					toolp
+					tool_page
 				fi
 			else
 				echo "tar未安装"
 				echo "start installing..."
 				pkg i tar -y
-				toolp
+				tool_page
 			fi
 			;;
 		6)
 			cd ~
 			echo "你的备份有:"
-			cat backups.txt
+			cat ~/.ntool/backups.txt
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
 			sha256sum -c ${name}-termux-sha.txt >> /dev/null
@@ -183,26 +184,29 @@ toolp(){			#这里是其它工具-工具类页面的function
 			elif [ $? = 1 ];then
 				echo "错误的sha值！不进行恢复！"
 				read -p "按回车以继续"
-				toolp
+				tool_page
 			fi
+			;;
+		7)
+			echo "starting..."
 			;;
 		*)
 			echo "未知选择"
 			sleep 2
-			toolp
+			tool_page
 			;;
 	esac
 }
 update(){			#这里是升级的function
 	cd ~
-	rm ~/install.sh >> /dev/null
+	rm ~/install.sh > /dev/null
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 	chmod +x ~/install.sh
 	~/install.sh
-	rm ~/install.sh >> /dev/null
+	rm ~/install.sh > /dev/null
 }
 
-webp(){				#这里是其他功能-网络类页面function
+web_page(){				#这里是其他功能-网络类页面function
 	clear
 	echo "0. 返回上个页面"
 	echo "1. 安装Nginx"
@@ -210,7 +214,7 @@ webp(){				#这里是其他功能-网络类页面function
 	read -p "输入你的选择:" webc
 	case $webc in
 		0)
-			ofp
+			other_function_page
 			;;
 		1)
 			pkg i nginx -y
@@ -223,7 +227,7 @@ webp(){				#这里是其他功能-网络类页面function
 		*)
 			echo "未知选择"
 			sleep 2
-			webp
+			web_page
 			;;
 	esac
 }
@@ -254,10 +258,10 @@ case $choice in
 		echo "bye"
 		;;
 	1)
-		cho
+		choose_os_page
 		;;
 	2)
-		ofp
+		other_function_page
 		;;
 
 	*)

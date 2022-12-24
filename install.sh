@@ -14,7 +14,8 @@ do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
-		rm ~/install.sh >> /dev/null
+		rm ~/install.sh > /dev/null
+		rm .ntool/version
                 echo "installing..."
                 apt update
                 apt upgrade
@@ -28,7 +29,7 @@ case $answer in
 		rm -rf de-i.sh ub-i.sh
                 echo "完成"
                 echo "输入ntool测试启动"
-		rm ~/install.sh >> /dev/null
+		rm ~/install.sh > /dev/null
 		break
 		;;
 	N|n)
