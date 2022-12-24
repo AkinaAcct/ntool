@@ -188,7 +188,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			fi
 			;;
 		7)
-			echo "starting..."
+			echo "启 动 私 货"	#这叫"夹带私货",记得给我点个star()
 			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool
 			;;
 		*)
@@ -200,11 +200,11 @@ tool_page(){			#这里是其它工具-工具类页面的function
 }
 update(){			#这里是升级的function
 	cd ~
-	rm install.sh > /dev/null
+	rm install.sh > /dev/null 2>&1
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
 	chmod +x ~/install.sh
 	~/install.sh
-	rm install.sh > /dev/null
+	rm install.sh > /dev/null 2>&1
 }
 
 web_page(){				#这里是其他功能-网络类页面function
@@ -239,11 +239,11 @@ cd ~/.ntool
 if [ -a version ];then
 	echo "最新版本:`cat ~/.ntool/version`"
 else
-	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version >> /dev/null
+	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version >> /dev/null 2>&1
 	echo "最新版本:`cat ~/.ntool/version`"
 fi
 cd ~
-echo "当前版本:v0.1.1"
+echo "当前版本:`cat version_local`"
 echo "你的架构为:${arch}"
 echo "当前时间:`date`"
 echo "0. 退出"
