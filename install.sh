@@ -14,22 +14,22 @@ do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
-		rm ~/install.sh > /dev/null
-		rm .ntool/version
+		rm .ntool/version >> /dev/null
                 echo "installing..."
                 apt update
                 apt upgrade
                 apt install git wget curl neofetch -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
-		rm -rf /data/data/com.termux/files/usr/bin/ntool
+		rm /data/data/com.termux/files/usr/bin/ntool
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod 777 /data/data/com.termux/files/usr/bin/ntool
 		cd ~/.ntool
-		rm -rf de-i.sh ub-i.sh
+		rm de-i.sh ub-i.sh
                 echo "完成"
                 echo "输入ntool测试启动"
-		rm ~/install.sh > /dev/null
+		cd ~
+		rm install.sh >> /dev/null
 		break
 		;;
 	N|n)
