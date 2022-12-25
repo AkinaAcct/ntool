@@ -15,10 +15,10 @@ read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
 		rm .ntool/local_version > /dev/null 2>&1
-                echo "installing..."
-                apt update
-                apt upgrade
-                apt install git wget curl neofetch -y
+		echo "installing..."
+		apt update
+		apt upgrade
+		apt install git wget curl neofetch -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm /data/data/com.termux/files/usr/bin/ntool
