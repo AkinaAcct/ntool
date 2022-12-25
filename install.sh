@@ -28,7 +28,7 @@ case $answer in
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O local_version > /dev/null 2>&1
 		rm de-i.sh ub-i.sh > /dev/null 2>&1
 		cd ~
-		rm iu.sh > /dev/null 2>&1
+		rm install.sh > /dev/null 2>&1
                 echo "完成"
                 echo "输入ntool测试启动"
 		break
