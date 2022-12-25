@@ -16,9 +16,9 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
-		apt update
-		apt upgrade
-		apt install git wget curl neofetch -y
+		pkg update -y
+		pkg upgrade -y
+		pkg install git wget curl neofetch -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm /data/data/com.termux/files/usr/bin/ntool
