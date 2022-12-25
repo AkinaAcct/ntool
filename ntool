@@ -121,7 +121,7 @@ ssh_page(){
 				read -p "输入ssh端口:" ssh_port
 				read -p "输入密码:" ssh_passwd
 				echo "please wait..."
-				sshpass -p ${ssh_passwd} ssh ${ssh_user}@${ssh_ip} -p ${ssh_port} -o StrictHostChecking=no
+				sshpass -p ${ssh_passwd} ssh ${ssh_user}@${ssh_ip} -p ${ssh_port}
 			else
 				echo "sshpass未安装"
 				echo "installing..."
