@@ -254,14 +254,8 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			ssh_check_install
 			;;
 		8)
-			cd ${mainpath}		# 隐 藏 功 能 
-			if [ -a accept ];then
-
-				echo "一些地方发生了变化......"
-			else
-				echo "你为什么要选择一个'?'选项啊喂！"
-				tool_page
-			fi
+			echo "你为什么要选择一个'?'选项啊喂！"
+			tool_page
 			;;
 		*)
 			echo "未知选择"
@@ -317,13 +311,12 @@ web_page(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-
 clear
 cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "ntool-一个shitcode项目"
 echo "最新版本:`cat ${mainpath}/latest_version`"
-echo "本地版本:`cat ${mainpath}/local_version`"		#local_version 由install.sh设置
+echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
 echo "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
 echo "0. 退出"
@@ -332,29 +325,22 @@ echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 read -p "输入你的选择:" choice
 case $choice in
-	00)
-		update
-		;;
-	0)
-		echo "bye"
-		;;
-	1)
-		choose_os_page
-		;;
-	2)
-		other_function_page
-		;;
-	notachoice)
-		touch accept
-		ntool
-		;;
-
-	*)
-		echo "输入一个没有的选项是在为难我嘛！"
-		sleep 2
-		ntool
-		;;
-
+00)
+	update
+	;;
+0)
+	echo "bye"
+	;;
+1)
+	choose_os_page
+	;;
+2)
+	other_function_page
+	;;
+*)
+	echo "输入一个没有的选项是在为难我嘛！"
+	sleep 2
+	ntool
+	;;
 esac
-rm ${mainpath}/accept > /dev/null 2>&1
 exit 0
