@@ -95,6 +95,7 @@ ssh_check_install(){
 		echo "未安装ssh客户/服务端"
 		echo "installing..."
 		pkg install openssh
+		ssh_check_install
 	fi
 }
 
@@ -248,7 +249,9 @@ tool_page(){			#这里是其它工具-工具类页面的function
 				tool_page
 			fi
 			;;
-				*)
+		7)
+			ssh_check_install
+		*)
 			echo "未知选择"
 			sleep 2
 			tool_page
