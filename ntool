@@ -188,7 +188,8 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			fi
 			;;
 		7)
-			echo "启 动 私 货"	#这叫"夹带私货",记得给我点个star()
+			echo "启 动 私 货"
+			echo "记得给我点个star哦"
 			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool
 			;;
 		*)
