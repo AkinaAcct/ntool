@@ -10,8 +10,6 @@ then
 	echo "请手动执行: rm -rf ~/.ntool/ubuntu-fs $PREFIX/startubuntu"
 	exit 0
 else
-	while true
-	do
 	echo "注意：现只支持安装单个容器"
 	echo "无法同时安装多个同系统容器"
         echo "推荐lts版本:22.04"
@@ -39,9 +37,10 @@ else
 		*)
 			echo "未知选择，请确认输入无误"
 			sleep 2
+			cd ~/.ntool
+			./ub-i.sh
 			;;
 	esac
-	done
 	cd ~
 	apt update
         apt upgrade
