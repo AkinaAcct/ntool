@@ -29,7 +29,7 @@ choose_os_page() {	#这里是选择容器版本的页面function
                         ;;
                 1)
                         cd $mainpath
-                        if [ -a "ub-i.sh" ];	#检测有无两个安装脚本
+                        if [ -a ub-i.sh ];	#检测有无两个安装脚本
                         then
                                 chmod +x ub-i.sh
                                 ./ub-i.sh
@@ -41,7 +41,7 @@ choose_os_page() {	#这里是选择容器版本的页面function
                         ;;
                 2)
                         cd $mainpath
-                        if [ -a "de-i.sh"];	#同上
+                        if [ -a de-i.sh ];	#同上
                         then
                                 chmod +x de-i.sh
                                 ./de-i.sh
