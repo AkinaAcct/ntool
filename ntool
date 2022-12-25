@@ -147,6 +147,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	echo "5. 备份termux(实验性功能)"
 	echo "6. 恢复备份"
 	echo "7. ssh功能"
+	echo "8. ¿?"
 	echo "00. 打开该项目github地址（夹 带 私 货）"
 	read -p "输入你的选择:" answer
 	case $answer in
@@ -213,7 +214,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 					tar -cvpzf ~/storage/downloads/backup/${name}.tgz /data/data/com.termux/files
 					cd ${mainpath}
 					echo "计算sha256..."
-					sha256sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
+					sha1sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
 					echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
 					echo "完成备份"
 				else
@@ -238,7 +239,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			cat ${mainpath}/backups.txt
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
-			sha256sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
+			sha1sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
 			if [ $? = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /
@@ -251,6 +252,15 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		7)
 			ssh_check_install
+			;;
+		8)
+			cd ${mainpath}		# 隐 藏 功 能 
+			if [ -a accept ];then
+
+				echo "一些地方发生了变化......"
+			else
+				echo "你为什么要选择一个'?'选项啊喂！"
+			fi
 			;;
 		*)
 			echo "未知选择"
@@ -331,6 +341,9 @@ case $choice in
 		;;
 	2)
 		other_function_page
+		;;
+	notachoice)
+		touch accept
 		;;
 
 	*)
