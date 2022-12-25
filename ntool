@@ -147,7 +147,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	echo "5. 备份termux(实验性功能)"
 	echo "6. 恢复备份"
 	echo "7. ssh功能"
-	echo "8. ¿?"
+	echo "8. ?"
 	echo "00. 打开该项目github地址（夹 带 私 货）"
 	read -p "输入你的选择:" answer
 	case $answer in
@@ -260,6 +260,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 				echo "一些地方发生了变化......"
 			else
 				echo "你为什么要选择一个'?'选项啊喂！"
+				tool_page
 			fi
 			;;
 		*)
@@ -320,6 +321,7 @@ web_page(){				#这里是其他功能-网络类页面function
 clear
 cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
+echo "ntool-一个shitcode项目"
 echo "最新版本:`cat ${mainpath}/latest_version`"
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version 由install.sh设置
 echo "你的架构为:${arch}"
@@ -353,4 +355,5 @@ case $choice in
 		;;
 
 esac
+rm ${mainpath}/accept
 exit 0
