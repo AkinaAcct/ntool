@@ -275,6 +275,8 @@ web_page(){				#这里是其他功能-网络类页面function
 	echo "0. 返回上个页面"
 	echo "1. 安装Nginx"
 	echo "2. 安装Apache2"
+	echo "3. 安装php"
+	echo "4. 安装MySQL(mariadb)"
 	read -p "输入你的选择:" webc
 	case $webc in
 		0)
@@ -286,6 +288,14 @@ web_page(){				#这里是其他功能-网络类页面function
 			;;
 		2)
 			pkg install apache2 -y
+			echo "done"
+			;;
+		3)
+			pkg install php -y
+			echo "done"
+			;;
+		4)
+			pkg install mariadb -y
 			echo "done"
 			;;
 		*)
