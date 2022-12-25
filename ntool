@@ -251,6 +251,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		7)
 			ssh_check_install
+			;;
 		*)
 			echo "未知选择"
 			sleep 2
