@@ -21,6 +21,7 @@ else
 	case $answer in
 		00)
 			ntool
+			exit 0
 			;;
 		1)
 			version="20.04.5"

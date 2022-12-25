@@ -10,11 +10,11 @@
 #以这也(一)许(定)后会成为一个烂尾工程吧
 
 arch="`uname -m`"
-mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录是为了防止有小可爱rm -rf ~
+mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
 
 #以下是标准屎山之我自己都不认识的function（）
-choose_os_page() {
-	clear 		#这里是选择容器版本的页面function
+choose_os_page() {	#这里是选择容器版本的页面function
+	clear
 	echo "this is a bad page that i even want to delete it"
         echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
         echo "该页面不在更新，**不要**提关于容器功能的issue，因为我也不会去修"
@@ -179,10 +179,10 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			sha256sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
 			if [ $? = 0 ];then
 				echo "开始恢复"
-				tar -xvpzf ${name}.tgz -C /
+				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /
 				read -p "完成，重启生效，按回车以继续"
-			elif [ $? = 1 ];then
-				echo "错误的sha值！不进行恢复！"
+			else
+				echo "错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏"
 				read -p "按回车以继续"
 				tool_page
 			fi
@@ -209,6 +209,7 @@ update(){			#这里是升级的function
 
 web_page(){				#这里是其他功能-网络类页面function
 	clear
+	#echo "这里是最水的页面（doge）"
 	echo "0. 返回上个页面"
 	echo "1. 安装Nginx"
 	echo "2. 安装Apache2"
