@@ -346,6 +346,7 @@ case $choice in
 		;;
 	notachoice)
 		touch accept
+		ntool
 		;;
 
 	*)
@@ -355,5 +356,5 @@ case $choice in
 		;;
 
 esac
-rm ${mainpath}/accept
+rm ${mainpath}/accept > /dev/null 2>&1
 exit 0
