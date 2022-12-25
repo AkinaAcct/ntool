@@ -13,7 +13,7 @@ arch="`uname -m`"
 mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
 
 #以下是标准屎山之我自己都不认识的function（）
-choose_os_page() {	#这里是选择容器版本的页面function
+choose_os_page(){	#这里是选择容器版本的页面function
 	clear
 	echo "this is a bad page that i even want to delete it"
         echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
@@ -58,6 +58,7 @@ choose_os_page() {	#这里是选择容器版本的页面function
                         ;;
         esac
 }
+
 other_function_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
@@ -82,6 +83,59 @@ other_function_page(){			#这里是其他功能页的function
                         ;;
         esac
 }
+
+ssh_check_install(){
+	clear
+	if command -v ssh;then
+		echo "ssh功能正在测试"
+		echo "可能会有意想不到的错误"
+		read -p "按回车以继续"
+		ssh_page
+	else
+		echo "未安装ssh客户/服务端"
+		echo "installing..."
+		pkg install openssh
+	fi
+}
+
+ssh_page(){
+	clear
+	echo "0. 返回上一页"
+	echo "1. 打开sshd服务（他人连接）"
+	echo "2. 连接远程服务器"
+	read -p "输入你的选择:" ssh_choice
+	case $ssh_choice in
+		0)
+			tool_page
+			;;
+		1)
+			sshd
+			read -p "启动完成 按任意键退出脚本"
+			exit 0
+			;;
+		2)
+			if command -v sshpass;then
+				read -p "输入远程服务器ip/域名:" ssh_ip
+				read -p "输入要登陆的用户名:" ssh_user
+				read -p "输入ssh端口:" ssh_port
+				read -p "输入密码:" ssh_passwd
+				echo "please wait..."
+				sshpass -p ${ssh_passwd} ssh ${ssh_user}@${ssh_ip} -p ${ssh_port} -o StrictHostChecking=no
+			else
+				echo "sshpass未安装"
+				echo "installing..."
+				pkg install sshpass -y
+				ssh_page
+			fi
+			;;
+		*)
+			echo "未知选择"
+			sleep 2
+			ssh_page
+			;;
+	esac
+}
+
 tool_page(){			#这里是其它工具-工具类页面的function
 	clear
 	echo "0. 返回上一页"
@@ -91,12 +145,19 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	echo "4. 在termux原系统里安装jdk"
 	echo "5. 备份termux(实验性功能)"
 	echo "6. 恢复备份"
-	echo "7. 打开该项目github地址（夹 带 私 货）"
+	echo "7. ssh功能"
+	echo "00. 打开该项目github地址（夹 带 私 货）"
 	read -p "输入你的选择:" answer
 	case $answer in
 		0)
 			other_function_page
 			;;
+		00)
+			echo "启 动 私 货"
+			echo "记得给我点个star哦"
+			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool > /dev/null 2>&1
+			;;
+
 		1)
 			if command -v ping > /dev/null;then
 				read -p "输入要进行ping的IP/域名:" ip
@@ -107,7 +168,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 				echo "stop ping."
 			else
 				echo "未安装ping，正在安装..."
-				pkg i termux-tools -y
+				pkg install termux-tools -y
 				tool_page
 			fi
 			;;
@@ -121,7 +182,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
                                 echo "stop ping."
 			else
 				echo "ping6未安装,正在安装..."
-				pkg i termux-tools -y
+				pkg install termux-tools -y
 				tool_page
 			fi
 			;;
@@ -166,7 +227,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			else
 				echo "tar未安装"
 				echo "start installing..."
-				pkg i tar -y
+				pkg install tar -y
 				tool_page
 			fi
 			;;
@@ -187,18 +248,14 @@ tool_page(){			#这里是其它工具-工具类页面的function
 				tool_page
 			fi
 			;;
-		7)
-			echo "启 动 私 货"
-			echo "记得给我点个star哦"
-			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool
-			;;
-		*)
+				*)
 			echo "未知选择"
 			sleep 2
 			tool_page
 			;;
 	esac
 }
+
 update(){			#这里是升级的function
 	cd ~
 	rm install.sh > /dev/null 2>&1
@@ -220,11 +277,11 @@ web_page(){				#这里是其他功能-网络类页面function
 			other_function_page
 			;;
 		1)
-			pkg i nginx -y
+			pkg install nginx -y
 			echo "done"
 			;;
 		2)
-			pkg i apache2 -y
+			pkg install apache2 -y
 			echo "done"
 			;;
 		*)
@@ -240,7 +297,7 @@ clear
 cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "最新版本:`cat ${mainpath}/latest_version`"
-echo "本地版本:`cat ${mainpath}/local_version`"
+echo "本地版本:`cat ${mainpath}/local_version`"		#local_version 由install.sh设置
 echo "你的架构为:${arch}"
 echo "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
 echo "0. 退出"
