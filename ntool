@@ -255,6 +255,9 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		8)
 			echo "你为什么要选择一个'?'选项啊喂！"
+			sleep 2
+			echo "真是个笨蛋！！"
+			sleep 2
 			tool_page
 			;;
 		*)
