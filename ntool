@@ -318,11 +318,12 @@ clear
 cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "ntool-一个shitcode项目"
-if [ "`cat ${mainpath}/local_version`" = "`cat ${mainpath}/latest_version`" ];
+if [ "`cat ${mainpath}/local_version`" != "`cat ${mainpath}/latest_version`" ];
 then
 	cowsay "所以你真的不更新吗qwq"
-else
-echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自git describe --tags(我懒省事)
+elif [ "`cat ${mainpath}/local_version`" == "`cat ${mainpath}/latest_version`" ];
+then
+echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
 echo "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
