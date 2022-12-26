@@ -321,8 +321,7 @@ echo "ntool-一个shitcode项目"
 if [ "`cat ${mainpath}/local_version`" != "`cat ${mainpath}/latest_version`" ];
 then
 	cowsay "所以你真的不更新吗qwq"
-elif [ "`cat ${mainpath}/local_version`" == "`cat ${mainpath}/latest_version`" ];
-then
+fi
 echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
@@ -351,5 +350,4 @@ case $choice in
 	ntool
 	;;
 esac
-fi
 exit 0
