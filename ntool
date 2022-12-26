@@ -196,8 +196,8 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		4)
 			echo "只支持openjdk17"
-			read -p "按回车以继续"
-			pkg i openjdk-17 -y
+			read -p "按回车以继续"	#我好水啊（）
+			pkg install openjdk-17 -y
 			echo "安装完成"
 			;;
 		5)
@@ -318,7 +318,11 @@ clear
 cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "ntool-一个shitcode项目"
-echo "最新版本:`cat ${mainpath}/latest_version`"
+if [ "`cat ${mainpath}/local_version`" = "`cat ${mainpath}/latest_version`" ];
+then
+	cowsay "所以你真的不更新吗qwq"
+else
+echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自git describe --tags(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
 echo "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
@@ -346,4 +350,5 @@ case $choice in
 	ntool
 	;;
 esac
+fi
 exit 0
