@@ -374,17 +374,6 @@ case  $choice  in
         sleep 2 
         ntool
         ;;
-    egg)
-        echo "是个彩蛋？"
-        sleep 2
-        echo "Merry Christmas!"
-        ;;
-    wsxhz)
-        echo "小黑子让我抓到了吧"
-        echo "以后别吃我家哥哥下的蛋！"
-        sleep 2 
-        ntool
-        ;;
     *)
     	echo "输入一个没有的选项是在为难我嘛！"
 	    sleep 2
