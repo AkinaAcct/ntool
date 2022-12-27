@@ -18,7 +18,7 @@ ARCH="`uname -m`"       #架构
 mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
 
 #以下是标准屎山之我自己都不认识的function（）
-function backup_page(){
+backup_page(){
     clear
     echo "0. 返回脚本主页"
     echo "1. 备份termux"
@@ -88,7 +88,7 @@ function backup_page(){
     esac
 }
 
-function choose_os_page(){	#这里是选择容器版本的页面function
+choose_os_page(){	#这里是选择容器版本的页面function
 	clear
 	echo "this is a bad page that i even want to delete it"
     echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
@@ -134,7 +134,7 @@ function choose_os_page(){	#这里是选择容器版本的页面function
     esac
 }
 
-function other_function_page(){			#这里是其他功能页的function
+other_function_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
@@ -159,7 +159,7 @@ function other_function_page(){			#这里是其他功能页的function
     esac
 }
 
-function ssh_check_install(){
+ssh_check_install(){
 	clear
 	if command -v ssh;then
 		echo "ssh功能正在测试"
@@ -174,7 +174,7 @@ function ssh_check_install(){
 	fi
 }
 
-function ssh_page(){
+ssh_page(){
 	clear
 	echo "0. 返回上一页"
 	echo "1. 打开sshd服务（他人连接）"
@@ -212,7 +212,7 @@ function ssh_page(){
 	esac
 }
 
-function tool_page(){			#这里是其它工具-工具类页面的function
+tool_page(){			#这里是其它工具-工具类页面的function
 	clear
 	echo "0. 返回上一页"
 	echo "1. ping"
@@ -291,7 +291,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 	esac
 }
 
-function update(){			#这里是升级的function
+update(){			#这里是升级的function
 	cd ~
 	rm install.sh > /dev/null 2>&1
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
@@ -300,7 +300,7 @@ function update(){			#这里是升级的function
 	rm install.sh > /dev/null 2>&1
 }
 
-function web_page(){				#这里是其他功能-网络类页面function
+web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
 	echo "0. 返回上个页面"
@@ -346,49 +346,49 @@ echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh
 echo "你的架构为:${ARCH}"
 echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`${RESET}"
 echo "0. 退出"
-echo "00. 更新"
+echo "update. 更新"
 echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
 read -p "输入你的选择:" choice
-case $choice in
-00)
-	update
-	;;
-0)
-	echo "bye"
-	;;
-1)
-	choose_os_page
-	;;
-2)
-	other_function_page
-	;;
-3)
-    backup_page
-    ;;
-4)
-    echo "这里什么都没有"
-    echo "真的"         #你看我没骗你吧,真的什么都没有
-    sleep 2 
-    ntool
-    ;;
-egg)
-    echo "是个彩蛋？"
-    sleep 2
-    echo "Merry Christmas!"
-    ;;
-wsxhz)
-    echo "小黑子让我抓到了吧"
-    echo "以后别吃我家哥哥下的蛋！"
-    sleep 2 
-    ntool
-    ;;
-*)
-	echo "输入一个没有的选项是在为难我嘛！"
-	sleep 2
-	ntool
-	;;
+case  $choice  in 
+    update)
+	    update
+    	;;
+    0)
+	    echo -e "${BLUE}bye${RESET}"
+    	;;
+    1)
+	    choose_os_page
+    	;;
+    2)
+	    other_function_page
+    	;;
+    3)
+        backup_page
+        ;;
+    4)
+        echo "这里什么都没有"
+        echo "真的"         #你看我没骗你吧,真的什么都没有
+        sleep 2 
+        ntool
+        ;;
+    egg)
+        echo "是个彩蛋？"
+        sleep 2
+        echo "Merry Christmas!"
+        ;;
+    wsxhz)
+        echo "小黑子让我抓到了吧"
+        echo "以后别吃我家哥哥下的蛋！"
+        sleep 2 
+        ntool
+        ;;
+    *)
+    	echo "输入一个没有的选项是在为难我嘛！"
+	    sleep 2
+    	ntool
+	    ;;
 esac
 exit 0
