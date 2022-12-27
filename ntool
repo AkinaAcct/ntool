@@ -219,10 +219,8 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	echo "2. ping6(即ipv6 ping)"
 	echo "3. 寻找文件(find)"
 	echo "4. 在termux原系统里安装jdk"
-	echo "5. 备份termux(实验性功能)"
-	echo "6. 恢复备份"
-	echo "7. ssh功能"
-	echo "8. ?"
+	echo "5. ssh功能"
+	echo "6. ?"
 	echo "00. 打开该项目github地址（夹 带 私 货）"
 	read -p "输入你的选择:" answer
 	case $answer in
@@ -276,11 +274,9 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			echo "安装完成"
 			;;
 		5)
-						;;
-		7)
 			ssh_check_install
 			;;
-		8)
+		6)
 			echo "你为什么要选择一个'?'选项啊喂！"
 			sleep 2
 			echo "真是个笨蛋！！"
