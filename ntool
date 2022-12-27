@@ -339,13 +339,14 @@ web_page(){				#这里是其他功能-网络类页面function
 
 clear
 cd ${mainpath}
-wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
+curl https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
+curl https://v1.hitokoto.cn/?encode=text -O hitokoto 2>/dev/null    #一言接口：hitokoto.cn
 echo "ntool-一个shitcode项目"
 echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${ARCH}"
-echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`${RESET}"
-echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
+echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
+echo -e "${BLUE}`cat hitokoto`${RESET}"
 echo "0. 退出"
 echo "99. 更新"
 echo "1. 容器功能(已烂尾)"
