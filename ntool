@@ -344,6 +344,11 @@ case $choice in
 2)
 	other_function_page
 	;;
+egg)
+    echo "是个彩蛋？"
+    sleep 2
+    echo "Merry Christmas!"
+    ;;
 *)
 	echo "输入一个没有的选项是在为难我嘛！"
 	sleep 2
