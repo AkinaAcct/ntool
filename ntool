@@ -13,6 +13,75 @@ arch="`uname -m`"
 mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
 
 #以下是标准屎山之我自己都不认识的function（）
+backup_page(){
+    echo "0. 返回脚本主页"
+    echo "1. 备份termux"
+    echo "2. 恢复备份"
+    echo "3. 删除备份"
+    echo "你在使用一个**实验性**功能"
+	echo "备份文件将保存在/sdcard/Download/backup"
+	read -p "输入你的选择:" backup_page_choice
+    case $backup_page_choice in
+        0)
+            ntool
+            ;;
+        1)
+            read -p "输入备份名:" name
+        	cd ~
+        	if command -v tar > /dev/null;then
+                if [ -d storage ];then
+                    echo "可能较慢，请耐心等待"
+			    	echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
+				    read -p "按回车以继续"
+                    cd /data/data/com.termux/
+	    			tar -cvpzf ~/storage/downloads/backup/${name}.tgz files
+		    		echo "计算sha1..."
+			    	sha1sum ~/storage/downloads/backup/${name}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
+				    echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
+    				echo "完成备份"
+                else
+		    		echo "termux-setup-storage未执行"
+			    	echo "执行中..."
+				    sleep 2
+    				termux-setup-storage
+	    			echo "done"
+		    		sleep 1
+			    	backup_page
+                fi
+            else
+                echo "tar未安装"
+			    echo "start installing..."
+    			pkg install tar -y
+	    		backup_page
+            fi
+            ;;
+        2)
+			echo "你的备份有:"
+			cat ${mainpath}/backups.txt
+			read -p "输入你要恢复的备份:" name
+			echo "比对sha256中..."
+			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
+			if [ $? = 0 ];then
+				echo "开始恢复"
+				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
+				read -p "完成，重启生效，按回车以退出"
+			else
+				echo "错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏"
+				read -p "按回车以继续"
+				backup_page
+			fi
+            ;;
+        3)
+            echo "devloping..."
+            ;;
+        *)
+            echo "未知选项"
+            sleep 2 
+            backup_page
+            ;;
+    esac
+}
+
 choose_os_page(){	#这里是选择容器版本的页面function
 	clear
 	echo "this is a bad page that i even want to delete it"
@@ -201,56 +270,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			echo "安装完成"
 			;;
 		5)
-			echo "你在使用一个**实验性**功能"
-			echo "备份文件将保存在/sdcard/Download/backup"
-			read -p "按回车以继续"
-			read -p "输入备份名:" name
-			cd ~
-			if command -v tar > /dev/null;then
-				if [ -d storage ];then
-					echo "可能较慢，请耐心等待"
-					echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
-					read -p "按回车以继续"
-                    cd /data/data/com.termux/
-					tar -cvpzf ~/storage/downloads/backup/${name}.tgz files
-					cd ${mainpath}
-					echo "计算sha256..."
-					sha1sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
-					echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
-					echo "完成备份"
-				else
-					echo "termux-setup-storage未执行"
-					echo "执行中..."
-					sleep 2
-					termux-setup-storage
-					echo "done"
-					sleep 1
-					tool_page
-				fi
-			else
-				echo "tar未安装"
-				echo "start installing..."
-				pkg install tar -y
-				tool_page
-			fi
-			;;
-		6)
-            cd ${mainpath}
-			echo "你的备份有:"
-			cat ${mainpath}/backups.txt
-			read -p "输入你要恢复的备份:" name
-			echo "比对sha256中..."
-			sha1sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
-			if [ $? = 0 ];then
-				echo "开始恢复"
-				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
-				read -p "完成，重启生效，按回车以继续"
-			else
-				echo "错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏"
-				read -p "按回车以继续"
-				tool_page
-			fi
-			;;
+						;;
 		7)
 			ssh_check_install
 			;;
@@ -331,6 +351,7 @@ echo "0. 退出"
 echo "00. 更新"
 echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
+echo "3. 备份功能"
 read -p "输入你的选择:" choice
 case $choice in
 00)
@@ -345,6 +366,9 @@ case $choice in
 2)
 	other_function_page
 	;;
+3)
+    backup_page
+    ;;
 egg)
     echo "是个彩蛋？"
     sleep 2
