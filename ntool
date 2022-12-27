@@ -295,8 +295,8 @@ function update(){			#这里是升级的function
 	cd ~
 	rm install.sh > /dev/null 2>&1
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
-	chmod +x ~/install.sh
-	~/install.sh
+	chmod +x install.sh
+	./install.sh
 	rm install.sh > /dev/null 2>&1
 }
 
@@ -352,7 +352,7 @@ echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
 read -p "输入你的选择:" choice
-case$choice in
+case $choice in
 00)
 	update
 	;;
@@ -379,9 +379,9 @@ egg)
     sleep 2
     echo "Merry Christmas!"
     ;;
-xhz)
+wsxhz)
     echo "小黑子让我抓到了吧"
-    echo "注意树脂（"
+    echo "以后别吃我家哥哥下的蛋！"
     sleep 2 
     ntool
     ;;
