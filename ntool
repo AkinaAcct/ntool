@@ -25,7 +25,7 @@ backup_page(){
     echo "2. 恢复备份"
     echo "3. 删除备份"
     echo -e "你在使用一个${RED}实验性${RESET}功能"
-	echo -e "备份文件将保存在${BLUE}/sdcard/Download/backup"
+	echo -e "备份文件将保存在${BLUE}/sdcard/Download/backup${RESET}"
 	read -p "输入你的选择:" backup_page_choice
     case $backup_page_choice in
         0)
@@ -72,7 +72,7 @@ backup_page(){
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
 				read -p "完成，重启生效，按回车以退出"
 			else
-				echo -e "${RED}错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏"
+				echo -e "${RED}错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏${RESET}"
 				read -p "按回车以继续"
 				backup_page
 			fi
@@ -138,7 +138,7 @@ other_function_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
-        echo "1. 网络类"
+    echo "1. 网络类"
 	echo "2. 工具类"
         read -p "输入你的选择" ofc    #of是other function的缩写
         case $ofc in
@@ -352,7 +352,7 @@ fi
 echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
-echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`"
+echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`${RESET}"
 echo "0. 退出"
 echo "00. 更新"
 echo "1. 容器功能(已烂尾)"
