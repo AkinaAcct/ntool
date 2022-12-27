@@ -14,6 +14,7 @@ mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误�
 
 #以下是标准屎山之我自己都不认识的function（）
 backup_page(){
+    clear
     echo "0. 返回脚本主页"
     echo "1. 备份termux"
     echo "2. 恢复备份"
