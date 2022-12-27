@@ -211,7 +211,8 @@ tool_page(){			#这里是其它工具-工具类页面的function
 					echo "可能较慢，请耐心等待"
 					echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
 					read -p "按回车以继续"
-					tar -cvpzf ~/storage/downloads/backup/${name}.tgz /data/data/com.termux/files
+                    cd /data/data/com.termux/
+					tar -cvpzf ~/storage/downloads/backup/${name}.tgz files
 					cd ${mainpath}
 					echo "计算sha256..."
 					sha1sum ~/storage/downloads/backup/${name}.tgz > ${name}-termux-sha.txt
@@ -234,7 +235,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			fi
 			;;
 		6)
-			cd ~
+            cd ${mainpath}
 			echo "你的备份有:"
 			cat ${mainpath}/backups.txt
 			read -p "输入你要恢复的备份:" name
@@ -242,7 +243,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			sha1sum -c ${name}-termux-sha.txt >> /dev/null 2>&1
 			if [ $? = 0 ];then
 				echo "开始恢复"
-				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /
+				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
 				read -p "完成，重启生效，按回车以继续"
 			else
 				echo "错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏"
