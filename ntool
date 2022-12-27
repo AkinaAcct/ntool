@@ -346,14 +346,14 @@ echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh
 echo "你的架构为:${ARCH}"
 echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`${RESET}"
 echo "0. 退出"
-echo "update. 更新"
+echo "99. 更新"
 echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
 read -p "输入你的选择:" choice
 case  $choice  in 
-    update)
+    99)
 	    update
     	;;
     0)
