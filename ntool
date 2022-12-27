@@ -383,6 +383,7 @@ xhz)
     echo "注意树脂（"
     sleep 2 
     ntool
+    ;;
 *)
 	echo "输入一个没有的选项是在为难我嘛！"
 	sleep 2
