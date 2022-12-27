@@ -338,6 +338,7 @@ function web_page(){				#这里是其他功能-网络类页面function
 }
 
 clear
+cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "ntool-一个shitcode项目"
 echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
@@ -351,7 +352,7 @@ echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
 read -p "输入你的选择:" choice
-case $choice in
+case$choice in
 00)
 	update
 	;;
