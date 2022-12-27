@@ -374,6 +374,12 @@ case  $choice  in
         sleep 2 
         ntool
         ;;
+    wsxhz)
+        echo "小黑子被我抓到了吧"
+        echo "有本事以后别吃我家哥哥下的蛋!"
+        sleep 2 
+        ntool 
+        ;;
     *)
     	echo "输入一个没有的选项是在为难我嘛！"
 	    sleep 2
