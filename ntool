@@ -18,7 +18,7 @@ ARCH="`uname -m`"       #架构
 mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
 
 #以下是标准屎山之我自己都不认识的function（）
-backup_page(){
+function backup_page(){
     clear
     echo "0. 返回脚本主页"
     echo "1. 备份termux"
@@ -36,7 +36,7 @@ backup_page(){
         	cd ~
         	if command -v tar > /dev/null;then
                 if [ -d storage ];then
-                    echo "可能较慢，请耐心等待"
+                    echo -e "可能${RED}较慢${RESET}，请耐心等待"
 			    	echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
 				    read -p "按回车以继续"
                     cd /data/data/com.termux/
@@ -44,7 +44,7 @@ backup_page(){
 		    		echo "计算sha1..."
 			    	sha1sum ~/storage/downloads/backup/${name}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
 				    echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
-    				echo "完成备份"
+    				echo -e "${GREEN}完成备份${RESET}"
                 else
 		    		echo "termux-setup-storage未执行"
 			    	echo "执行中..."
@@ -70,7 +70,7 @@ backup_page(){
 			if [ $? = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
-				read -p "完成，重启生效，按回车以退出"
+				echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
 			else
 				echo -e "${RED}错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏${RESET}"
 				read -p "按回车以继续"
@@ -88,78 +88,78 @@ backup_page(){
     esac
 }
 
-choose_os_page(){	#这里是选择容器版本的页面function
+function choose_os_page(){	#这里是选择容器版本的页面function
 	clear
 	echo "this is a bad page that i even want to delete it"
-        echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
-        echo -e "${RED}该页面不在更新${RESET}，${RED}不要${RESET}提关于容器功能的issue，因为我也不会去修"
-        echo "只有Ubuntu的原因是我写脚本时只需要一个差不多的proot容器:D"
-        echo "0. 返回上一个页面"
-        echo "1. Ubuntu"
-        echo "2. debian(已烂尾)"
-        read -p "输入你的选择:" cos
-        case $cos in
-                0)
-        		ntool
-                        ;;
-                1)
-                        cd $mainpath
-                        if [ -a ub-i.sh ];	#检测有无两个安装脚本
-                        then
-                                chmod +x ub-i.sh
-                                ./ub-i.sh
-                        else
-                                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
-                                chmod +x ub-i.sh
-                                ./ub-i.sh
-                        fi
-                        ;;
-                2)
-                        cd $mainpath
-                        if [ -a de-i.sh ];	#同上
-                        then
-                                chmod +x de-i.sh
-                                ./de-i.sh
-                        else
-                                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
-                                chmod +x de-i.sh
-                                ./de-i.sh
-                        fi
+    echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
+    echo -e "${RED}该页面不在更新${RESET}"
+    echo "只有Ubuntu的原因是我写脚本时只需要一个差不多的proot容器:D"
+    echo "0. 返回上一个页面"
+    echo "1. Ubuntu"
+    echo "2. debian(已烂尾)"
+    read -p "输入你的选择:" cos
+    case $cos in 
+        0)
+            ntool
+            ;;
+        1)
+            cd $mainpath
+            if [ -a ub-i.sh ];
+            then 
+                chmod +x ub-i.sh
+                ./ub-i.sh 
+            else
+                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
+                chmod +x ub-i.sh
+                ./ub-i.sh
+                fi
+            ;;
+        2)
+            cd $mainpath
+            if [ -a de-i.sh ];
+            then
+                chmod +x de-i.sh
+                ./de-i.sh
+            else
+                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
+                chmod +x de-i.sh
+                ./de-i.sh
+            fi
 			;;
-                *)
-                        echo "未知选项"
+        *)
+            echo "未知选项"
 			sleep 2
-			choose_os_page
-                        ;;
-        esac
+		    choose_os_page
+            ;;
+    esac
 }
 
-other_function_page(){			#这里是其他功能页的function
+function other_function_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
     echo "1. 网络类"
 	echo "2. 工具类"
-        read -p "输入你的选择" ofc    #of是other function的缩写
-        case $ofc in
-                0)
-			ntool
-                        ;;
-                1)
-                        web_page
-                        ;;
-		2)
-			tool_page
-			;;
-                *)
-                        echo "未知选择"
-			sleep 2
-			other_function_page
-                        ;;
-        esac
+    read -p "输入你的选择" ofc    #of是other function的缩写
+    case $ofc in 
+        0)
+		    ntool
+            ;;
+        1)
+            web_page
+            ;;
+	    2)
+	    	tool_page
+		    ;;
+        *)
+            echo "未知选择"
+    		sleep 2 
+            other_function_page
+            ;;
+    esac
 }
 
-ssh_check_install(){
+function ssh_check_install(){
 	clear
 	if command -v ssh;then
 		echo "ssh功能正在测试"
@@ -174,7 +174,7 @@ ssh_check_install(){
 	fi
 }
 
-ssh_page(){
+function ssh_page(){
 	clear
 	echo "0. 返回上一页"
 	echo "1. 打开sshd服务（他人连接）"
@@ -212,7 +212,7 @@ ssh_page(){
 	esac
 }
 
-tool_page(){			#这里是其它工具-工具类页面的function
+function tool_page(){			#这里是其它工具-工具类页面的function
 	clear
 	echo "0. 返回上一页"
 	echo "1. ping"
@@ -249,12 +249,12 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		2)
 			if command -v ping6 > /dev/null;then
-                                read -p "输入要进行ping6的IP/域名:" ip
-                                read -p "输入要ping6的次数:" times
-                                read -p "输入ping6的速度（以秒为单位，省略符号，无root最快0.2）:" speed
-                                echo "start ping..."
-                                ping6 -i ${speed} -c${times} ${ip}
-                                echo "stop ping."
+                read -p "输入要进行ping6的IP/域名:" ip
+                read -p "输入要ping6的次数:" times
+                read -p "输入ping6的速度（以秒为单位，省略符号，无root最快0.2）:" speed
+                echo "start ping..."
+                ping6 -i ${speed} -c${times} ${ip}
+                echo "stop ping."
 			else
 				echo "ping6未安装,正在安装..."
 				pkg install termux-tools -y
@@ -291,7 +291,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	esac
 }
 
-update(){			#这里是升级的function
+function update(){			#这里是升级的function
 	cd ~
 	rm install.sh > /dev/null 2>&1
 	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
@@ -300,7 +300,7 @@ update(){			#这里是升级的function
 	rm install.sh > /dev/null 2>&1
 }
 
-web_page(){				#这里是其他功能-网络类页面function
+function web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
 	echo "0. 返回上个页面"
@@ -338,13 +338,8 @@ web_page(){				#这里是其他功能-网络类页面function
 }
 
 clear
-cd ${mainpath}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1
 echo "ntool-一个shitcode项目"
-if [ "`cat ${mainpath}/local_version`" != "`cat ${mainpath}/latest_version`" ];
-then
-	cowsay "所以你真的不更新吗qwq"
-fi
 echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${arch}"
@@ -354,6 +349,7 @@ echo "00. 更新"
 echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 echo "3. 备份功能"
+echo "4. "
 read -p "输入你的选择:" choice
 case $choice in
 00)
@@ -371,11 +367,22 @@ case $choice in
 3)
     backup_page
     ;;
+4)
+    echo "这里什么都没有"
+    echo "真的"         #你看我没骗你吧,真的什么都没有
+    sleep 2 
+    ntool
+    ;;
 egg)
     echo "是个彩蛋？"
     sleep 2
     echo "Merry Christmas!"
     ;;
+xhz)
+    echo "小黑子让我抓到了吧"
+    echo "注意树脂（"
+    sleep 2 
+    ntool
 *)
 	echo "输入一个没有的选项是在为难我嘛！"
 	sleep 2
