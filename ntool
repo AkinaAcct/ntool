@@ -345,12 +345,14 @@ echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe
 echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${ARCH}"
 echo -e "当前时间:${BLUE}`date '+%Y-%m-%d %H:%M:%S %A'`${RESET}"
+echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
 echo "0. 退出"
 echo "99. 更新"
 echo "1. 容器功能(已烂尾)"
 echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
+echo "5. 一言"
 read -p "输入你的选择:" choice
 case  $choice  in 
     99)
@@ -372,6 +374,11 @@ case  $choice  in
         echo "这里什么都没有"
         echo "真的"         #你看我没骗你吧,真的什么都没有
         sleep 2 
+        ntool
+        ;;
+    5)
+        echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
+        read -p "按回车以继续"
         ntool
         ;;
     wsxhz)
