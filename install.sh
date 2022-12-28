@@ -26,11 +26,12 @@ case $answer in
 		chmod 777 /data/data/com.termux/files/usr/bin/ntool
 		cd ~/.ntool
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O local_version > /dev/null 2>&1
+        wget https://raw.githuhusercontent.com/nnyyaa/ntool/main/Androidicon > /dev/null 2>&1
 		rm de-i.sh ub-i.sh > /dev/null 2>&1
 		cd ~
 		rm install.sh > /dev/null 2>&1
-                echo "完成"
-                echo "输入ntool测试启动"
+        echo "完成"
+        echo "输入ntool测试启动"
 		break
 		;;
 	N|n)
