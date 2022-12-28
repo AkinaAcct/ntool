@@ -339,7 +339,7 @@ web_page(){				#这里是其他功能-网络类页面function
 
 clear
 cd ${mainpath}
-curl https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
+wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
 echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"     #一言接口：hitokoto.cn
 echo "ntool-一个shitcode项目"
 echo -e "${GREEN}`cat ${mainpath}/Androidicon`${RESET}"
