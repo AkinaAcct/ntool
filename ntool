@@ -404,39 +404,30 @@ echo "你的架构为:${ARCH}"
 echo "你的系统为:${OS}"
 echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
 read -p "按回车以进入ntool"
-choice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 12 60 4 \
+mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 15 60 5 \
 "1" "已烂尾的容器功能" \
 "2" "其它功能" \
 "3" "备份功能" \
-"4" "什么都没有" \
+"4" "什么都不是" \
 "5" "一言" \
 "6" "原系统桌面" \
 "00" "更新" \
-"0" "退出" \  3>&1 1>&2 2>&3)
-#echo "0. 退出"
-#echo "99. 更新"
-#echo "1. 容器功能(已烂尾)"
-#echo "2. 其他功能"
-#echo "3. 备份功能"
-#echo "4. "
-#echo "5. 一言"
-#echo "6. termux原系统桌面（非容器）"
-#read -p "输入你的选择:" choice
-case  $choice  in 
+"0" "退出" 3>&1 1>&2 2>&3)
+case $mainchoice in 
     00)
 	    update
     	;;
     0)
-	    echo -e "${BLUE}bye${RESET}"
-    	;;
+        echo -e "${BLUE}bye${RESET}"
+        ;;
     1)
-	    choose_os_page
-    	;;
+        choose_os_page
+        ;;
     2)
         other_tool_page
-    	;;
+        ;;
     3)
-        backup_page
+        backup_page 
         ;;
     4)
         echo "这里什么都没有"
@@ -454,10 +445,5 @@ case  $choice  in
         read -p "按回车以继续"
         desktop_page
         ;;
-    *)
-    	echo -e "${PINK}输入一个没有的选项是在为难我吗！！${RESET}"
-	    sleep 2
-    	ntool
-	    ;;
 esac
 exit 0
