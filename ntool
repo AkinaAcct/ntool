@@ -170,7 +170,7 @@ desktop_page(){
             wget ${RAWURL}/desktop/startopenbox
             chmod +x startopenbox
             echo -e "${GREEN}完成${RESET}"
-            echo -s "输入${GREEN}startopenbox${RESET}以启动"
+            echo -e "输入${GREEN}startopenbox${RESET}以启动"
             read -p "按回车以继续"
             ;;
         3)
