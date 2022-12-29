@@ -28,7 +28,7 @@ backup_page(){      #备份页面function
     "1" "备份termux" \
     "2" "恢复备份" \
     "3" "删除备份" 3>&1 1>&2 2>&3)
-    if [ $EXITCODE = 0 ];then
+    if [ $EXITCODE == 0 ];then
         echo "running..."
     else
         ntool
@@ -353,9 +353,8 @@ check_update(){			#这里是检查/升级的function
     cd ${MAINPATH}
     wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
     if [ "`cat latest_version`" != "`cat local_version`" ];then 
-        whiptail --yesno "你的版本不是最新版。是否更新？" 15 60
-        if $[ $EXITCODE == 0 ];then
-            bash -c "$(curl ${RAWURL}/install.sh)"
+        if (whiptail --yesno "你的版本不是最新版。是否更新？" 15 60); then 
+            bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
             ntool
         fi
