@@ -87,7 +87,7 @@ backup_page(){      #备份页面function
             echo "devloping..."
             ;;
         *)
-            echo "${RED}未知选项${RESET}"
+            echo -e "${RED}未知选项${RESET}"
             sleep 2 
             backup_page
             ;;
@@ -402,16 +402,6 @@ web_page(){				#这里是其他功能-网络类页面function
 
 clear
 cd ${MAINPATH}
-#wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
-#echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"     #一言接口：hitokoto.cn
-#echo "ntool-一个shitcode项目"
-#echo -e "${GREEN}`cat ${MAINPATH}/Androidicon`${RESET}"
-#echo "最新版本:`cat ${MAINPATH}/latest_version`"	#version来自"git describe --tags"(我懒省事)
-#echo "本地版本:`cat ${MAINPATH}/local_version`"		#local_version由install.sh设置
-#echo "你的架构为:${ARCH}"
-#echo "你的系统为:${OS}"
-#echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
-#read -p "按回车以进入ntool"
 mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 15 60 6 \
 "1" "已烂尾的容器功能" \
 "2" "其它功能" \
@@ -419,6 +409,7 @@ mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面"
 "4" "什么都不是" \
 "5" "一言" \
 "6" "原系统桌面" \
+"114514" "我是小黑子" \
 "00" "更新" \
 "0" "退出" 3>&1 1>&2 2>&3)
 case $mainchoice in 
@@ -452,6 +443,11 @@ case $mainchoice in
         echo "仅支持xfce,openbox"
         read -p "按回车以继续"
         desktop_page
+        ;;
+    114514)
+        echo "小黑子让我抓到了吧！"
+        sleep 2 
+        ntool
         ;;
 esac
 exit 0
