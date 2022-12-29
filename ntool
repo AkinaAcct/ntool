@@ -135,7 +135,8 @@ choose_os_page(){	#这里是选择容器版本的页面function
     esac
 }
 
-desktop_page(){  
+desktop_page(){
+    clear
     echo "0. 返回脚本首页"
     echo "1. 安装xfce(**较**为完整的图形化环境)"
     echo "2. 安装openbox(仅提供一个图形化环境)"
