@@ -23,13 +23,16 @@ RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw�
 #以下是标准屎山之我自己都不认识的function（）
 backup_page(){      #备份页面function
     clear
-    echo "0. 返回脚本主页"
-    echo "1. 备份termux"
-    echo "2. 恢复备份"
-    echo "3. 删除备份"
-    echo -e "你在使用一个${RED}实验性${RESET}功能"
-	echo -e "备份文件将保存在${BLUE}/sdcard/Download/backup${RESET}"
-	read -p "输入你的选择:" backup_page_choice
+    backup_page_choice=$(whiptail --title "ntool 备份页面" --menu "你现在在:ntool备份页面" 15 60 6 \
+    "0" "返回脚本主页" \
+    "1" "备份termux" \
+    "2" "恢复备份" \
+    "3" "删除备份" 3>&1 1>&2 2>&3)
+    if [ $EXITCODE = 0 ];then
+        echo "running..."
+    else
+        ntool
+    fi
     case $backup_page_choice in
         0)
             ntool
@@ -346,13 +349,19 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	esac
 }
 
-update(){			#这里是升级的function
-	cd ~
-	rm install.sh > /dev/null 2>&1
-	wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh
-	chmod +x install.sh
-	./install.sh
-	rm install.sh > /dev/null 2>&1
+check_update(){			#这里是检查/升级的function
+    cd ${MAINPATH}
+    wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
+    if [ "`cat latest_version`" != "`cat local_version`" ];then 
+        whiptail --yesno "你的版本不是最新版。是否更新？" 15 60
+        if $[ $EXITCODE == 0 ];then
+            bash -c "$(curl ${RAWURL}/install.sh)"
+        else
+            ntool
+        fi
+    else
+        echo "您的版本为最新版，无需更新"
+    fi 
 }
 
 web_page(){				#这里是其他功能-网络类页面function
@@ -394,17 +403,17 @@ web_page(){				#这里是其他功能-网络类页面function
 
 clear
 cd ${MAINPATH}
-wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
-echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"     #一言接口：hitokoto.cn
-echo "ntool-一个shitcode项目"
-echo -e "${GREEN}`cat ${MAINPATH}/Androidicon`${RESET}"
-echo "最新版本:`cat ${MAINPATH}/latest_version`"	#version来自"git describe --tags"(我懒省事)
-echo "本地版本:`cat ${MAINPATH}/local_version`"		#local_version由install.sh设置
-echo "你的架构为:${ARCH}"
-echo "你的系统为:${OS}"
-echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
-read -p "按回车以进入ntool"
-mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 15 60 5 \
+#wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
+#echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"     #一言接口：hitokoto.cn
+#echo "ntool-一个shitcode项目"
+#echo -e "${GREEN}`cat ${MAINPATH}/Androidicon`${RESET}"
+#echo "最新版本:`cat ${MAINPATH}/latest_version`"	#version来自"git describe --tags"(我懒省事)
+#echo "本地版本:`cat ${MAINPATH}/local_version`"		#local_version由install.sh设置
+#echo "你的架构为:${ARCH}"
+#echo "你的系统为:${OS}"
+#echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
+#read -p "按回车以进入ntool"
+mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 15 60 6 \
 "1" "已烂尾的容器功能" \
 "2" "其它功能" \
 "3" "备份功能" \
@@ -415,7 +424,7 @@ mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面"
 "0" "退出" 3>&1 1>&2 2>&3)
 case $mainchoice in 
     00)
-	    update
+	    check_update
     	;;
     0)
         echo -e "${BLUE}bye${RESET}"
