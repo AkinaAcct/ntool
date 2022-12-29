@@ -136,18 +136,16 @@ choose_os_page(){	#这里是选择容器版本的页面function
 }
 
 desktop_page(){
+    pkg install x11-repo python -y > /dev/null 2>&1 
     echo "0. 返回脚本首页"
     echo "1. 安装xfce(**较**为完整的图形化环境)"
     echo "2. 安装openbox(仅提供一个图形化环境)"
     echo -e "${RED}3. 卸载(这将会导致你的桌面数据丢失)${RESET}"
     echo -e "请注意！原系统桌面${RED}可玩性很低${RESET}"
     echo -e "由于${RED}不是${RESET}一个正常linux环境，${RED}大部分${RESET}linux软件都会报错"
+    echo  -e "可能${RED}较慢${RESET}，${GREEN}请耐心等待${RESET}"
     read -p "输入你的选择:" desktop_choice
-    echo "可能较慢，请耐心等待"
-    read -p "按回车以继续"
-    pkg install x11-repo -y
-    pkg install python -y
-    case $desktop_choice in
+        case $desktop_choice in
         0)
             ntool
             ;;
