@@ -15,7 +15,7 @@ BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
 ARCH="`uname -m`"       #架构
-exitcode="$?"
+EXITCODE="$?"
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址
 
@@ -69,7 +69,7 @@ backup_page(){      #备份页面function
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
 			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
-			if [ $exitcode = 0 ];then
+			if [ $EXITCODE = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
 				echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
@@ -401,15 +401,25 @@ echo "最新版本:`cat ${MAINPATH}/latest_version`"	#version来自"git describe
 echo "本地版本:`cat ${MAINPATH}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${ARCH}"
 echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
-echo "0. 退出"
-echo "99. 更新"
-echo "1. 容器功能(已烂尾)"
-echo "2. 其他功能"
-echo "3. 备份功能"
-echo "4. "
-echo "5. 一言"
-echo "6. termux原系统桌面（非容器）"
-read -p "输入你的选择:" choice
+read -p "按回车以进入ntool"
+choice=$(whiptail --title "ntool menu -whiptail" --menu "进行选择" 30 15 8 \
+"0" "退出" \
+"99" "更新" \
+"1" "已烂尾的容器功能" \
+"2" "其它功能" \
+"3" "备份功能" \
+"4" "什么都没有" \
+"5" "一言" \
+"6" "原系统桌面" 3>&1 1>&2 2>&3)
+#echo "0. 退出"
+#echo "99. 更新"
+#echo "1. 容器功能(已烂尾)"
+#echo "2. 其他功能"
+#echo "3. 备份功能"
+#echo "4. "
+#echo "5. 一言"
+#echo "6. termux原系统桌面（非容器）"
+#read -p "输入你的选择:" choice
 case  $choice  in 
     99)
 	    update
