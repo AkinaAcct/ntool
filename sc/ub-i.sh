@@ -48,18 +48,18 @@ else
 	apt install git tar zip unzip wget curl -y
         sleep 2
         echo "请耐心等待......"
-	wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/${version}/release/ubuntu-base-${version}-base-arm64.tar.gz
-	mkdir -p ~/.ntool/ubuntu-fs
+	    wget https://mirrors.bfsu.edu.cn/ubuntu-cdimage/ubuntu-base/releases/${version}/release/ubuntu-base-${version}-base-arm64.tar.gz
+	    mkdir -p ~/.ntool/ubuntu-fs
         mv ubuntu-base-${version}-base-arm64.tar.gz ~/.ntool/ubuntu-fs
         cd ~/.ntool/ubuntu-fs
         tar -xvzf ubuntu-base-${version}-base-arm64.tar.gz
-	set -e
+    	set -e
         cd ~
         echo "nameserver 8.8.8.8"> /data/data/com.termux/files/home/.ntool/ubuntu-fs/etc/resolv.conf
-        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/startubuntu
+        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/startubuntu
         mv ~/startubuntu $PREFIX/bin
-	rm ~/.ntool/ubuntu-fs/ubuntu-base-${version}-base-arm64.tar.gz
-	chmod 777 $PREFIX/bin/startubuntu
+    	rm ~/.ntool/ubuntu-fs/ubuntu-base-${version}-base-arm64.tar.gz
+    	chmod 777 $PREFIX/bin/startubuntu
         echo "完成！"
         echo "输入 'startubuntu' 启动"
 fi

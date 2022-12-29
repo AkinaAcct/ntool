@@ -15,7 +15,8 @@ BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
 ARCH="`uname -m`"       #架构
-mainpath="/data/data/com.termux/files/home/.ntool"  #用隐藏目录,防止误删
+MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
+RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址
 
 #以下是标准屎山之我自己都不认识的function（）
 backup_page(){
@@ -43,7 +44,7 @@ backup_page(){
 	    			tar -cvpzf ~/storage/downloads/backup/${name}.tgz files
 		    		echo "计算sha1..."
 			    	sha1sum ~/storage/downloads/backup/${name}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
-				    echo "名称:${name} 时间:`date`" >> ${mainpath}/backups.txt
+				    echo "名称:${name} 时间:`date`" >> ${MAINPATH}/backups.txt
     				echo -e "${GREEN}完成备份${RESET}"
                 else
 		    		echo "termux-setup-storage未执行"
@@ -63,7 +64,7 @@ backup_page(){
             ;;
         2)
 			echo "你的备份有:"
-			cat ${mainpath}/backups.txt
+			cat ${MAINPATH}/backups.txt
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
 			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
@@ -103,25 +104,25 @@ choose_os_page(){	#这里是选择容器版本的页面function
             ntool
             ;;
         1)
-            cd $mainpath
+            cd ${MAINPATH}
             if [ -a ub-i.sh ];
             then 
                 chmod +x ub-i.sh
                 ./ub-i.sh 
             else
-                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/ub-i.sh
+                wget ${RAWURL}/sc/ub-i.sh
                 chmod +x ub-i.sh
                 ./ub-i.sh
                 fi
             ;;
         2)
-            cd $mainpath
+            cd ${MAINPATH}
             if [ -a de-i.sh ];
             then
                 chmod +x de-i.sh
                 ./de-i.sh
             else
-                wget https://raw.githubusercontent.com/nnyyaa/ntool/main/sc/de-i.sh
+                wget ${RAWURL}/sc/de-i.sh
                 chmod +x de-i.sh
                 ./de-i.sh
             fi
@@ -134,13 +135,56 @@ choose_os_page(){	#这里是选择容器版本的页面function
     esac
 }
 
-other_function_page(){			#这里是其他功能页的function
+desktop_page(){
+    echo "1. 安装xfce(**较**为完整的图形化环境)"
+    echo "2. 安装openbox(仅提供一个图形化环境)"
+    echo -e "${RED}3. 卸载(这将会导致你的桌面数据丢失)${RESET}"
+    echo -e "请注意！原系统桌面${RED}可玩性很低${RESET}"
+    echo -e "由于${RED}不是${RESET}一个正常linux环境，${RED}大部分${RESET}linux软件都会报错"
+    read -p "输入你的选择:" desktop_choice
+    echo "可能较慢，请耐心等待"
+    read -p "按回车以继续"
+    pkg install x11-repo -y
+    pkg install python -y
+    case $desktop_choice in
+        1)
+            echo "安装中..."
+            pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
+            pip install PyXDG
+            cd ${PREFIX}/bin
+            echo "获取启动脚本中..."
+            wget ${RAWURL}/desktop/startxfce
+            chmod +x startxfce
+            echo -e "${GREEN}完成${RESET}"
+            echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
+            cd ~
+            read -p "按回车以继续"
+            ;;
+        2)
+            pkg install openbox pypanel xorg-xsetroot tigervnc -y
+            pip3 install PyXDG
+            cd ${PREFIX}/bin
+            echo -e "${BLUE}获取启动脚本中...${RESET}"
+            wget ${RAWURL}/desktop/startopenbox
+            chmod +x startopenbox
+            echo -e "${GREEN}完成${RESET}"
+            echo -s "输入${GREEN}startopenbox${RESET}以启动"
+            read -p "按回车以继续"
+            ;;
+        3)
+            echo "开发中"
+            desktop_page
+            ;;
+    esac
+}
+
+other_tool_page(){			#这里是其他功能页的function
 	clear
 	echo "此页面进行分类"
 	echo "0. 返回脚本首页"
     echo "1. 网络类"
 	echo "2. 工具类"
-    read -p "输入你的选择" ofc    #of是other function的缩写
+    read -p "输入你的选择:" ofc    #of是other function的缩写
     case $ofc in 
         0)
 		    ntool
@@ -154,7 +198,7 @@ other_function_page(){			#这里是其他功能页的function
         *)
             echo "未知选择"
     		sleep 2 
-            other_function_page
+            other_tool_page
             ;;
     esac
 }
@@ -225,7 +269,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	read -p "输入你的选择:" answer
 	case $answer in
 		0)
-			other_function_page
+			other_tool_page
 			;;
 		00)
 			echo "启 动 私 货"
@@ -311,7 +355,7 @@ web_page(){				#这里是其他功能-网络类页面function
 	read -p "输入你的选择:" webc
 	case $webc in
 		0)
-			other_function_page
+			other_tool_page
 			;;
 		1)
 			pkg install nginx -y
@@ -338,13 +382,13 @@ web_page(){				#这里是其他功能-网络类页面function
 }
 
 clear
-cd ${mainpath}
+cd ${MAINPATH}
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O latest_version > /dev/null 2>&1 
 echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"     #一言接口：hitokoto.cn
 echo "ntool-一个shitcode项目"
-echo -e "${GREEN}`cat ${mainpath}/Androidicon`${RESET}"
-echo "最新版本:`cat ${mainpath}/latest_version`"	#version来自"git describe --tags"(我懒省事)
-echo "本地版本:`cat ${mainpath}/local_version`"		#local_version由install.sh设置
+echo -e "${GREEN}`cat ${MAINPATH}/Androidicon`${RESET}"
+echo "最新版本:`cat ${MAINPATH}/latest_version`"	#version来自"git describe --tags"(我懒省事)
+echo "本地版本:`cat ${MAINPATH}/local_version`"		#local_version由install.sh设置
 echo "你的架构为:${ARCH}"
 echo -e "当前时间:`date '+%Y-%m-%d %H:%M:%S %A'`"
 echo "0. 退出"
@@ -354,6 +398,7 @@ echo "2. 其他功能"
 echo "3. 备份功能"
 echo "4. "
 echo "5. 一言"
+echo "6. termux原系统桌面（非容器）"
 read -p "输入你的选择:" choice
 case  $choice  in 
     99)
@@ -366,7 +411,7 @@ case  $choice  in
 	    choose_os_page
     	;;
     2)
-        other_function_page
+        other_tool_page
     	;;
     3)
         backup_page
@@ -382,14 +427,15 @@ case  $choice  in
         read -p "按回车以继续"
         ntool
         ;;
-    wsxhz)
-        echo "小黑子被我抓到了吧"
-        echo "有本事以后别吃我家哥哥下的蛋!"
-        sleep 2 
-        ntool 
+    6)
+        echo "请等待，可能启动较慢"
+        echo "仅支持xfce"
+        read -p "按回车以继续"
+        desktop_page
+        ntool
         ;;
     *)
-    	echo "输入一个没有的选项是在为难我嘛！"
+    	echo "输入一个没有的选项是在为难我嘛！！"
 	    sleep 2
     	ntool
 	    ;;

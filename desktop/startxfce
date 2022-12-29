@@ -1,0 +1,11 @@
+#!/data/data/com.termux/files/usr/bin/bash -e
+echo "输入vnc启动端口:" port
+export DISPLAY=:${port}
+Xvnc --SecurityTypes=None $DISPLAY &
+sleep 1s
+openbox-session
+xsetroot -solid gray
+pypanel &
+aterm &
+startxfce4 
+echo "连接地址：127.0.0.1:${port}"
