@@ -19,7 +19,7 @@ MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址
 
 #以下是标准屎山之我自己都不认识的function（）
-backup_page(){
+backup_page(){      #备份页面function
     clear
     echo "0. 返回脚本主页"
     echo "1. 备份termux"
@@ -82,7 +82,7 @@ backup_page(){
             echo "devloping..."
             ;;
         *)
-            echo "未知选项"
+            echo "${RED}未知选项${RESET}"
             sleep 2 
             backup_page
             ;;
@@ -128,7 +128,7 @@ choose_os_page(){	#这里是选择容器版本的页面function
             fi
 			;;
         *)
-            echo "未知选项"
+            echo "${RED}未知选项${RESET}"
 			sleep 2
 		    choose_os_page
             ;;
@@ -136,6 +136,7 @@ choose_os_page(){	#这里是选择容器版本的页面function
 }
 
 desktop_page(){
+    echo "0. 返回脚本首页"
     echo "1. 安装xfce(**较**为完整的图形化环境)"
     echo "2. 安装openbox(仅提供一个图形化环境)"
     echo -e "${RED}3. 卸载(这将会导致你的桌面数据丢失)${RESET}"
@@ -147,6 +148,9 @@ desktop_page(){
     pkg install x11-repo -y
     pkg install python -y
     case $desktop_choice in
+        0)
+            ntool
+            ;;
         1)
             echo "安装中..."
             pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
@@ -173,6 +177,12 @@ desktop_page(){
             ;;
         3)
             echo "开发中"
+            sleep 2
+            desktop_page
+            ;;
+        *)
+            echo "${RED}未知选项${RESET}"
+            sleep 2 
             desktop_page
             ;;
     esac
@@ -196,7 +206,7 @@ other_tool_page(){			#这里是其他功能页的function
 	    	tool_page
 		    ;;
         *)
-            echo "未知选择"
+            echo "${RED}未知选择${RESET}"
     		sleep 2 
             other_tool_page
             ;;
@@ -211,9 +221,10 @@ ssh_check_install(){
 		read -p "按回车以继续"
 		ssh_page
 	else
-		echo "未安装ssh客户/服务端"
-		echo "installing..."
-		pkg install openssh
+		echo "${RED}未安装ssh客户/服务端${RESET}"
+		echo "${RED}安装中...${RESET}"
+		pkg install openssh -y 
+        read -p "按回车以继续"
 		ssh_check_install
 	fi
 }
@@ -249,7 +260,7 @@ ssh_page(){
 			fi
 			;;
 		*)
-			echo "未知选择"
+			echo "${RED}未知选择${RESET}"
 			sleep 2
 			ssh_page
 			;;
@@ -328,7 +339,7 @@ tool_page(){			#这里是其它工具-工具类页面的function
 			tool_page
 			;;
 		*)
-			echo "未知选择"
+			echo "${RED}未知选择${RESET}"
 			sleep 2
 			tool_page
 			;;
@@ -374,7 +385,7 @@ web_page(){				#这里是其他功能-网络类页面function
 			echo "done"
 			;;
 		*)
-			echo "未知选择"
+			echo "${RED}未知选择${RESET}"
 			sleep 2
 			web_page
 			;;
@@ -428,14 +439,12 @@ case  $choice  in
         ntool
         ;;
     6)
-        echo "请等待，可能启动较慢"
-        echo "仅支持xfce"
+        echo "仅支持xfce,openbox"
         read -p "按回车以继续"
         desktop_page
-        ntool
         ;;
     *)
-    	echo "输入一个没有的选项是在为难我嘛！！"
+    	echo "${PINK}输入一个没有的选项是在为难我嘛！！${RESET}"
 	    sleep 2
     	ntool
 	    ;;
