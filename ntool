@@ -15,6 +15,7 @@ BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
 ARCH="`uname -m`"       #架构
+exitcode="$?"
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址
 
@@ -68,7 +69,7 @@ backup_page(){      #备份页面function
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
 			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
-			if [ $? = 0 ];then
+			if [ $exitcode = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
 				echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
