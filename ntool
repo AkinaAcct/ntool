@@ -154,8 +154,8 @@ desktop_page(){
             pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
-            echo "获取启动脚本中..."
-            wget ${RAWURL}/desktop/startxfce
+            echo -e "${BLUE}获取启动脚本中...${RESET}"
+            wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
             chmod +x startxfce
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
@@ -167,7 +167,7 @@ desktop_page(){
             pip3 install PyXDG
             cd /data/data/com.termux/files/usr/bin
             echo -e "${BLUE}获取启动脚本中...${RESET}"
-            wget ${RAWURL}/desktop/startopenbox
+            wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
             chmod +x startopenbox
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startopenbox${RESET}以启动"
