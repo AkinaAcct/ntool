@@ -15,27 +15,25 @@ BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
 ARCH="`uname -m`"       #架构
-EXITCODE="$?"       #信号
-OS="`uname -o`"
+OS="`uname -o`"     #系统
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
-RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址
+RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
 #以下是标准屎山之我自己都不认识的function（）
 backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(whiptail --title "ntool 备份页面" --menu "你现在在:ntool备份页面" 15 60 6 \
+    backup_page_choice=$(whiptail --title "ntool tui-backup_page" --menu "你所在的位置:/main_page/backup_page" 15 60 6 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
     "3" "删除备份" 3>&1 1>&2 2>&3)
-    if [ $EXITCODE == 0 ];then
-        echo "running..."
-    else
-        ntool
+    ExitStatus=$?
+    if [ $ExitStatus = 1 ];then
+        main_page
     fi
     case $backup_page_choice in
         0)
-            ntool
+            main_page
             ;;
         1)
             read -p "输入备份名:" name
@@ -73,7 +71,8 @@ backup_page(){      #备份页面function
 			read -p "输入你要恢复的备份:" name
 			echo "比对sha256中..."
 			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
-			if [ $EXITCODE = 0 ];then
+            ExitStatus=$?
+			if [ $ExitStatus = 0 ];then
 				echo "开始恢复"
 				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
 				echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
@@ -85,11 +84,6 @@ backup_page(){      #备份页面function
             ;;
         3)
             echo "devloping..."
-            ;;
-        *)
-            echo -e "${RED}未知选项${RESET}"
-            sleep 2 
-            backup_page
             ;;
     esac
 }
@@ -106,7 +100,7 @@ choose_os_page(){	#这里是选择容器版本的页面function
     read -p "输入你的选择:" cos
     case $cos in 
         0)
-            ntool
+            main_page
             ;;
         1)
             cd ${MAINPATH}
@@ -132,11 +126,6 @@ choose_os_page(){	#这里是选择容器版本的页面function
                 ./de-i.sh
             fi
 			;;
-        *)
-            echo "${RED}未知选项${RESET}"
-			sleep 2
-		    choose_os_page
-            ;;
     esac
 }
 
@@ -148,11 +137,11 @@ desktop_page(){
     echo -e "${RED}3. 卸载(这将会导致你的桌面数据丢失)${RESET}"
     echo -e "请注意！原系统桌面${RED}可玩性很低${RESET}"
     echo -e "由于${RED}不是${RESET}一个正常linux环境，${RED}大部分${RESET}linux软件都会报错"
-    echo  -e "可能${RED}较慢${RESET}，${GREEN}请耐心等待${RESET}"
+    echo -e "可能${RED}较慢${RESET}，${GREEN}请耐心等待${RESET}"
     read -p "输入你的选择:" desktop_choice
         case $desktop_choice in
         0)
-            ntool
+            main_page
             ;;
         1)
             echo "安装中..."
@@ -184,23 +173,25 @@ desktop_page(){
             desktop_page
             ;;
         *)
-            echo "${RED}未知选项${RESET}"
-            sleep 2 
-            desktop_page
+            echo -e "${RED}未知选项${RESET}"
+            main_page
             ;;
     esac
 }
 
 other_tool_page(){			#这里是其他功能页的function
 	clear
-	echo "此页面进行分类"
-	echo "0. 返回脚本首页"
-    echo "1. 网络类"
-	echo "2. 工具类"
-    read -p "输入你的选择:" ofc    #of是other function的缩写
-    case $ofc in 
+    other_tool_page_choice=$(whiptail --title "ntool tui-other_tool_page" --menu "你所在的位置:/main_page/other_tool_page" 15 60 6 \
+    "1" "网络类" \ 
+    "2" "工具类" \ 
+    "0" "返回脚本首页" 3>&1 1>&2 2>&3)
+    ExitStatus=$? 
+    if [ $ExitStatus = 1 ];then
+        main_page
+    fi
+    case $other_tool_page_choice in 
         0)
-		    ntool
+		    main_page
             ;;
         1)
             web_page
@@ -208,11 +199,6 @@ other_tool_page(){			#这里是其他功能页的function
 	    2)
 	    	tool_page
 		    ;;
-        *)
-            echo "${RED}未知选择${RESET}"
-    		sleep 2 
-            other_tool_page
-            ;;
     esac
 }
 
@@ -356,7 +342,7 @@ check_update(){			#这里是检查/升级的function
         if (whiptail --yesno "你的版本不是最新版。是否更新？" 15 60); then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
-            ntool
+            main_page
         fi
     else
         echo "您的版本为最新版，无需更新"
@@ -366,12 +352,16 @@ check_update(){			#这里是检查/升级的function
 web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-	echo "0. 返回上个页面"
-	echo "1. 安装Nginx"
-	echo "2. 安装Apache2"
-	echo "3. 安装php"
-	echo "4. 安装MySQL(mariadb)"
-	read -p "输入你的选择:" webc
+    webc=$(whiptail --title "ntool tui-web_page" --menu "你所在的位置:/main_page/other_tool_page/web_page" 15 60 6 \
+    "1" "安装Nginx" \
+    "2" "安装Apache2" \
+    "3" "安装php环境" \ 
+    "4" "安装MySQL(mariadb)" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    ExitStatus=$?
+	if [ $ExitStatus = 1 ];then
+        other_tool_page
+    fi
 	case $webc in
 		0)
 			other_tool_page
@@ -400,54 +390,62 @@ web_page(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-clear
-cd ${MAINPATH}
-mainchoice=$(whiptail --title "ntool menu" --menu "你所在的位置:主页面" 15 60 6 \
-"1" "已烂尾的容器功能" \
-"2" "其它功能" \
-"3" "备份功能" \
-"4" "什么都不是" \
-"5" "一言" \
-"6" "原系统桌面" \
-"114514" "我是小黑子" \
-"00" "更新" \
-"0" "退出" 3>&1 1>&2 2>&3)
-case $mainchoice in 
-    00)
-	    check_update
-    	;;
-    0)
+main_page(){
+    clear
+    cd ${MAINPATH}
+    mainchoice=$(whiptail --title "ntool tui-main_page" --menu "你所在的位置:/main_page" 15 60 6 \
+    "1" "已烂尾的容器功能" \
+    "2" "其它功能" \
+    "3" "备份功能" \
+    "4" "什么都不是" \
+    "5" "一言" \
+    "6" "原系统桌面" \
+    "114514" "我是小黑子(?)" \
+    "00" "更新" \
+    "0" "退出" 3>&1 1>&2 2>&3)
+    ExitStatus=$?
+    if [ $ExitStatus = 1 ];then
         echo -e "${BLUE}bye${RESET}"
-        ;;
-    1)
-        choose_os_page
-        ;;
-    2)
-        other_tool_page
-        ;;
-    3)
-        backup_page 
-        ;;
-    4)
-        echo "这里什么都没有"
-        echo "真的"         #你看我没骗你吧,真的什么都没有
-        sleep 2 
-        ntool
-        ;;
-    5)
-        echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
-        read -p "按回车以继续"
-        ntool
-        ;;
-    6)
-        echo "仅支持xfce,openbox"
-        read -p "按回车以继续"
-        desktop_page
-        ;;
-    114514)
-        echo "小黑子让我抓到了吧！"
-        sleep 2 
-        ntool
-        ;;
-esac
+        exit 0
+    fi
+    case $mainchoice in 
+        00)
+	        check_update
+        	;;
+        0)
+            echo -e "${BLUE}bye${RESET}"
+            ;;
+        1)
+            choose_os_page
+            ;;
+        2)
+            other_tool_page
+            ;;
+        3)
+            backup_page 
+            ;;
+        4)
+            echo "这里什么都没有"
+            echo "真的"         #你看我没骗你吧,真的什么都没有
+            sleep 2 
+            main_page
+            ;;
+        5)
+            echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
+            read -p "按回车以继续"
+            main_page
+            ;;
+        6)
+            echo "仅支持xfce,openbox"
+            read -p "按回车以继续"
+            desktop_page
+            ;;
+        114514)
+            echo "小黑子让我抓到了吧！"
+            sleep 2 
+            main_page
+            ;;
+    esac
+}
+main_page
 exit 0
