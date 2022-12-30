@@ -8,6 +8,8 @@
 #代码虽然是自己敲的
 #但是真的好jb的乱
 #以这也(一)许(定)后会成为一个烂尾工程吧
+#
+#以下颜色代码为预设
 RED="\E[1;31m"      # 红
 GREEN="\E[1;32m"     # 绿
 YELOW="\E[1;33m"    # 黄
@@ -19,16 +21,22 @@ OS="`uname -o`"     #系统
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
+
+cd ~
 #以下是标准屎山之我自己都不认识的function（）
-backup_page(){      #备份页面function
+function wait_for_dev_page(){
+    whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 10 20
+}
+
+function backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(whiptail --title "ntool tui-backup_page" --menu "你所在的位置:/main_page/backup_page" 15 60 7 \
+    backup_page_choice=$(whiptail --title "ntool-tui:backup_page" --menu "选择一个以继续" 15 60 7 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
     "3" "删除备份" 3>&1 1>&2 2>&3)
-    ExitStatus=$?
-    if [ $ExitStatus = 1 ];then
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
         main_page
     fi
     case $backup_page_choice in
@@ -36,68 +44,79 @@ backup_page(){      #备份页面function
             main_page
             ;;
         1)
-            read -p "输入备份名:" name
+            BACKUP_NAME=$(whiptail --title "ntool-tui:备份-设置名称" --inputbox "输入备份名(仅备份$PREFIX以提高速度)" 10 20 3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 1 ];then
+                backup_page
+            elif  [ -z $BACKUP_NAME ];then
+                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 10 20
+                backup_page
+            fi
         	cd ~
         	if command -v tar > /dev/null;then
                 if [ -d storage ];then
-                    echo -e "可能${RED}较慢${RESET}，请耐心等待"
-			    	echo "否则因耐心不足而导致备份失败或恢复备份失败与我无关"
-				    read -p "按回车以继续"
+                    whiptail --title "ntool-tui:提示" --msgbox "备份可能会很慢,请耐心等待" 10 20
                     cd /data/data/com.termux/
-	    			tar -cvpzf ~/storage/downloads/backup/${name}.tgz files
-		    		echo "计算sha1..."
-			    	sha1sum ~/storage/downloads/backup/${name}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
-				    echo "名称:${name} 时间:`date`" >> ${MAINPATH}/backups.txt
+                    tar -cvpzf ~/storage/downloads/backup/${BACKUP_NAME}.tgz files
+                    echo -e "${GREEN}计算sha1...${RESET}"
+                    sha1sum ~/storage/downloads/backup/${BACKUP_NAME}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
+                    echo "名称:${BACKUP_NAME}" >> ${MAINPATH}/backups.txt
     				echo -e "${GREEN}完成备份${RESET}"
                 else
-		    		echo "termux-setup-storage未执行"
-			    	echo "执行中..."
-				    sleep 2
+                    echo "termux-setup-storage未执行"
+                    echo "执行中..."
+                    sleep 2
     				termux-setup-storage
-	    			echo "done"
-		    		sleep 1
-			    	backup_page
+                    echo "done"
+                    sleep 1 
+                    backup_page
                 fi
             else
                 echo "tar未安装"
-			    echo "start installing..."
-    			pkg install tar -y
-	    		backup_page
+                echo "start installing..."
+    			pkg install tar -y 
+                backup_page
             fi
             ;;
         2)
-			echo "你的备份有:"
-			cat ${MAINPATH}/backups.txt
-			read -p "输入你要恢复的备份:" name
-			echo "比对sha256中..."
-			sha1sum -c ~/storage/downloads/backup/${name}-termux-sha.txt >> /dev/null 2>&1
-            ExitStatus=$?
-			if [ $ExitStatus = 0 ];then
-				echo "开始恢复"
-				tar -xvpzf ~/storage/downloads/backup/${name}.tgz -C /data/data/com.termux/
-				echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
-			else
-				echo -e "${RED}错误的sha256值！不进行恢复！这代表着压缩包可能已经损坏${RESET}"
-				read -p "按回车以继续"
-				backup_page
-			fi
+            RESTORE_NAME=$(whiptail --title "备份恢复" --inputbox "选择一个备份: " 10 20 3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 1 ];then
+                backup_page
+            elif [ -z $RESTORE_NAME ];then
+                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 30
+                backup_page
+            fi 
+            cd ~
+            echo "比对sha256中..."
+            sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME}-termux-sha.txt >> /dev/null 2>&1
+            exitstatus=$?
+            if [ $exitstatus = 0 ];then 
+                echo "开始恢复"
+                tar -xvpzf ~/storage/downloads/backup/${RESTORE_NAME}.tgz -C /data/data/com.termux/
+                echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
+            else
+                whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 10 20
+                backup_page 
+            fi
             ;;
         3)
-            echo "devloping..."
+            wait_for_dev_page
+            backup_page
             ;;
     esac
 }
 
-choose_os_page(){	#这里是选择容器版本的页面function
+function container_page(){	#这里是选择容器版本的页面function
 	clear
-	echo "this is a bad page that i even want to delete it"
-    echo "all of the choices will be never updated(maybe?) and DO NOT REPORT ISSUSES ANOUT THIS SCIRPT ABOUT PROOT!"
-    echo -e "${RED}该页面不在更新${RESET}"
-    echo "只有Ubuntu的原因是我写脚本时只需要一个差不多的proot容器:D"
-    echo "0. 返回上一个页面"
-    echo "1. Ubuntu"
-    echo "2. debian(已烂尾)"
-    read -p "输入你的选择:" cos
+    cos=$(whiptail --title "ntool-tui:container page" --menu "选择一个以继续" 15 60 7 \
+    "1" "Ubuntu" \
+    "2" "Debian" \
+    "0" "返回脚本首页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        main_page
+    fi
     case $cos in 
         0)
             main_page
@@ -129,63 +148,63 @@ choose_os_page(){	#这里是选择容器版本的页面function
     esac
 }
 
-desktop_page(){
+function desktop_page(){
     clear
-    echo "0. 返回脚本首页"
-    echo "1. 安装xfce(**较**为完整的图形化环境)"
-    echo "2. 安装openbox(仅提供一个图形化环境)"
-    echo -e "${RED}3. 卸载(这将会导致你的桌面数据丢失)${RESET}"
-    echo -e "请注意！原系统桌面${RED}可玩性很低${RESET}"
-    echo -e "由于${RED}不是${RESET}一个正常linux环境，${RED}大部分${RESET}linux软件都会报错"
-    echo -e "可能${RED}较慢${RESET}，${GREEN}请耐心等待${RESET}"
-    read -p "输入你的选择:" desktop_choice
-        case $desktop_choice in
-        0)
-            main_page
-            ;;
-        1)
-            echo "安装中..."
-            pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
-            pip install PyXDG
-            cd /data/data/com.termux/files/usr/bin
-            echo -e "${BLUE}获取启动脚本中...${RESET}"
-            wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
-            chmod +x startxfce
-            echo -e "${GREEN}完成${RESET}"
-            echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
-            cd ~
-            read -p "按回车以继续"
-            ;;
-        2)
-            pkg install openbox pypanel xorg-xsetroot tigervnc -y
-            pip3 install PyXDG
-            cd /data/data/com.termux/files/usr/bin
-            echo -e "${BLUE}获取启动脚本中...${RESET}"
-            wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
-            chmod +x startopenbox
-            echo -e "${GREEN}完成${RESET}"
-            echo -e "输入${GREEN}startopenbox${RESET}以启动"
-            read -p "按回车以继续"
-            ;;
-        3)
-            echo "开发中"
-            sleep 2
-            desktop_page
-            ;;
-        *)
-            echo -e "${RED}未知选项${RESET}"
-            main_page
-            ;;
+    desktop_choice=$(whiptail --title "ntool-tui:desktop choose" --menu "选择一个以继续" 15 60 7 \
+    "1" "仅安装openbox(基本图形环境)" \
+    "2" "安装xfce(较为完整的桌面)" \
+    "0" "返回脚本主页面" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        main_page
+    fi
+    case $desktop_choice in
+    0)
+        main_page
+        ;;
+    1)
+        echo "安装中..."
+        pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
+        pip install PyXDG
+        cd /data/data/com.termux/files/usr/bin
+        echo -e "${BLUE}获取启动脚本中...${RESET}"
+        wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
+        chmod +x startxfce
+        echo -e "${GREEN}完成${RESET}"
+        echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
+        cd ~
+        read -p "按回车以继续"
+        ;;
+    2)
+        pkg install openbox pypanel xorg-xsetroot tigervnc -y
+        pip install PyXDG
+        cd /data/data/com.termux/files/usr/bin
+        echo -e "${BLUE}获取启动脚本中...${RESET}"
+        wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
+        chmod +x startopenbox
+        echo -e "${GREEN}完成${RESET}"
+        echo -e "输入${GREEN}startopenbox${RESET}以启动"
+        cd ~
+        read -p "按回车以继续"
+        ;;
+    3)
+        wait_for_dev_page
+        desktop_page
+        ;;
+    *)
+        echo -e "${RED}未知选项${RESET}"
+        main_page
+        ;;
     esac
 }
 
-other_tool_page(){			#这里是其他功能页的function
-    otpc=$(whiptail --title "ntool tui-other_tool_page" --menu "你所在的位置:/main_page/other_tool_page" 15 60 7 \
-    "0" "返回脚本主页" \
+function other_tool_page(){			#这里是其他功能页的function
+    otpc=$(whiptail --title "ntool-tui:other_tool_page" --menu "选择一个以继续" 15 60 7 \
     "1" "网络页面" \
-    "2" "工具页面" 3>&1 1>&2 2>&3)
-    ExitStatus=$?
-    if [ $ExitStatus = 1 ];then
+    "2" "工具页面" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
         main_page
     fi
     case $otpc in 
@@ -201,23 +220,23 @@ other_tool_page(){			#这里是其他功能页的function
     esac
 }
 
-ssh_check_install(){
+function ssh_check_install(){
 	clear
 	if command -v ssh;then
-		echo "ssh功能正在测试"
-		echo "可能会有意想不到的错误"
-		read -p "按回车以继续"
+		whiptail --title "ssh check install" --msgbox "ssh功能较少，慎用" 10 20
 		ssh_page
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${RED}安装中...${RESET}"
 		pkg install openssh -y 
+        echo -e "${GREEN}"
         read -p "按回车以继续"
+        echo -e "${RESET}"
 		ssh_check_install
 	fi
 }
 
-ssh_page(){
+function ssh_page(){
 	clear
 	echo "0. 返回上一页"
 	echo "1. 打开sshd服务（他人连接）"
@@ -255,17 +274,26 @@ ssh_page(){
 	esac
 }
 
-tool_page(){			#这里是其它工具-工具类页面的function
+function tool_page(){			#这里是其它工具-工具类页面的function
 	clear
-	echo "0. 返回上一页"
-	echo "1. ping"
-	echo "2. ping6(即ipv6 ping)"
-	echo "3. 寻找文件(find)"
-	echo "4. 在termux原系统里安装jdk"
-	echo "5. ssh功能"
-	echo "6. ?"
-	echo "00. 打开该项目github地址（夹 带 私 货）"
-	read -p "输入你的选择:" answer
+	#echo "0. 返回上一页"
+	#echo "1. ping"
+	#echo "2. ping6(即ipv6 ping)"
+	#echo "3. 寻找文件(find)"
+	#echo "4. 在termux原系统里安装jdk"
+	#echo "5. ssh功能"
+	#echo "6. ?"
+	#echo "00. 打开该项目github地址（夹 带 私 货）"
+	#read -p "输入你的选择:" answer
+    answer=$(whiptail --title "ntool-tui:tool_page" --menu "选择一个以继续" 15 60 7 \
+    "1" "ping" \
+    "2" "ping6" \
+    "3" "文件查找" \
+    "4" "安装openjdk17" \
+    "5" "ssh功能" \
+    "6" "?" \
+    "00" "打开该项目地址(?)" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3) 
 	case $answer in
 		0)
 			other_tool_page
@@ -334,11 +362,11 @@ tool_page(){			#这里是其它工具-工具类页面的function
 	esac
 }
 
-check_update(){			#这里是检查/升级的function
+function check_update(){			#这里是检查/升级的function
     cd ${MAINPATH}
     wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
     if [ "`cat latest_version`" != "`cat local_version`" ];then 
-        if (whiptail --yesno "你的版本不是最新版。是否更新？" 15 60); then 
+        if (whiptail --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？" 10 20);then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
             main_page
@@ -348,17 +376,17 @@ check_update(){			#这里是检查/升级的function
     fi 
 }
 
-web_page(){				#这里是其他功能-网络类页面function
+function web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(whiptail --title "ntool tui-web_page" --menu "你所在的位置:/main_page/other_tool_page/web_page" 15 60 7 \
+    webc=$(whiptail --title "ntool-tui:web_page" --menu "选择一个以继续" 15 60 7 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
     "3" "安装php环境" \
     "4" "安装MySQL(mariadb)" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
-    ExitStatus=$?
-	if [ $ExitStatus = 1 ];then
+    exitstatus=$?
+	if [ $exitstatus = 1 ];then
         other_tool_page
     fi
 	case $webc in
@@ -384,21 +412,20 @@ web_page(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-main_page(){
+function main_page(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(whiptail --title "ntool tui-main_page" --menu "你所在的位置:/main_page" 15 60 7 \
+    mainchoice=$(whiptail --title "ntool-tui:main_page" --menu "选择一个以继续" 15 60 7 \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
-    "4" "什么都不是" \
+    "4" "“这里什么都没有”" \
     "5" "一言" \
     "6" "原系统桌面" \
-    "114514" "我是小黑子(?)" \
     "00" "更新" \
     "0" "退出" 3>&1 1>&2 2>&3)
-    ExitStatus=$?
-    if [ $ExitStatus = 1 ];then
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
         echo -e "${BLUE}bye${RESET}"
         exit 0
     fi
@@ -408,9 +435,10 @@ main_page(){
         	;;
         0)
             echo -e "${BLUE}bye${RESET}"
+            exit 0
             ;;
         1)
-            choose_os_page
+            container_page
             ;;
         2)
             other_tool_page
@@ -429,14 +457,7 @@ main_page(){
             main_page
             ;;
         6)
-            echo "仅支持xfce,openbox"
-            read -p "按回车以继续"
             desktop_page
-            ;;
-        114514)
-            echo "小黑子让我抓到了吧！"
-            sleep 2 
-            main_page
             ;;
     esac
 }
