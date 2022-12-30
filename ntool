@@ -22,7 +22,7 @@ RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw�
 #以下是标准屎山之我自己都不认识的function（）
 backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(whiptail --title "ntool tui-backup_page" --menu "你所在的位置:/main_page/backup_page" 15 60 6 \
+    backup_page_choice=$(whiptail --title "ntool tui-backup_page" --menu "你所在的位置:/main_page/backup_page" 15 60 7 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
@@ -180,16 +180,15 @@ desktop_page(){
 }
 
 other_tool_page(){			#这里是其他功能页的function
-	clear
-    other_tool_page_choice=$(whiptail --title "ntool tui-other_tool_page" --menu "你所在的位置:/main_page/other_tool_page" 15 60 6 \
-    "1" "网络类" \ 
-    "2" "工具类" \ 
-    "0" "返回脚本首页" 3>&1 1>&2 2>&3)
-    ExitStatus=$? 
+    otpc=$(whiptail --title "ntool tui-other_tool_page" --menu "你所在的位置:/main_page/other_tool_page" 15 60 7 \
+    "0" "返回脚本主页" \
+    "1" "网络页面" \
+    "2" "工具页面" 3>&1 1>&2 2>&3)
+    ExitStatus=$?
     if [ $ExitStatus = 1 ];then
         main_page
     fi
-    case $other_tool_page_choice in 
+    case $otpc in 
         0)
 		    main_page
             ;;
@@ -352,10 +351,10 @@ check_update(){			#这里是检查/升级的function
 web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(whiptail --title "ntool tui-web_page" --menu "你所在的位置:/main_page/other_tool_page/web_page" 15 60 6 \
+    webc=$(whiptail --title "ntool tui-web_page" --menu "你所在的位置:/main_page/other_tool_page/web_page" 15 60 7 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
-    "3" "安装php环境" \ 
+    "3" "安装php环境" \
     "4" "安装MySQL(mariadb)" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     ExitStatus=$?
@@ -382,18 +381,13 @@ web_page(){				#这里是其他功能-网络类页面function
 			pkg install mariadb -y
 			echo "done"
 			;;
-		*)
-			echo "${RED}未知选择${RESET}"
-			sleep 2
-			web_page
-			;;
 	esac
 }
 
 main_page(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(whiptail --title "ntool tui-main_page" --menu "你所在的位置:/main_page" 15 60 6 \
+    mainchoice=$(whiptail --title "ntool tui-main_page" --menu "你所在的位置:/main_page" 15 60 7 \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
@@ -431,8 +425,7 @@ main_page(){
             main_page
             ;;
         5)
-            echo -e "${BLUE}`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`${RESET}"
-            read -p "按回车以继续"
+            whiptail --title "ntool-一言" --msgbox "`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`" 15 60
             main_page
             ;;
         6)
