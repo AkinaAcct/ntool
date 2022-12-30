@@ -374,7 +374,8 @@ function check_update(){			#这里是检查/升级的function
             main_page
         fi
     else
-        echo "您的版本为最新版，无需更新"
+        whiptail --title "ntool-tui:check update" --msgbox "您的版本为最新版，无需更新" 15 60
+        main_page
     fi 
 }
 
