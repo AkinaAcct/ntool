@@ -25,12 +25,12 @@ RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw�
 cd ~
 #以下是标准屎山之我自己都不认识的function（）
 function wait_for_dev_page(){
-    whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 10 20
+    whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 15 60
 }
 
 function backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(whiptail --title "ntool-tui:backup_page" --menu "选择一个以继续" 15 60 7 \
+    backup_page_choice=$(whiptail --title "ntool-tui:backup page" --menu "选择一个以继续" 15 60 7 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
@@ -44,7 +44,7 @@ function backup_page(){      #备份页面function
             main_page
             ;;
         1)
-            BACKUP_NAME=$(whiptail --title "ntool-tui:备份-设置名称" --inputbox "输入备份名(仅备份$PREFIX以提高速度)" 10 20 3>&1 1>&2 2>&3)
+            BACKUP_NAME=$(whiptail --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份$PREFIX以提高速度)" 10 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -55,7 +55,7 @@ function backup_page(){      #备份页面function
         	cd ~
         	if command -v tar > /dev/null;then
                 if [ -d storage ];then
-                    whiptail --title "ntool-tui:提示" --msgbox "备份可能会很慢,请耐心等待" 10 20
+                    whiptail --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 10 20
                     cd /data/data/com.termux/
                     tar -cvpzf ~/storage/downloads/backup/${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
@@ -79,7 +79,7 @@ function backup_page(){      #备份页面function
             fi
             ;;
         2)
-            RESTORE_NAME=$(whiptail --title "备份恢复" --inputbox "选择一个备份: " 10 20 3>&1 1>&2 2>&3)
+            RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份: `cat backups.txt`" 15 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -92,7 +92,8 @@ function backup_page(){      #备份页面function
             sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME}-termux-sha.txt >> /dev/null 2>&1
             exitstatus=$?
             if [ $exitstatus = 0 ];then 
-                echo "开始恢复"
+                echo -e "${GREEN}sha正常${RESET}"
+                echo "${BLUE}开始恢复${RESET}"
                 tar -xvpzf ~/storage/downloads/backup/${RESTORE_NAME}.tgz -C /data/data/com.termux/
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
@@ -150,7 +151,7 @@ function container_page(){	#这里是选择容器版本的页面function
 
 function desktop_page(){
     clear
-    desktop_choice=$(whiptail --title "ntool-tui:desktop choose" --menu "选择一个以继续" 15 60 7 \
+    desktop_choice=$(whiptail --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 60 7 \
     "1" "仅安装openbox(基本图形环境)" \
     "2" "安装xfce(较为完整的桌面)" \
     "0" "返回脚本主页面" 3>&1 1>&2 2>&3)
@@ -199,7 +200,7 @@ function desktop_page(){
 }
 
 function other_tool_page(){			#这里是其他功能页的function
-    otpc=$(whiptail --title "ntool-tui:other_tool_page" --menu "选择一个以继续" 15 60 7 \
+    otpc=$(whiptail --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 60 7 \
     "1" "网络页面" \
     "2" "工具页面" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
@@ -223,7 +224,7 @@ function other_tool_page(){			#这里是其他功能页的function
 function ssh_check_install(){
 	clear
 	if command -v ssh;then
-		whiptail --title "ssh check install" --msgbox "ssh功能较少，慎用" 10 20
+		whiptail --title "ssh check install" --msgbox "ssh功能较少,BUG多多,慎用" 10 20
 		ssh_page
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
@@ -285,7 +286,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 	#echo "6. ?"
 	#echo "00. 打开该项目github地址（夹 带 私 货）"
 	#read -p "输入你的选择:" answer
-    answer=$(whiptail --title "ntool-tui:tool_page" --menu "选择一个以继续" 15 60 7 \
+    answer=$(whiptail --title "ntool-tui:tool page" --menu "选择一个以继续" 15 60 7 \
     "1" "ping" \
     "2" "ping6" \
     "3" "文件查找" \
@@ -293,7 +294,11 @@ function tool_page(){			#这里是其它工具-工具类页面的function
     "5" "ssh功能" \
     "6" "?" \
     "00" "打开该项目地址(?)" \
-    "0" "返回上一页" 3>&1 1>&2 2>&3) 
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        other_tool_page
+    fi
 	case $answer in
 		0)
 			other_tool_page
@@ -382,7 +387,7 @@ function check_update(){			#这里是检查/升级的function
 function web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(whiptail --title "ntool-tui:web_page" --menu "选择一个以继续" 15 60 7 \
+    webc=$(whiptail --title "ntool-tui:web page" --menu "选择一个以继续" 15 60 7 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
     "3" "安装php环境" \
