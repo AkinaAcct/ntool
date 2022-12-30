@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash -e
-echo "输入vnc启动端口:" port
+read -p "输入vnc启动端口:" port
 export DISPLAY=:${port}
 Xvnc --SecurityTypes=None $DISPLAY &
 sleep 1s
