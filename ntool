@@ -63,9 +63,10 @@ function backup_page(){      #备份页面function
                     cd /data/data/com.termux/
                     tar -cvpzf ~/storage/downloads/backup/${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
-                    sha1sum ~/storage/downloads/backup/${BACKUP_NAME}.tgz > ~/storage/downloads/backup/${name}-termux-sha.txt
+                    sha1sum ~/storage/downloads/backup/${BACKUP_NAME}.tgz > ~/storage/downloads/backup/${BACKUP_NAME}
                     echo "名称:${BACKUP_NAME}" >> ${MAINPATH}/backups.txt
     				echo -e "${GREEN}完成备份${RESET}"
+                    backup_page
                 else
                     echo "termux-setup-storage未执行"
                     echo "执行中..."
@@ -83,7 +84,7 @@ function backup_page(){      #备份页面function
             fi
             ;;
         2)
-            RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份: `cat backups.txt`" 15 60 3>&1 1>&2 2>&3)
+            RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份: `ls ~/storage/downloads/backup/*.tgz`" 15 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -93,7 +94,7 @@ function backup_page(){      #备份页面function
             fi 
             cd ~
             echo "比对sha中..."
-            sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME}-termux-sha.txt >> /dev/null 2>&1
+            sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME} >> /dev/null 2>&1
             exitstatus=$?
             if [ $exitstatus = 0 ];then 
                 echo -e "${GREEN}sha正常${RESET}"
@@ -106,7 +107,7 @@ function backup_page(){      #备份页面function
             fi
             ;;
         3)
-            DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "`cat backups.txt` \
+            DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "`ls ~/storage/downloads/backup/*.tgz` \
             选择一个以删除" 15 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
@@ -116,7 +117,7 @@ function backup_page(){      #备份页面function
                 backup_page
             fi 
             rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}.tgz
-            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}-termux-sha.txt
+            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}
             read -p "按回车继续"
             backup_page
             ;;
