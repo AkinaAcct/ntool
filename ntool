@@ -28,6 +28,10 @@ function wait_for_dev_page(){
     whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 15 60
 }
 
+function bad_empty_input(){
+    whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 60
+}
+
 function backup_page(){      #备份页面function
     clear
     backup_page_choice=$(whiptail --title "ntool-tui:backup page" --menu "选择一个以继续" 15 60 7 \
@@ -49,7 +53,7 @@ function backup_page(){      #备份页面function
             if [ $exitstatus = 1 ];then
                 backup_page
             elif  [ -z $BACKUP_NAME ];then
-                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 10 20
+                bad_empty_input
                 backup_page
             fi
         	cd ~
@@ -84,7 +88,7 @@ function backup_page(){      #备份页面function
             if [ $exitstatus = 1 ];then
                 backup_page
             elif [ -z $RESTORE_NAME ];then
-                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 30
+                bad_empty_input
                 backup_page
             fi 
             cd ~
@@ -108,7 +112,7 @@ function backup_page(){      #备份页面function
             if [ $exitstatus = 1 ];then
                 backup_page 
             elif [ -z $DEL_BACKUP_NAME ];then
-                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 30
+                bad_empty_input
                 backup_page
             fi 
             rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}.tgz
@@ -119,58 +123,76 @@ function backup_page(){      #备份页面function
     esac
 }
 
-function container_page(){	#这里是选择容器版本的页面function
-	clear
-    cos=$(whiptail --title "ntool-tui:container page" --menu "选择一个以继续" 15 60 7 \
+function container_page(){
+    CONTAINER_CHOICE=$(whiptail --title "ntool-tui:container installer" --menu "选择一个以继续" 15 60 7 \
     "1" "Ubuntu" \
     "2" "Debian" \
-    "0" "返回脚本首页" 3>&1 1>&2 2>&3)
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
         main_page
     fi
-    case $cos in 
+    case $CONTAINER_CHOICE in
         0)
             main_page
             ;;
         1)
-            cd ${MAINPATH}
-            if [ -a ub-i.sh ];
-            then 
-                chmod +x ub-i.sh
-                ./ub-i.sh 
-            else
-                wget ${RAWURL}/sc/ub-i.sh
-                chmod +x ub-i.sh
-                ./ub-i.sh
-                fi
+            ubuntu_install
             ;;
         2)
-            cd ${MAINPATH}
-            if [ -a de-i.sh ];
-            then
-                chmod +x de-i.sh
-                ./de-i.sh
-            else
-                wget ${RAWURL}/sc/de-i.sh
-                chmod +x de-i.sh
-                ./de-i.sh
-            fi
-			;;
+            debian_install
+            ;;
+        0)
+            main_page
+            ;;
     esac
 }
 
+function ubuntu_install(){
+    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续" 15 60 7 \
+    "1" "Ubuntu22.04 Jammy Jellyfish(推荐)" \
+    "2" "Ubuntu20.04 Focal Fossa" \
+    "3" "手动输入版本号" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        container_page
+    fi
+    case $UBUNTU_CHOICE in 
+        0)
+            container_page
+            ;;
+        1)
+            VER=22.04
+            ;;
+        2)
+            VER=20.04
+            ;;
+        3)
+            VER=$(whiptail --title "ntool-tui:install ubuntu" --inputbox "输入一个版本号(错误的版本号将导致安装失败)" 15 60 3>&1 1>&2 2>&3)
+            if [ -z $VER ];then
+                bad_empty_input
+                ubuntu_install
+            fi 
+            ;;
+    esac
+    pkg update -y 
+    pkg upgrade -y 
+    wait_for_dev_page
+    ubuntu_install
+}    
+
 function desktop_page(){
     clear
-    desktop_choice=$(whiptail --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 60 7 \
-    "1" "仅安装openbox(基本图形环境)" \
-    "2" "安装xfce(较为完整的桌面)" \
+    DESKTOP_CHOICE=$(whiptail --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 60 7 \
+    "1" "安装xfce(较为完整的图形环境)" \
+    "2" "仅安装openbox(基础图形环境)" \
     "0" "返回脚本主页面" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
         main_page
     fi
-    case $desktop_choice in
+    case $DESKTOP_CHOICE in
     0)
         main_page
         ;;
@@ -211,7 +233,7 @@ function desktop_page(){
 }
 
 function other_tool_page(){			#这里是其他功能页的function
-    otpc=$(whiptail --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 60 7 \
+    OTPC=$(whiptail --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 60 7 \
     "1" "网络页面" \
     "2" "工具页面" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
@@ -219,7 +241,7 @@ function other_tool_page(){			#这里是其他功能页的function
     if [ $exitstatus = 1 ];then
         main_page
     fi
-    case $otpc in 
+    case $OTPC in 
         0)
 		    main_page
             ;;
@@ -235,7 +257,7 @@ function other_tool_page(){			#这里是其他功能页的function
 function ssh_check_install(){
 	clear
 	if command -v ssh;then
-		whiptail --title "ssh check install" --msgbox "ssh功能较少,BUG多多,慎用" 10 20
+		whiptail --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 10 20
 		ssh_page
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
@@ -250,17 +272,28 @@ function ssh_check_install(){
 
 function ssh_page(){
 	clear
-	echo "0. 返回上一页"
-	echo "1. 打开sshd服务（他人连接）"
-	echo "2. 连接远程服务器"
-	read -p "输入你的选择:" ssh_choice
-	case $ssh_choice in
+	#echo "0. 返回上一页"
+	#echo "1. 打开sshd服务（他人连接）"
+	#echo "2. 连接远程服务器"
+	#read -p "输入你的选择:" ssh_choice
+    SSH_CHOICE=$(whiptail --title "ntool-tui:ssh page" --menu "选择一个以继续" 15 60 7 \
+    "1" "打开sshd服务(让他人连接)" \
+    "2" "通过密码连接远程服务器" \
+    "3" "生成密钥" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        tool_page
+    fi
+	case $SSH_CHOICE in
 		0)
 			tool_page
 			;;
 		1)
 			sshd
+            echo -e "${GREEN}"
 			read -p "启动完成 按任意键退出脚本"
+            echo -e "${RESET}"
 			exit 0
 			;;
 		2)
@@ -278,26 +311,16 @@ function ssh_page(){
 				ssh_page
 			fi
 			;;
-		*)
-			echo "${RED}未知选择${RESET}"
-			sleep 2
-			ssh_page
+		3)
+            wait_for_dev_page
+            ssh_page
 			;;
 	esac
 }
 
 function tool_page(){			#这里是其它工具-工具类页面的function
 	clear
-	#echo "0. 返回上一页"
-	#echo "1. ping"
-	#echo "2. ping6(即ipv6 ping)"
-	#echo "3. 寻找文件(find)"
-	#echo "4. 在termux原系统里安装jdk"
-	#echo "5. ssh功能"
-	#echo "6. ?"
-	#echo "00. 打开该项目github地址（夹 带 私 货）"
-	#read -p "输入你的选择:" answer
-    answer=$(whiptail --title "ntool-tui:tool page" --menu "选择一个以继续" 15 60 7 \
+    TPC=$(whiptail --title "ntool-tui:tool page" --menu "选择一个以继续" 15 60 7 \
     "1" "ping" \
     "2" "ping6" \
     "3" "文件查找" \
@@ -310,7 +333,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
     if [ $exitstatus = 1 ];then
         other_tool_page
     fi
-	case $answer in
+	case $TPC in
 		0)
 			other_tool_page
 			;;
@@ -322,12 +345,17 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 
 		1)
 			if command -v ping > /dev/null;then
-				read -p "输入要进行ping的IP/域名:" ip
-				read -p "输入要ping的次数:" times
-				read -p "输入ping的速度（以秒为单位，省略符号，无root最快0.2）:" speed
-				echo "start ping..."
-				ping -i ${speed} -c${times} ${ip}
-				echo "stop ping."
+                local ip=$(whiptail --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)" 15 60 3>&1 1>&2 2>&3)
+                local time=$(whiptail --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 60 3>&1 1>&2 2>&3)
+                local speed=$(whiptail --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 60 3>&1 1>&2 2>&3)
+                local size=$(whiptail --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 60 3>&1 1>&2 2>&3)
+                if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
+                    bad_empty_input
+                    tool_page
+                fi
+                echo -e "${BLUE}start ping${RESET}"
+				ping -i ${speed} -c${times} -s ${size} ${ip}
+				echo -e "${GREEN}stop ping${RESET}"
 			else
 				echo "未安装ping，正在安装..."
 				pkg install termux-tools -y
@@ -336,12 +364,17 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		2)
 			if command -v ping6 > /dev/null;then
-                read -p "输入要进行ping6的IP/域名:" ip
-                read -p "输入要ping6的次数:" times
-                read -p "输入ping6的速度（以秒为单位，省略符号，无root最快0.2）:" speed
-                echo "start ping..."
-                ping6 -i ${speed} -c${times} ${ip}
-                echo "stop ping."
+                local ip=$(whiptail --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)" 15 60 3>&1 1>&2 2>&3)
+                local time=$(whiptail --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 60 3>&1 1>&2 2>&3)
+                local speed=$(whiptail --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 60 3>&1 1>&2 2>&3)
+                local size=$(whiptail --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 60 3>&1 1>&2 2>&3)
+                if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
+                    bad_empty_input
+                    tool_page
+                fi
+                echo -e "${BLUE}start ping${RESET}"
+                ping6 -i ${speed} -c${time} -s ${size} ${ip}
+                echo -e "${GREEN}stop ping${RESET}"
 			else
 				echo "ping6未安装,正在安装..."
 				pkg install termux-tools -y
@@ -351,6 +384,9 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 		3)
 			read -p "输入你要搜索的文件:" filename
 			read -p "输入你要搜索的目录:" filepath
+            if [ -z $filename ] || [ -z $filepath ];then
+                bad_empty_input
+            fi
 			echo "searching..."
 			find -name ${filename} ${filepath}
 			;;
