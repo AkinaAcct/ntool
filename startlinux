@@ -1,0 +1,6 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+#
+unset LD_PRElOAD
+cd ~/.ntool
+
+

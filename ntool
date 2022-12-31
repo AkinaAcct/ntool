@@ -88,7 +88,7 @@ function backup_page(){      #备份页面function
                 backup_page
             fi 
             cd ~
-            echo "比对sha256中..."
+            echo "比对sha中..."
             sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME}-termux-sha.txt >> /dev/null 2>&1
             exitstatus=$?
             if [ $exitstatus = 0 ];then 
@@ -97,12 +97,23 @@ function backup_page(){      #备份页面function
                 tar -xvpzf ~/storage/downloads/backup/${RESTORE_NAME}.tgz -C /data/data/com.termux/
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
-                whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 10 20
+                whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 15 30
                 backup_page 
             fi
             ;;
         3)
-            wait_for_dev_page
+            DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "`cat backups.txt` \
+            选择一个以删除" 15 60 3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 1 ];then
+                backup_page 
+            elif [ -z $DEL_BACKUP_NAME ];then
+                whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 30
+                backup_page
+            fi 
+            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}.tgz
+            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}-termux-sha.txt
+            read -p "按回车继续"
             backup_page
             ;;
     esac
@@ -423,7 +434,7 @@ function web_page(){				#这里是其他功能-网络类页面function
 function main_page(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(whiptail --title "ntool-tui:main_page" --menu "选择一个以继续" 15 60 7 \
+    mainchoice=$(whiptail --title "ntool-tui:main_page" --menu "你的安卓版本为:`getprop ro.build.version.release`选择一个以继续" 15 60 7 \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
