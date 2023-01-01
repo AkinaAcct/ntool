@@ -260,6 +260,7 @@ function container_install(){
     COMMAND+=" /bin/bash -l"
     echo -e "${GREEN}---------------starting---------------${RESET}"
     exec $COMMAND
+    echo -e "${GREEN}---------------exit from container---------------${RESET}"
     EOF 
     chmod +x ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
     whiptail --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS}${VERCODE} ${VERNAME},输入start${CONTAINER_OS}以启动" 0 0
