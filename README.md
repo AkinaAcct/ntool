@@ -12,4 +12,4 @@ chmod +x install.sh
 ```
 ~~享受屎山代码的运行吧！~~  
 
-现容器功能已烂尾(bad container shell)
+~~现容器功能已烂尾~~别说了别说了在重写了qwq

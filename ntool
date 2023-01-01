@@ -18,11 +18,17 @@ PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
 ARCH="`uname -m`"       #架构
 OS="`uname -o`"     #系统
+if [ "$OS" == "aarch64" ];then
+    OS="arm64"
+fi
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
+if [ "${ARCH}" != "aarch64" ];then
+    whiptail --title "ntool-tui:WARNING" --msgbox "未适配的架构:${ARCH}" 15 60
+fi
 
-cd ~
+cd ${HOME}
 #以下是标准屎山之我自己都不认识的function（）
 function wait_for_dev_page(){
     whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 15 60
@@ -124,7 +130,7 @@ function backup_page(){      #备份页面function
     esac
 }
 
-function container_page(){
+function container_page(){      #容器OS选择
     CONTAINER_CHOICE=$(whiptail --title "ntool-tui:container installer" --menu "选择一个以继续" 15 60 7 \
     "1" "Ubuntu" \
     "2" "Debian" \
@@ -149,11 +155,25 @@ function container_page(){
     esac
 }
 
+function change_source(){       #换源
+    SOURCE_CHOICE=$(whiptail --title "ntool-tui:change source" --menu "事实上，你可以使用termux-change-repo来换源" 15 60 7 \
+    "1" "USTC 中国科技大学镜像站" \
+    "2" "BFSU 北京外国语大学镜像站" \
+    "3" "TUNA 清华大学镜像站" \
+    "4" "Njupt 南京邮电大学镜像站" \
+    "5" "Aliyun 阿里云镜像站" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        change_source
+    fi 
+    
+    sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/apt/termux-main stable main@' $PREFIX/etc/apt/sources.list
+}
+
 function ubuntu_install(){
-    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续" 15 60 7 \
-    "1" "Ubuntu22.04 Jammy Jellyfish(推荐)" \
-    "2" "Ubuntu20.04 Focal Fossa" \
-    "3" "手动输入版本号" \
+    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续  仅支持jammy(22.04)和focal(20.04)" 15 60 7 \
+    "1" "Ubuntu22.04 Jammy Jellyfish LTS(推荐)" \
+    "2" "Ubuntu20.04 Focal Fossa LTS" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
@@ -164,23 +184,18 @@ function ubuntu_install(){
             container_page
             ;;
         1)
-            VER=22.04
+            VER="22.04"
+            VERCODE="jammy"
             ;;
         2)
-            VER=20.04
-            ;;
-        3)
-            VER=$(whiptail --title "ntool-tui:install ubuntu" --inputbox "输入一个版本号(错误的版本号将导致安装失败)" 15 60 3>&1 1>&2 2>&3)
-            if [ -z $VER ];then
-                bad_empty_input
-                ubuntu_install
-            fi 
+            VER="20.04"
+            VERCODE="focal"
             ;;
     esac
     pkg update -y 
     pkg upgrade -y 
     wait_for_dev_page
-    ubuntu_install
+    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERCODE}/${ARCH}/default/rootfs.tar.xz
 }    
 
 function desktop_page(){
