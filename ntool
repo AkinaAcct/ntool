@@ -25,22 +25,22 @@ MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
 if [ "${ARCH}" != "aarch64" ];then
-    whiptail --title "ntool-tui:WARNING" --msgbox "未适配的架构:${ARCH}" 15 60
+    whiptail --title "ntool-tui:WARNING" --msgbox "未适配的架构:${ARCH}" 0 0
 fi
 
 cd ${HOME}
 #以下是标准屎山之我自己都不认识的function（）
 function wait_for_dev_page(){
-    whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 15 60
+    whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 0 0
 }
 
 function bad_empty_input(){
-    whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 60
+    whiptail --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 0 0 
 }
 
 function backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(whiptail --title "ntool-tui:backup page" --menu "选择一个以继续" 15 60 7 \
+    backup_page_choice=$(whiptail --title "ntool-tui:backup page" --menu "选择一个以继续" 0 0 0 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
@@ -54,7 +54,7 @@ function backup_page(){      #备份页面function
             main_page
             ;;
         1)
-            BACKUP_NAME=$(whiptail --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份$PREFIX以提高速度)" 10 60 3>&1 1>&2 2>&3)
+            BACKUP_NAME=$(whiptail --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份$PREFIX以提高速度)" 0 0 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -65,7 +65,7 @@ function backup_page(){      #备份页面function
         	cd ~
         	if command -v tar > /dev/null;then
                 if [ -d storage ];then
-                    whiptail --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 10 20
+                    whiptail --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 0 0
                     cd /data/data/com.termux/
                     tar -cvpzf ~/storage/downloads/backup/${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
@@ -90,7 +90,8 @@ function backup_page(){      #备份页面function
             fi
             ;;
         2)
-            RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份: `ls ~/storage/downloads/backup/*.tgz`" 15 60 3>&1 1>&2 2>&3)
+            RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份 \
+            `ls ~/storage/downloads/backup/*.tgz`" 30 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -108,13 +109,13 @@ function backup_page(){      #备份页面function
                 tar -xvpzf ~/storage/downloads/backup/${RESTORE_NAME}.tgz -C /data/data/com.termux/
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
-                whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 15 30
+                whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 0 0
                 backup_page 
             fi
             ;;
         3)
-            DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "`ls ~/storage/downloads/backup/*.tgz` \
-            选择一个以删除" 15 60 3>&1 1>&2 2>&3)
+            DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "选择一个备份 \
+            `ls ~/storage/downloads/backup/*.tgz`" 30 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page 
@@ -131,7 +132,7 @@ function backup_page(){      #备份页面function
 }
 
 function container_page(){      #容器OS选择
-    CONTAINER_CHOICE=$(whiptail --title "ntool-tui:container installer" --menu "选择一个以继续" 15 60 7 \
+    CONTAINER_CHOICE=$(whiptail --title "ntool-tui:container installer" --menu "选择一个以继续" 0 0 0 \
     "1" "Ubuntu" \
     "2" "Debian" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
@@ -144,10 +145,10 @@ function container_page(){      #容器OS选择
             main_page
             ;;
         1)
-            ubuntu_install
+            ubuntu_install_page
             ;;
         2)
-            debian_install
+            debian_install_page
             ;;
         0)
             main_page
@@ -155,23 +156,8 @@ function container_page(){      #容器OS选择
     esac
 }
 
-function change_source(){       #换源
-    SOURCE_CHOICE=$(whiptail --title "ntool-tui:change source" --menu "事实上，你可以使用termux-change-repo来换源" 15 60 7 \
-    "1" "USTC 中国科技大学镜像站" \
-    "2" "BFSU 北京外国语大学镜像站" \
-    "3" "TUNA 清华大学镜像站" \
-    "4" "Njupt 南京邮电大学镜像站" \
-    "5" "Aliyun 阿里云镜像站" 3>&1 1>&2 2>&3)
-    exitstatus=$?
-    if [ $exitstatus = 1 ];then
-        change_source
-    fi 
-    
-    sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://mirrors.bfsu.edu.cn/termux/apt/termux-main stable main@' $PREFIX/etc/apt/sources.list
-}
-
-function ubuntu_install(){
-    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续  仅支持jammy(22.04)和focal(20.04)" 15 60 7 \
+function ubuntu_install_page(){
+    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续  仅支持jammy(22.04)和focal(20.04)" 0 0 0 \
     "1" "Ubuntu22.04 Jammy Jellyfish LTS(推荐)" \
     "2" "Ubuntu20.04 Focal Fossa LTS" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
@@ -196,11 +182,57 @@ function ubuntu_install(){
     pkg upgrade -y 
     wait_for_dev_page
     aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERCODE}/${ARCH}/default/rootfs.tar.xz
-}    
+}
+
+function debian_install_page(){
+    wait_for_dev_page
+    container_page
+}
+
+function change_source_page(){       #换源
+    SOURCE_CHOICE=$(whiptail --title "ntool-tui:change source" --menu "事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 0 0 0 \
+    "1" "USTC 中国科技大学镜像站" \
+    "2" "BFSU 北京外国语大学镜像站" \
+    "3" "TUNA 清华大学镜像站" \
+    "4" "Njupt 南京邮电大学镜像站" \
+    "5" "Aliyun 阿里云镜像站" \
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        other_tool_page
+    elif [ -z $SOURCE_CHOICE ];then
+        other_tool_page
+    fi
+    case $SOURCE_CHOICE in 
+        0)
+            other_tool_page
+            ;;
+        1)
+            MIRRORSITE="mirrors.ustc.edu.cn"
+            ;;
+        2)
+            MIRRORSITE="mirrors.bfsu.edu.cn"
+            ;;
+        3)
+            MIRRORSITE="mirrors.tuna.tsinghua.edu.cn"
+            ;;
+        4)
+            MIRRORSITE="mirrors.njupt.edu.cn"
+            ;;
+        5)
+            MIRRORSITE="mirrors.aliyun.com"
+            ;;
+    esac
+    sed -i 's@^\(deb.*stable main\)$@#\1\ndeb https://${MIRRORSITE}/termux/apt/termux-main stable main@' $PREFIX/etc/apt/sources.list
+    apt update -y
+    apt upgrade -y
+    whiptail --title "ntool-tui:change source success" --msgbox  "完成"
+    change_source_page
+}
 
 function desktop_page(){
     clear
-    DESKTOP_CHOICE=$(whiptail --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 60 7 \
+    DESKTOP_CHOICE=$(whiptail --title "ntool-tui:desktop install" --menu "选择一个以继续" 0 0 0 \
     "1" "安装xfce(较为完整的图形环境)" \
     "2" "仅安装openbox(基础图形环境)" \
     "0" "返回脚本主页面" 3>&1 1>&2 2>&3)
@@ -249,9 +281,10 @@ function desktop_page(){
 }
 
 function other_tool_page(){			#这里是其他功能页的function
-    OTPC=$(whiptail --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 60 7 \
+    OTPC=$(whiptail --title "ntool-tui:other tool page" --menu "选择一个以继续" 0 0 0 \
     "1" "网络页面" \
     "2" "工具页面" \
+    "3" "换源" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
@@ -267,13 +300,15 @@ function other_tool_page(){			#这里是其他功能页的function
 	    2)
 	    	tool_page
 		    ;;
+        3)
+            change_source_page
     esac
 }
 
 function ssh_check_install(){
 	clear
 	if command -v ssh;then
-		whiptail --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 10 20
+		whiptail --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 0 0
 		ssh_page
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
@@ -288,11 +323,7 @@ function ssh_check_install(){
 
 function ssh_page(){
 	clear
-	#echo "0. 返回上一页"
-	#echo "1. 打开sshd服务（他人连接）"
-	#echo "2. 连接远程服务器"
-	#read -p "输入你的选择:" ssh_choice
-    SSH_CHOICE=$(whiptail --title "ntool-tui:ssh page" --menu "选择一个以继续" 15 60 7 \
+    SSH_CHOICE=$(whiptail --title "ntool-tui:ssh page" --menu "选择一个以继续" 0 0 0 \
     "1" "打开sshd服务(让他人连接)" \
     "2" "通过密码连接远程服务器" \
     "3" "生成密钥" \
@@ -336,7 +367,7 @@ function ssh_page(){
 
 function tool_page(){			#这里是其它工具-工具类页面的function
 	clear
-    TPC=$(whiptail --title "ntool-tui:tool page" --menu "选择一个以继续" 15 60 7 \
+    TPC=$(whiptail --title "ntool-tui:tool page" --menu "选择一个以继续" 0 0 0 \
     "1" "ping" \
     "2" "ping6" \
     "3" "文件查找" \
@@ -361,10 +392,10 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 
 		1)
 			if command -v ping > /dev/null;then
-                local ip=$(whiptail --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)" 15 60 3>&1 1>&2 2>&3)
-                local time=$(whiptail --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 60 3>&1 1>&2 2>&3)
-                local speed=$(whiptail --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 60 3>&1 1>&2 2>&3)
-                local size=$(whiptail --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 60 3>&1 1>&2 2>&3)
+                local ip=$(whiptail --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)" 0 0 3>&1 1>&2 2>&3)
+                local time=$(whiptail --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 0 0 3>&1 1>&2 2>&3)
+                local speed=$(whiptail --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 0 0 3>&1 1>&2 2>&3)
+                local size=$(whiptail --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 0 0 3>&1 1>&2 2>&3)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_page
@@ -380,10 +411,10 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		2)
 			if command -v ping6 > /dev/null;then
-                local ip=$(whiptail --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)" 15 60 3>&1 1>&2 2>&3)
-                local time=$(whiptail --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 60 3>&1 1>&2 2>&3)
-                local speed=$(whiptail --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 60 3>&1 1>&2 2>&3)
-                local size=$(whiptail --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 60 3>&1 1>&2 2>&3)
+                local ip=$(whiptail --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)" 0 0 3>&1 1>&2 2>&3)
+                local time=$(whiptail --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 0 0 3>&1 1>&2 2>&3)
+                local speed=$(whiptail --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 0 0 3>&1 1>&2 2>&3)
+                local size=$(whiptail --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 0 0 3>&1 1>&2 2>&3)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_page
@@ -436,13 +467,13 @@ function check_update(){			#这里是检查/升级的function
     if [ "`cat latest_version`" != "`cat local_version`" ];then 
         if (whiptail --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？
         最新版:`cat latest_version`  
-        本地版本:`cat local_version`" 15 60);then 
+        本地版本:`cat local_version`" 0 0);then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
             main_page
         fi
     else
-        whiptail --title "ntool-tui:check update" --msgbox "您的版本为最新版，无需更新" 15 60
+        whiptail --title "ntool-tui:check update" --msgbox "您的版本为最新版，无需更新" 0 0
         main_page
     fi 
 }
@@ -450,7 +481,7 @@ function check_update(){			#这里是检查/升级的function
 function web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(whiptail --title "ntool-tui:web page" --menu "选择一个以继续" 15 60 7 \
+    webc=$(whiptail --title "ntool-tui:web page" --menu "选择一个以继续" 0 0 0 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
     "3" "安装php环境" \
@@ -486,7 +517,7 @@ function web_page(){				#这里是其他功能-网络类页面function
 function main_page(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(whiptail --title "ntool-tui:main_page" --menu "你的安卓版本为:`getprop ro.build.version.release`选择一个以继续" 15 60 7 \
+    mainchoice=$(whiptail --title "ntool-tui:main page" --menu "你的安卓版本为:`getprop ro.build.version.release`选择一个以继续" 0 0 0  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
