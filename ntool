@@ -184,6 +184,7 @@ function debian_version_page(){     #Debian版本选择
     esac
     if [ -d debian-${VERNAME} ];then
         whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0
+        debian_version_page
     container_install
 }
 
@@ -212,7 +213,8 @@ function ubuntu_version_page(){     #Ubuntu版本选择
             ;;
     esac
     if [ -d ubuntu-${VERNAME} ];then 
-        whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0 
+        whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0
+        ubuntu_version_page
     fi
     container_install
 }
