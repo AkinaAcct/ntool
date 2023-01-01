@@ -16,11 +16,11 @@ YELOW="\E[1;33m"    # 黄
 BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
-ARCH="`dpkg --print-architecture`"       #架构
-OS="`uname -o`"     #系统
-if [ "$OS" == "aarch64" ];then
-    OS="arm64"
+ARCH="`uname -m`"       #架构
+if [ "$ARCH" == "aarch64" ];then
+    ARCH="arm64"
 fi
+OS="`uname -o`"     #系统
 STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
@@ -126,7 +126,7 @@ function backup_page(){      #备份页面function
             fi 
             rm -v ${STORAGEPATH}/${DEL_BACKUP_NAME}.tgz
             rm -v ${STORAGEPATH}/${DEL_BACKUP_NAME}
-            read -p "按回车继续"
+            read -p -n1 "按任意键继续"
             backup_page
             ;;
     esac
@@ -134,8 +134,8 @@ function backup_page(){      #备份页面function
 
 function container_page(){      #容器OS选择
     CONTAINER_CHOICE=$(whiptail --title "ntool-tui:container installer" --menu "选择一个以继续" 0 0 0 \
-    "1" "Ubuntu" \
-    "2" "Debian" \
+    "1" "Ubuntu 我的存在是因为大家的存在" \
+    "2" "Debian 为爱发电,爱的结晶" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
@@ -146,10 +146,12 @@ function container_page(){      #容器OS选择
             main_page
             ;;
         1)
-            ubuntu_install_page
+            CONTAINER_OS=ubuntu
+            ubuntu_version_page
             ;;
         2)
-            debian_install_page
+            CONTAINER_OS=debian
+            debian_version_page
             ;;
         0)
             main_page
@@ -157,9 +159,38 @@ function container_page(){      #容器OS选择
     esac
 }
 
-function ubuntu_install_page(){
+function debian_version_page(){     #Debian版本选择
+    DEBIAN_VER_CHOICE=$(whiptail --title "ntool-tui:Debian Version" --menu "选择一个以继续\
+    同版本不可二次安装，不同版本可以哦" 0 0 0 \
+    "1" "Debian10 Buster" \
+    "2" "Debian11 Bullseye" \
+    "0" "返回上一页")
+    exitstatus=$?
+    if [ $exitstatus = 1 ];then
+        container_page
+    fi
+    case $DEBIAN_VER_CHOICE in
+        0)
+            container_page
+            ;;
+        1)
+            VERCODE="10"
+            VERNAME="buster"
+            ;;
+        2)
+            VERCODE="11"
+            VERNAME="bullseye"
+            ;;
+    esac
+    if [ -d debian-${VERNAME} ];then
+        whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0
+    container_install
+}
+
+function ubuntu_version_page(){     #Ubuntu版本选择
     cd ${MAINPATH}
-    UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续  仅支持jammy(22.04)和focal(20.04)" 0 0 0 \
+    UBUNTU_VER_CHOICE=$(whiptail --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续\
+    同版本不可二次安装，不同版本可以哦" 0 0 0 \
     "1" "Ubuntu22.04 Jammy Jellyfish" \
     "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
@@ -167,7 +198,7 @@ function ubuntu_install_page(){
     if [ $exitstatus = 1 ];then
         container_page
     fi
-    case $UBUNTU_CHOICE in 
+    case $UBUNTU_VER_CHOICE in 
         0)
             container_page
             ;;
@@ -183,33 +214,63 @@ function ubuntu_install_page(){
     if [ -d ubuntu-${VERNAME} ];then 
         whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0 
     fi
-    command -v aria2c > /dev/null || apt install aria2 -y
-    apt update -y 
-    apt upgrade -y 
-    echo -e "${GREEN}稍等，正在检查最新rootfs${RESET}"
-    ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
-    echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
-    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${STORAGEPATH}/ubuntu-${VERNAME}.tar.xz
-    tar -xvf ${STORAGEPATH}/ubuntu-${VERNAME}.tar.xz ${MAINPATH}/ubuntu-${VERNAME}
-    echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c${RESET}"
-    echo -e "${BLUE}获取启动脚本中${RESET}"
-    curl ${RAWURL}/script/startubuntu -o ${PREFIX}/bin
-    chmod +x ${PREFIX}/bin/startubuntu
-    whiptail --title "ntool-tui:success" --msgbox "安装完成,输入startubuntu以启动" 0 0 
+    container_install
 }
 
-function debian_install_page(){
-    wait_for_dev_page
-    container_page
+function container_install(){
+    apt update -y
+    apt upgrade -y
+    if command -v aria2c > /dev/null;then
+        apt install aria2 -y
+    fi
+    echo -e "${GREEN}稍等，正在检查选择的${CONTAINER_OS}的最新rootfs...${RESET}"
+    ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+    echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
+    echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c${RESET}"
+    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz
+    tar -xvf ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
+    echo -e "${BLUE}写入启动脚本中${RESET}"
+    cat <<EOF> $PREFIX/bin/start${CONTAINER_OS}${VERNAME}
+    #!/data/data/com.termux/files/usr/bin/bash
+    #ntool ${CONTAINER_OS}${VERCODE} ${VERNAME}启动脚本
+    #嗯...复制也是可以的啦...我不在意...
+    #毕竟这东西没什么技术含量...
+    unset LD_PRELOAD
+    COMMAND="proot"
+    COMMAND+=" --link2symlink"
+    COMMAND+=" -0"
+    COMMAND+=" -r ~/.ntool/${CONTAINER_OS}-${VERNAME}"
+    COMMAND+=" -b /dev"
+    COMMAND+=" -b /sys"
+    COMMAND+=" -b proc"
+    #不建议直接挂载sdcard
+    #有隐私问题
+    #COMMAND+=" -b /sdcard"
+    #下面仅挂载HOME(默认)
+    #如需修改请自行修改
+    COMMAND+=" -b /data/data/com.termux/files/home:/root"
+    COMMAND+=" -w root"
+    COMMAND+=" /usr/bin/env -i"
+    COMMAND+=" HOME=/root"
+    COMMAND+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
+    COMMAND+=" TERM=xterm-256color"
+    COMMAND+=" LANG=C.UTF-8"
+    COMMAND+=" /bin/bash -l"
+    echo -e "${GREEN}---------------starting---------------${RESET}"
+    exec $COMMAND
+    EOF 
+    chmod +x ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
+    whiptail --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS}${VERCODE} ${VERNAME},输入start${CONTAINER_OS}以启动" 0 0
 }
 
 function change_source_page(){       #换源
     SOURCE_CHOICE=$(whiptail --title "ntool-tui:change source" --menu "事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 0 0 0 \
-    "1" "USTC 中国科技大学镜像站" \
-    "2" "BFSU 北京外国语大学镜像站" \
-    "3" "TUNA 清华大学镜像站" \
-    "4" "Njupt 南京邮电大学镜像站" \
-    "5" "Aliyun 阿里云镜像站" \
+    "1" "使用termux-change-repo(推荐)" \
+    "2" "USTC 中国科技大学镜像站" \
+    "3" "BFSU 北京外国语大学镜像站" \
+    "4" "TUNA 清华大学镜像站" \
+    "5" "Njupt 南京邮电大学镜像站" \
+    "6" "Aliyun 阿里云镜像站" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
@@ -222,18 +283,24 @@ function change_source_page(){       #换源
             other_tool_page
             ;;
         1)
-            MIRRORSITE="mirrors.ustc.edu.cn"
+            termux-change-repo
+            echo -e "${GREEN}"
+            read -p -n1 "按任意键继续"
+            echo -e "${RESET}"
             ;;
         2)
-            MIRRORSITE="mirrors.bfsu.edu.cn"
+            MIRRORSITE="mirrors.ustc.edu.cn"
             ;;
         3)
-            MIRRORSITE="mirrors.tuna.tsinghua.edu.cn"
+            MIRRORSITE="mirrors.bfsu.edu.cn"
             ;;
         4)
-            MIRRORSITE="mirrors.njupt.edu.cn"
+            MIRRORSITE="mirrors.tuna.tsinghua.edu.cn"
             ;;
         5)
+            MIRRORSITE="mirrors.njupt.edu.cn"
+            ;;
+        6)
             MIRRORSITE="mirrors.aliyun.com"
             ;;
     esac
@@ -269,7 +336,8 @@ function desktop_page(){
         echo -e "${GREEN}完成${RESET}"
         echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
         cd ~
-        read -p "按回车以继续"
+        read -p -n1 "按任意键以继续"
+        exit 0
         ;;
     2)
         apt install openbox pypanel xorg-xsetroot tigervnc -y
@@ -281,7 +349,8 @@ function desktop_page(){
         echo -e "${GREEN}完成${RESET}"
         echo -e "输入${GREEN}startopenbox${RESET}以启动"
         cd ~
-        read -p "按回车以继续"
+        read -p -n1 "按任意键以继续"
+        exit 0
         ;;
     3)
         wait_for_dev_page
@@ -329,7 +398,7 @@ function ssh_check_install(){
 		echo "${RED}安装中...${RESET}"
 		apt install openssh -y 
         echo -e "${GREEN}"
-        read -p "按回车以继续"
+        read -p -n1 "按任意键以继续"
         echo -e "${RESET}"
 		ssh_check_install
 	fi
@@ -353,7 +422,7 @@ function ssh_page(){
 		1)
 			sshd
             echo -e "${GREEN}"
-			read -p "启动完成 按任意键退出脚本"
+			read -p -n1 "启动完成 按任意键继续"
             echo -e "${RESET}"
 			exit 0
 			;;
@@ -453,7 +522,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			;;
 		4)
 			echo "只支持openjdk17"
-			read -p "按回车以继续"	#我好水啊（）
+			read -p -n1 "按任意键以继续"	#我好水啊（）
 			apt install openjdk-17 -y
 			echo "安装完成"
 			;;
