@@ -16,11 +16,12 @@ YELOW="\E[1;33m"    # 黄
 BLUE="\E[1;34m"     # 蓝
 PINK="\E[1;35m"     # 粉
 RESET="\E[0m"          # 去色
-ARCH="`uname -m`"       #架构
+ARCH="`dpkg --print-architecture`"       #架构
 OS="`uname -o`"     #系统
 if [ "$OS" == "aarch64" ];then
     OS="arm64"
 fi
+STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
@@ -67,9 +68,9 @@ function backup_page(){      #备份页面function
                 if [ -d storage ];then
                     whiptail --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 0 0
                     cd /data/data/com.termux/
-                    tar -cvpzf ~/storage/downloads/backup/${BACKUP_NAME}.tgz files
+                    tar -cvpzf ${STORAGEPATH}${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
-                    sha1sum ~/storage/downloads/backup/${BACKUP_NAME}.tgz > ~/storage/downloads/backup/${BACKUP_NAME}
+                    sha1sum ${STORAGEPATH}/${BACKUP_NAME}.tgz > ${STORAGEPATH}/${BACKUP_NAME}
                     echo "名称:${BACKUP_NAME}" >> ${MAINPATH}/backups.txt
     				echo -e "${GREEN}完成备份${RESET}"
                     backup_page
@@ -85,13 +86,13 @@ function backup_page(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-    			pkg install tar -y 
+    			apt install tar -y 
                 backup_page
             fi
             ;;
         2)
             RESTORE_NAME=$(whiptail --title "ntool-tui:restore backup" --inputbox "选择一个备份 \
-            `ls ~/storage/downloads/backup/*.tgz`" 30 60 3>&1 1>&2 2>&3)
+            `ls ${STORAGEPATH}/*.tgz`" 30 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page
@@ -101,12 +102,12 @@ function backup_page(){      #备份页面function
             fi 
             cd ~
             echo "比对sha中..."
-            sha1sum -c ~/storage/downloads/backup/${RESTORE_NAME} >> /dev/null 2>&1
+            sha1sum -c ${STORAGEPATH}/${RESTORE_NAME} >> /dev/null 2>&1
             exitstatus=$?
             if [ $exitstatus = 0 ];then 
                 echo -e "${GREEN}sha正常${RESET}"
                 echo "${BLUE}开始恢复${RESET}"
-                tar -xvpzf ~/storage/downloads/backup/${RESTORE_NAME}.tgz -C /data/data/com.termux/
+                tar -xvpzf ${STORAGEPATH}/${RESTORE_NAME}.tgz -C /data/data/com.termux/
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
                 whiptail --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 0 0
@@ -115,7 +116,7 @@ function backup_page(){      #备份页面function
             ;;
         3)
             DEL_BACKUP_NAME=$(whiptail --title "ntool-tui:delete backup" --inputbox "选择一个备份 \
-            `ls ~/storage/downloads/backup/*.tgz`" 30 60 3>&1 1>&2 2>&3)
+            `ls ${STORAGEPATH}/*.tgz`" 30 60 3>&1 1>&2 2>&3)
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 backup_page 
@@ -123,8 +124,8 @@ function backup_page(){      #备份页面function
                 bad_empty_input
                 backup_page
             fi 
-            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}.tgz
-            rm -v ~/storage/downloads/backup/${DEL_BACKUP_NAME}
+            rm -v ${STORAGEPATH}/${DEL_BACKUP_NAME}.tgz
+            rm -v ${STORAGEPATH}/${DEL_BACKUP_NAME}
             read -p "按回车继续"
             backup_page
             ;;
@@ -157,9 +158,10 @@ function container_page(){      #容器OS选择
 }
 
 function ubuntu_install_page(){
+    cd ${MAINPATH}
     UBUNTU_CHOICE=$(whiptail --title "ntool-tui:install Ubuntu" --menu "选择一个以继续  仅支持jammy(22.04)和focal(20.04)" 0 0 0 \
-    "1" "Ubuntu22.04 Jammy Jellyfish LTS(推荐)" \
-    "2" "Ubuntu20.04 Focal Fossa LTS" \
+    "1" "Ubuntu22.04 Jammy Jellyfish" \
+    "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
@@ -170,18 +172,31 @@ function ubuntu_install_page(){
             container_page
             ;;
         1)
-            VER="22.04"
-            VERCODE="jammy"
+            VERCODE="22.04"
+            VERNAME="jammy"
             ;;
         2)
-            VER="20.04"
-            VERCODE="focal"
+            VERCODE="20.04"
+            VERNAME="focal"
             ;;
     esac
-    pkg update -y 
-    pkg upgrade -y 
-    wait_for_dev_page
-    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERCODE}/${ARCH}/default/rootfs.tar.xz
+    if [ -d ubuntu-${VERNAME} ];then 
+        whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0 
+    elif command -v ariac > /dev/null;then
+        echo -e "${GREEN}apt install aria2 -y${RESET}"
+    fi
+    apt update -y 
+    apt upgrade -y 
+    echo -e "${GREEN}稍等，正在检查最新rootfs${RESET}"
+    ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+    echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
+    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/ubuntu/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${STORAGEPATH}/ubuntu-${VERNAME}.tar.xz
+    tar -xvf ${STORAGEPATH}/ubuntu-${VERNAME}.tar.xz ${MAINPATH}/ubuntu-${VERNAME}
+    echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c${RESET}"
+    echo -e "${BLUE}获取启动脚本中${RESET}"
+    curl ${RAWURL}/script/startubuntu -o ${PREFIX}/bin
+    chmod +x ${PREFIX}/bin/startubuntu
+    whiptail --title "ntool-tui:success" --msgbox "安装完成,输入startubuntu以启动" 0 0 
 }
 
 function debian_install_page(){
@@ -246,7 +261,7 @@ function desktop_page(){
         ;;
     1)
         echo "安装中..."
-        pkg install openbox pypanel xorg-xsetroot xfce tigervnc -y 
+        apt install openbox pypanel xorg-xsetroot xfce tigervnc -y 
         pip install PyXDG
         cd /data/data/com.termux/files/usr/bin
         echo -e "${BLUE}获取启动脚本中...${RESET}"
@@ -258,7 +273,7 @@ function desktop_page(){
         read -p "按回车以继续"
         ;;
     2)
-        pkg install openbox pypanel xorg-xsetroot tigervnc -y
+        apt install openbox pypanel xorg-xsetroot tigervnc -y
         pip install PyXDG
         cd /data/data/com.termux/files/usr/bin
         echo -e "${BLUE}获取启动脚本中...${RESET}"
@@ -313,7 +328,7 @@ function ssh_check_install(){
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${RED}安装中...${RESET}"
-		pkg install openssh -y 
+		apt install openssh -y 
         echo -e "${GREEN}"
         read -p "按回车以继续"
         echo -e "${RESET}"
@@ -354,7 +369,7 @@ function ssh_page(){
 			else
 				echo "sshpass未安装"
 				echo "installing..."
-				pkg install sshpass -y
+				apt install sshpass -y
 				ssh_page
 			fi
 			;;
@@ -405,7 +420,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 				echo -e "${GREEN}stop ping${RESET}"
 			else
 				echo "未安装ping，正在安装..."
-				pkg install termux-tools -y
+				apt install termux-tools -y
 				tool_page
 			fi
 			;;
@@ -424,7 +439,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 echo -e "${GREEN}stop ping${RESET}"
 			else
 				echo "ping6未安装,正在安装..."
-				pkg install termux-tools -y
+				apt install termux-tools -y
 				tool_page
 			fi
 			;;
@@ -440,7 +455,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 		4)
 			echo "只支持openjdk17"
 			read -p "按回车以继续"	#我好水啊（）
-			pkg install openjdk-17 -y
+			apt install openjdk-17 -y
 			echo "安装完成"
 			;;
 		5)
@@ -496,19 +511,19 @@ function web_page(){				#这里是其他功能-网络类页面function
 			other_tool_page
 			;;
 		1)
-			pkg install nginx -y
+			apt install nginx -y
 			echo "done"
 			;;
 		2)
-			pkg install apache2 -y
+			apt install apache2 -y
 			echo "done"
 			;;
 		3)
-			pkg install php -y
+			apt install php -y
 			echo "done"
 			;;
 		4)
-			pkg install mariadb -y
+			apt install mariadb -y
 			echo "done"
 			;;
 	esac
