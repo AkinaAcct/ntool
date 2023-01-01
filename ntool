@@ -32,6 +32,7 @@ if [ "${ARCH}" != "arm64" ];then
 fi
 
 cd ${HOME}
+mkdir -p .ntool
 #以下是shitcode之我自己都不认识的function（）
 function wait_for_dev_page(){
     whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 0 0
@@ -162,11 +163,11 @@ function container_page(){      #容器OS选择
 }
 
 function debian_version_page(){     #Debian版本选择
-    DEBIAN_VER_CHOICE=$(whiptail --title "ntool-tui:Debian Version" --menu "选择一个以继续\
+    DEBIAN_VER_CHOICE=$(whiptail --title "ntool-tui:Debian Version" --menu "选择一个以继续 \
     同版本不可二次安装，不同版本可以哦" 0 0 0 \
     "1" "Debian10 Buster" \
     "2" "Debian11 Bullseye" \
-    "0" "返回上一页")
+    "0" "返回上一页" 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 1 ];then
         container_page
@@ -189,6 +190,7 @@ function debian_version_page(){     #Debian版本选择
         debian_version_page 
         container_install
     fi
+    container_install
 }
 
 function ubuntu_version_page(){     #Ubuntu版本选择
@@ -229,46 +231,58 @@ function container_install(){
         apt install aria2 -y
     fi
     echo -e "${GREEN}稍等，正在检查选择的${CONTAINER_OS}的最新rootfs...${RESET}"
-    LATESTROOTFS=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
-    echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
-    echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c${RESET}"
-    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz
-    tar -xvf ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
+    LATESTROOTFS=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+    echo -e "最新版(时间):${GREEN}${LATESTROOTFS}${RESET}"
+    echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c或其他方式终止${RESET}"
+    cd ${MAINPATH}
+    if [ -f ${CONTAINER_OS}-${VERNAME}*.tar.xz ];then
+        echo -e "${BLUE}发现存在的rootfs.删除中...${RESET}"
+        rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
+    fi
+    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
+    mkdir ${CONTAINER_OS}-${VERNAME}
+    tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${BLUE}写入启动脚本中${RESET}"
-    write_script
+    script_write
+    echo -e "${GREEN}写入dns中${RESET}"
+    mkdir -p ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/
+    echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/etc/resolv.conf
+    echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/stub-resolv.conf
     chmod +x ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
-    whiptail --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS}${VERCODE} ${VERNAME},输入start${CONTAINER_OS}以启动" 0 0
+    whiptail --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS}${VERCODE} ${VERNAME},输入start${CONTAINER_OS}${VERNAME}以启动" 0 0
 }
 
-function write_script(){
-cat >EOF > ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
+function script_write(){
+cat << EOF > $PREFIX/bin/start${CONTAINER_OS}${VERNAME}
 #!/data/data/com.termux/files/usr/bin/bash
 #ntool ${CONTAINER_OS}${VERCODE} ${VERNAME}启动脚本
 #嗯...复制也是可以的啦...我不在意...
 #毕竟这东西没什么技术含量...
+cd ~/.ntool
 unset LD_PRELOAD
 COMMAND="proot"
 COMMAND+=" --link2symlink"
 COMMAND+=" -0"
-COMMAND+=" -r ~/.ntool/${CONTAINER_OS}-${VERNAME}"
+COMMAND+=" -r ${CONTAINER_OS}-${VERNAME}"
 COMMAND+=" -b /dev"
 COMMAND+=" -b /sys"
-COMMAND+=" -b proc"
+COMMAND+=" -b /proc"
 #不建议直接挂载sdcard
 #有隐私问题
 #COMMAND+=" -b /sdcard"
 #下面仅挂载HOME(默认)
 #如需修改请自行修改
 COMMAND+=" -b /data/data/com.termux/files/home:/root"
-COMMAND+=" -w root"
+COMMAND+=" -w /root"
 COMMAND+=" /usr/bin/env -i"
 COMMAND+=" HOME=/root"
 COMMAND+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
 COMMAND+=" TERM=xterm-256color"
 COMMAND+=" LANG=C.UTF-8"
 COMMAND+=" /bin/bash -l"
-exec $COMMAND
+echo -e "${GREEN}---------starting---------${RESET}"
 EOF
+echo 'exec $COMMAND' >> ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
 }
 
 function change_source_page(){       #换源
