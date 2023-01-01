@@ -182,9 +182,8 @@ function ubuntu_install_page(){
     esac
     if [ -d ubuntu-${VERNAME} ];then 
         whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0 
-    elif command -v ariac > /dev/null;then
-        echo -e "${GREEN}apt install aria2 -y${RESET}"
     fi
+    command -v aria2c > /dev/null || apt install aria2 -y
     apt update -y 
     apt upgrade -y 
     echo -e "${GREEN}稍等，正在检查最新rootfs${RESET}"
