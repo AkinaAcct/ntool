@@ -25,12 +25,14 @@ STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载�
 MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main/"       #GitHub raw地址(我是一只懒懒的猫猫)
 
-if [ "${ARCH}" != "aarch64" ];then
-    whiptail --title "ntool-tui:WARNING" --msgbox "未适配的架构:${ARCH}" 0 0
+if [ "${ARCH}" != "arm64" ];then
+    whiptail --title "ntool-tui:WARNING" --msgbox "未适配的架构:${ARCH} \
+    通常来说这会造成问题,但是我已竭力适配不同的架构了 \
+    你可以测试一下," 0 0
 fi
 
 cd ${HOME}
-#以下是标准屎山之我自己都不认识的function（）
+#以下是shitcode之我自己都不认识的function（）
 function wait_for_dev_page(){
     whiptail --title "ntool-tui:developing page" --msgbox "正在开发" 0 0
 }
@@ -184,8 +186,9 @@ function debian_version_page(){     #Debian版本选择
     esac
     if [ -d debian-${VERNAME} ];then
         whiptail --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 0 0
-        debian_version_page
-    container_install
+        debian_version_page 
+        container_install
+    fi
 }
 
 function ubuntu_version_page(){     #Ubuntu版本选择
@@ -226,44 +229,46 @@ function container_install(){
         apt install aria2 -y
     fi
     echo -e "${GREEN}稍等，正在检查选择的${CONTAINER_OS}的最新rootfs...${RESET}"
-    ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+    LATESTROOTFS=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
     echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
     echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c${RESET}"
-    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz
+    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz
     tar -xvf ${STORAGEPATH}/${CONTAINER_OS}-${VERNAME}.tar.xz ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${BLUE}写入启动脚本中${RESET}"
-    cat <<EOF> $PREFIX/bin/start${CONTAINER_OS}${VERNAME}
-    #!/data/data/com.termux/files/usr/bin/bash
-    #ntool ${CONTAINER_OS}${VERCODE} ${VERNAME}启动脚本
-    #嗯...复制也是可以的啦...我不在意...
-    #毕竟这东西没什么技术含量...
-    unset LD_PRELOAD
-    COMMAND="proot"
-    COMMAND+=" --link2symlink"
-    COMMAND+=" -0"
-    COMMAND+=" -r ~/.ntool/${CONTAINER_OS}-${VERNAME}"
-    COMMAND+=" -b /dev"
-    COMMAND+=" -b /sys"
-    COMMAND+=" -b proc"
-    #不建议直接挂载sdcard
-    #有隐私问题
-    #COMMAND+=" -b /sdcard"
-    #下面仅挂载HOME(默认)
-    #如需修改请自行修改
-    COMMAND+=" -b /data/data/com.termux/files/home:/root"
-    COMMAND+=" -w root"
-    COMMAND+=" /usr/bin/env -i"
-    COMMAND+=" HOME=/root"
-    COMMAND+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
-    COMMAND+=" TERM=xterm-256color"
-    COMMAND+=" LANG=C.UTF-8"
-    COMMAND+=" /bin/bash -l"
-    echo -e "${GREEN}---------------starting---------------${RESET}"
-    exec $COMMAND
-    echo -e "${GREEN}---------------exit from container---------------${RESET}"
-    EOF 
+    write_script
     chmod +x ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
     whiptail --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS}${VERCODE} ${VERNAME},输入start${CONTAINER_OS}以启动" 0 0
+}
+
+function write_script(){
+cat >EOF > ${PREFIX}/bin/start${CONTAINER_OS}${VERNAME}
+#!/data/data/com.termux/files/usr/bin/bash
+#ntool ${CONTAINER_OS}${VERCODE} ${VERNAME}启动脚本
+#嗯...复制也是可以的啦...我不在意...
+#毕竟这东西没什么技术含量...
+unset LD_PRELOAD
+COMMAND="proot"
+COMMAND+=" --link2symlink"
+COMMAND+=" -0"
+COMMAND+=" -r ~/.ntool/${CONTAINER_OS}-${VERNAME}"
+COMMAND+=" -b /dev"
+COMMAND+=" -b /sys"
+COMMAND+=" -b proc"
+#不建议直接挂载sdcard
+#有隐私问题
+#COMMAND+=" -b /sdcard"
+#下面仅挂载HOME(默认)
+#如需修改请自行修改
+COMMAND+=" -b /data/data/com.termux/files/home:/root"
+COMMAND+=" -w root"
+COMMAND+=" /usr/bin/env -i"
+COMMAND+=" HOME=/root"
+COMMAND+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
+COMMAND+=" TERM=xterm-256color"
+COMMAND+=" LANG=C.UTF-8"
+COMMAND+=" /bin/bash -l"
+exec $COMMAND
+EOF
 }
 
 function change_source_page(){       #换源
