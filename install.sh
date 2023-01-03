@@ -18,7 +18,7 @@ case $answer in
 		echo "installing..."
 		pkg update -y
 		pkg upgrade -y
-		pkg install git wget curl python x11-repo -y
+		pkg install git wget curl python x11-repo dialog -y
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm /data/data/com.termux/files/usr/bin/ntool
