@@ -28,9 +28,7 @@ MAINPATH="/data/data/com.termux/files/home/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
 
 if [ "${ARCH}" != "arm64" ];then
-    dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64 \
-    通常来说这会造成问题,但是我已竭力适配不同的架构了 \
-    你可以测试一下" 15 70
+    dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
 fi
 
 cd ${HOME}
@@ -44,6 +42,69 @@ function bad_empty_input(){
     dialog --noshadow --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
 
+function patch_frame_choose(){
+    if (dialog --noshadow --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
+        PATCHCHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
+        exitstatus=$?
+        if [ $exitstatus != 0];then
+            main_page
+        fi
+        case $PATCHCHOICE in
+            1)
+                PATCHFRAME="xpatch"
+                ;;
+            2)
+                PATCHFRAME="lspatch"
+                ;;
+        esac
+    else
+        main_page
+    fi
+    apt install openjdk-17 -y
+    patch_apk
+}
+
+function patch_apk(){
+    APKPATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    exitstatus=$?
+    if [ $exitstatus != 0 ];then
+        patch_frame_choose
+    elif [ -z $APKPATH ];then
+        bad_empty_input
+        patch_apk
+    fi
+    mkdir -p ${MAINPATH}/patchedapks
+    cd ${MAINPATH}/patchedapks
+    if [ ! -f ${PATCHFRAME}.jar ];then
+        echo -e "${BLUE}获取最新版本号中${RESET}"
+        if [ "$PATCHFRAME" == "xpatch" ];then
+            tag=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
+            echo -e "${GREEN}${PATCHFRAME}最新版为${tag}${RESET}"
+            wget https://github.com/WindySha/Xpatch/releases/download/${tag}/xpatch-${tag}.jar -o xpatch.jar
+        else
+            tag=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
+            echo -e "${GREEN}${PATCHFRAME}最新版为${tag}${RESET}"
+            wget https://github.com/LSPosed/LSPatch/releases/download/${tag}/lspatch.jar
+        fi
+    fi
+    if [ ! -f ${APKPATH} ];then
+        dialog --noshadow --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n检查是否输入错误或有无给予内置存储权限" 15 70
+        patch_apk
+    fi
+    MODULEPATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    echo -e "${BLUE}可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
+    if [ "$PATCHFRAME" == "xpatch" ];then
+        java -jar ${MAINPATH}/patchedapks/xpatch.jar ${APKPATH} -xm ${MODULEPATH} -o /sdcard/xpatchedapk.apk
+        rm ${MAINPATH}/patchedapks/xpatch.jar
+    else
+        java -jar ${MAINPATH}/patchedapks/lspatch.jar ${APKPATH} -m ${MODULEPATH} -o /sdcard
+        rm ${MAINPATH}/patchedapks/lspatch.jar
+    fi
+    echo -e "${GREEN}完成!修改后的apk${BLUE}在这里↑↑↑↑↑上面${RESET}"
+    read -p "按回车继续"
+    exit 0
+}
+
 function backup_page(){      #备份页面function
     clear
     backup_page_choice=$(dialog --noshadow --output-fd 1 --title "ntool-tui:backup page" --menu "选择一个以继续" 15 70 8 \
@@ -52,7 +113,7 @@ function backup_page(){      #备份页面function
     "2" "恢复备份" \
     "3" "删除备份" )
     exitstatus=$?
-    if [ $exitstatus = 1 ];then
+    if [ $exitstatus != 0 ];then
         main_page
     fi
     case $backup_page_choice in
@@ -62,7 +123,7 @@ function backup_page(){      #备份页面function
         1)
             BACKUP_NAME=$(dialog --noshadow --output-fd 1 --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份com.termux/files以提高速度) " 15 70)
             exitstatus=$?
-            if [ $exitstatus = 1 ];then
+            if [ $exitstatus != 0 ];then
                 backup_page
             elif  [ -z $BACKUP_NAME ];then
                 bad_empty_input
@@ -96,9 +157,9 @@ function backup_page(){      #备份页面function
             fi
             ;;
         2)
-            RESTORE_PATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录！" --fselect ${STORAGEPATH} 15 70)
+            RESTORE_PATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录！" --inputbox ${STORAGEPATH} 15 70)
             exitstatus=$?
-            if [ $exitstatus = 1 ];then
+            if [ $exitstatus != 0 ];then
                 backup_page
                 exit 0
             elif [ -z $RESTORE_PATH ];then
@@ -123,7 +184,7 @@ function backup_page(){      #备份页面function
         3)
             DEL_BACKUP_PATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录" --fselect ${STORAGEPATH} 15 70)
             exitstatus=$?
-            if [ $exitstatus = 1 ];then
+            if [ $exitstatus != 0 ];then
                 backup_page
             elif [ -z $DEL_BACKUP_PATH ];then
                 bad_empty_input
@@ -143,7 +204,7 @@ function container_page(){      #容器OS选择
     "2" "Debian 为爱发电,爱的结晶" \
     "0" "返回上一页")
     exitstatus=$?
-    if [ $exitstatus = 1 ];then
+    if [ $exitstatus != 0 ];then
         main_page
     fi
     case $CONTAINER_CHOICE in
@@ -167,7 +228,7 @@ function debian_version_page(){     #Debian版本选择
     "2" "Debian11 Bullseye" \
     "0" "返回上一页")
     exitstatus=$?
-    if [ $exitstatus = 1 ];then
+    if [ $exitstatus != 0 ];then
         container_page
     fi
     case $DEBIAN_VER_CHOICE in
@@ -197,7 +258,7 @@ function ubuntu_version_page(){     #Ubuntu版本选择
     "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页")
     exitstatus=$?
-    if [ $exitstatus = 1 ];then
+    if [ $exitstatus != 0 ];then
         container_page
     fi
     case $UBUNTU_VER_CHOICE in 
@@ -694,6 +755,7 @@ function main_page(){
     "4" "计算圆周率(?)" \
     "5" "一言" \
     "6" "原系统桌面" \
+    "7" "LSPatch/XPatch功能" \
     "00" "更新" \
     "0" "退出")
     exitstatus=$?
@@ -739,6 +801,9 @@ function main_page(){
             ;;
         6)
             desktop_page
+            ;;
+        7)
+            patch_frame_choose
             ;;
     esac
 }
