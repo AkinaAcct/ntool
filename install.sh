@@ -25,8 +25,7 @@ case $answer in
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod +x /data/data/com.termux/files/usr/bin/ntool
 		cd ~/.ntool
-		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O local_version > /dev/null 2>&1
-        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/Androidicon > /dev/null 2>&1
+        curl -o local_version https://raw.githubusercontent.com/nnyyaa/ntool/main/version
 		cd ~
 		rm install.sh > /dev/null 2>&1
         echo "完成"
