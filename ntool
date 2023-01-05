@@ -244,10 +244,6 @@ function debian_version_page(){     #Debian版本选择
             VERNAME="bullseye"
             ;;
     esac
-    if [ -d debian-${VERNAME} ];then
-        dialog -noshadow --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
-        debian_version_page
-    fi
     container_control_page
 }
 
@@ -274,10 +270,6 @@ function ubuntu_version_page(){     #Ubuntu版本选择
             VERNAME="focal"
             ;;
     esac
-    if [ -d ubuntu-${VERNAME} ];then 
-        dialog --noshadow --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
-        ubuntu_version_page
-    fi
     container_control_page
 }
 
@@ -296,25 +288,25 @@ function container_control_page(){
             container_page
             ;;
         1)
+            if [ -d ${CONTAINER_OS}-${VERNAME} ];then
+                dialog --noshadow --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
+                container_control_page
+            fi
             container_install
             ;;
         2)
+            if [ ! -d ${CONTAINER_OS}-${VERNAME} ];then
+                dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你还没有安装这个容器" 15 70
+                container_control_page
+            fi
             container_delete
             ;;
     esac
 }
 
 function container_delete(){
-    DELCONTAINERPATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录名！" --dselect ${MAINPATH} 15 70)
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
-        container_control_page
-    elif [ -z $DELCONTAINERPATH ];then
-        bad_empty_input
-        container_control_page
-    fi
-    rm -rvf ${DELCONTAINERPATH}
-    rm $PREFIX/bin/start${VERNAME}
+    rm -rvf ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
+    rm -v $PREFIX/bin/start${VERNAME}
     dialog --noshadow --title "ntool-tui:success" --msgbox "删除完成" 15 70
     container_page
 }
@@ -351,15 +343,22 @@ echo -e "${GREEN}---------starting---------${RESET}"
 EOF
 echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
+
 function write_group_add(){
+cat <<EOF>> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/bash.bashrc
+echo -e "请执行bash /etc/.ntool/groupadd.sh以解决这些group报错"
+EOF
 cat <<EOF> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
 groupadd -g 50123 all_a123
 groupadd -g 99909997 u999_everybody
+ sed -i '/groupadd.sh/d' /etc/bash.bashrc
+rm -rf /etc/.ntool
 EOF
 }
+
 function container_install(){
     apt update -y
     apt upgrade -y
@@ -389,38 +388,31 @@ function container_install(){
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/etc/resolv.conf
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/stub-resolv.conf
     sleep 0.3
+    echo -e "${GREEN}拉取源列表中.使用BFSU北京外国语大学镜像站${RESET}"
+    wget ${RAWURL}/sourcelist/${CONTAINER_OS}${VERNAME}.list -o ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list > /dev/null 2>&1
+    sleep 0.3
     echo -e "${GREEN}给予脚本执行权限${RESET}"
     chmod +x ${PREFIX}/bin/start${VERNAME}
     sleep 0.3
     echo -e "${GREEN}删除rootfs中${RESET}"
-    rm -v ${CONTAINER_OS}-${VERNAME}.tar.xz
-    sleep 0.3
-    echo -e "${GREEN}写入容器记录中${RESET}"
-    echo "${VERNAME}" >> ${MAINPATH}/container.list
+    rm  ${CONTAINER_OS}-${VERNAME}.tar.xz
     sleep 0.3
     echo -e "${GREEN}添加用户组中${RESET}"
     mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/
     write_group_add
     sleep 0.3
-    echo -e "${GREEN}去除groupadd提示中${RESET}"
-    echo "echo '' > /etc/.ntool/groupadd.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/bash.bashrc
-    sleep 0.3
     dialog --noshadow --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS} ${VERCODE} ${VERNAME},输入start${VERNAME}以启动" 15 70
+    container_control_page
 }
 
 function change_source_page(){       #换源
     SOURCE_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:change source" --menu "1.警告!这会重置你的源列表 \
     2.事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 15 70 8 \
     "1" "使用termux-change-repo(推荐)" \
-    "2" "USTC 中国科技大学镜像站" \
-    "3" "BFSU 北京外国语大学镜像站" \
-    "4" "TUNA 清华大学镜像站" \
-    "5" "Njupt 南京邮电大学镜像站" \
-    "6" "Aliyun 阿里云镜像站" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        other_tool_page
+        other_tool_page 
     elif [ -z $SOURCE_CHOICE ];then
         other_tool_page
     fi
@@ -432,27 +424,7 @@ function change_source_page(){       #换源
             termux-change-repo
             exit 0
             ;;
-        2)
-            MIRRORSITE="mirrors.ustc.edu.cn"
-            ;;
-        3)
-            MIRRORSITE="mirrors.bfsu.edu.cn"
-            ;;
-        4)
-            MIRRORSITE="mirrors.tuna.tsinghua.edu.cn"
-            ;;
-        5)
-            MIRRORSITE="mirrors.njupt.edu.cn"
-            ;;
-        6)
-            MIRRORSITE="mirrors.aliyun.com"
-            ;;
     esac
-    echo "deb https://${MIRRORSITE}/termux/apt/termux-main stable main" > $PREFIX/etc/apt/sources.list
-    apt update -y
-    apt upgrade -y
-    dialog --noshadow --title "ntool-tui:change source success" --msgbox  "完成"
-    change_source_page
 }
 
 function desktop_page(){
