@@ -4,10 +4,8 @@
 #  屎  山  代  码  #
 #                  #
 ####################
-#也许你不知道，但这是一个高中生在课余时间写的一个垃圾屎山脚本
-#代码虽然是自己敲的
-#但是真的好jb的乱
-#以这也(一)许(定)后会成为一个烂尾工程吧
+#https://github.com/nnyyaa/ntool
+#这也(一)许(定)后会成为一个烂尾工程吧
 #chroot不会写(也许)(大概)(心虚)
 #嗯只要没有人催我就不写a_a
 #
@@ -202,7 +200,7 @@ function container_page(){      #容器OS选择
     CONTAINER_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
-    "0" "返回上一页")
+    "0" "返回上一页")       #我是鸽子咕咕咕，其他功能等我慢慢写
     exitstatus=$?
     if [ $exitstatus != 0 ];then
         main_page
@@ -293,13 +291,16 @@ function container_control_page(){
                 container_control_page
             fi
             container_install
+            exit 0
             ;;
         2)
             if [ ! -d ${CONTAINER_OS}-${VERNAME} ];then
                 dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你还没有安装这个容器" 15 70
                 container_control_page
             fi
+            dialog --title "ntool-tui:WARNING" --defaultno --yesno "警告！\n这会删除你在容器里的全部数据\n如果你不知道你在干什么，请取消" 15 70
             container_delete
+            exit 0
             ;;
     esac
 }
@@ -329,9 +330,9 @@ COMMAND+=" -b /proc"
 #不建议直接挂载sdcard
 #有隐私问题
 #COMMAND+=" -b /sdcard"
-#下面仅挂载HOME(默认)
-#如需修改请自行修改
-COMMAND+=" -b /data/data/com.termux/files/home:/root"
+#默认不挂载本机目录
+#下面一行为仅挂载termux里的HOME(默认注释)
+#COMMAND+=" -b /data/data/com.termux/files/home:/root"
 COMMAND+=" -w /root"
 COMMAND+=" /usr/bin/env -i"
 COMMAND+=" HOME=/root"
@@ -345,16 +346,13 @@ echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_group_add(){
-cat <<EOF>> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/bash.bashrc
-echo -e "请执行bash /etc/.ntool/groupadd.sh以解决这些group报错"
-EOF
-cat <<EOF> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
+cat << EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
 groupadd -g 50123 all_a123
 groupadd -g 99909997 u999_everybody
- sed -i '/groupadd.sh/d' /etc/bash.bashrc
+sed -i '/groupadd.sh/d' /etc/bash.bashrc
 rm -rf /etc/.ntool
 EOF
 }
@@ -388,21 +386,45 @@ function container_install(){
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/etc/resolv.conf
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/stub-resolv.conf
     sleep 0.3
-    echo -e "${GREEN}拉取源列表中.使用BFSU北京外国语大学镜像站${RESET}"
-    wget ${RAWURL}/sourcelist/${CONTAINER_OS}${VERNAME}.list -o ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list > /dev/null 2>&1
+    echo -e "${GREEN}换源中,使用BFSU北京外国语大学镜像站${RESET}"
+    case $CONTAINER_OS in
+        ubuntu)
+            sed -i 's/ports.ubuntu.com/mirrors.bfsu.edu.cn/g' ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list
+            ;;
+        debian)
+            sed -i 's/deb.debian.org/mirrors.bfsu.edu.cn/g' ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list
+            ;;
+    esac
     sleep 0.3
     echo -e "${GREEN}给予脚本执行权限${RESET}"
     chmod +x ${PREFIX}/bin/start${VERNAME}
     sleep 0.3
     echo -e "${GREEN}删除rootfs中${RESET}"
-    rm  ${CONTAINER_OS}-${VERNAME}.tar.xz
+    rm ${CONTAINER_OS}-${VERNAME}.tar.xz > /dev/null 2>&1
     sleep 0.3
-    echo -e "${GREEN}添加用户组中${RESET}"
-    mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/
-    write_group_add
+    echo -e "${GREEN}写入配置脚本中${RESET}"
+    if [ "$CONTAINER_OS" == "ubuntu" ] || [ "CONTAINER_OS" == "debian" ];then
+        write_group_add
+        echo ". setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
+        cat >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh <<- EOF
+        echo -e "${GREEN}正在配置，请稍等${RESET}"
+        bash /etc/.ntool/groupadd.sh
+        apt update
+        apt upgrade
+        apt install apt-transport-https -y
+        cd /usr/bin
+        mv `ls | grep perl` perl
+        apt install ca-certificates -y
+        echo -e "${GREEN}将http换为https${RESET}"
+        sed -i 's/http/https/g' /etc/apt/sources.list
+        apt update
+        apt install dialog whiptail wget curl aria2 -y
+        sed -i '/setup.sh/d' /etc/profile
+        echo -e "${GREEN}完成！开始使用你的${CONTAINER_OS}${VERCODE} ${VERNAME}${RESET}"
+EOF
+    fi
     sleep 0.3
-    dialog --noshadow --title "ntool-tui:success" --msgbox "成功安装${CONTAINER_OS} ${VERCODE} ${VERNAME},输入start${VERNAME}以启动" 15 70
-    container_control_page
+    dialog --noshadow --title "ntool-tui:success" --msgbox "安装${CONTAINER_OS}${VERCODE} ${VERNAME}成功\n输入start${VERNAME}启动容器并进行配置" 15 70
 }
 
 function change_source_page(){       #换源
