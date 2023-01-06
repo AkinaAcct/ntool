@@ -30,12 +30,28 @@ elif [ "${OS}" != "Android" ];then
     dialog --title "ntool-tui:WARNING" -msgbox "我还没适配除了Android以外的系统呢..."
     exit 0
 fi
-
+for pkgf in apt pacman yum;do
+    if command -v $pkgf > /dev/null;then
+        pkg="${pkgf}"
+        if [ "${pkg}" == "apt" ];then
+            pkgi="apt install"
+            pkguni="apt purge"
+            pkgup="apt update && apt upgrade"
+        fi
+    fi
+done
 cd ${HOME}
 mkdir -p .ntool
 #以下是shitcode之我自己都不认识的function（）
 function wait_for_dev_page(){
     dialog --noshadow --title "ntool-tui:developing page" --msgbox "正在开发" 15 70
+}
+
+function check_if_not_android_warning(){
+    if [ "${OS}" != "Android" ];then
+        dialog --noshadow --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
+        exit 0
+    fi
 }
 
 function bad_empty_input(){
@@ -60,7 +76,7 @@ function patch_frame_choose(){
     else
         termux_main_page
     fi
-    apt install openjdk-17 -y
+     install openjdk-17 -y
     patch_apk
 }
 
@@ -152,7 +168,7 @@ function backup_page(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-    			apt install tar -y 
+    			${pkgi} tar -y 
                 backup_page
             fi
             ;;
@@ -360,10 +376,9 @@ EOF
 }
 
 function container_install(){
-    apt update -y
-    apt upgrade -y
+    pkgup
     if command -v aria2c > /dev/null;then
-        apt install aria2 -y
+        ${pkgi} aria2 -y
     fi
     mkdir -p ${MAINPATH}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
@@ -453,50 +468,54 @@ function change_source_page(){       #换源
 
 function desktop_page(){
     clear
-    DESKTOP_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
-    "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
-    "2" "仅安装openbox(基础图形环境)" \
-    "0" "返回脚本主页面")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
-        termux_main_page
+    if command -v pip > /dev/null;then
+        DESKTOP_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
+        "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
+        "2" "仅安装openbox(基础图形环境)" \
+        "0" "返回脚本主页面")
+        exitstatus=$?
+        if [ $exitstatus != 0 ];then
+            termux_main_page
+        fi
+        case $DESKTOP_CHOICE in
+        0)
+            termux_main_page
+            ;;
+        1)
+            echo "安装中..."
+            ${pkgi} openbox pypanel xorg-xsetroot xfce tigervnc -y 
+            pip install PyXDG
+            cd /data/data/com.termux/files/usr/bin
+            echo -e "${BLUE}获取启动脚本中...${RESET}"
+            wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
+            chmod +x startxfce
+            echo -e "${GREEN}完成${RESET}"
+            echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
+            cd ~
+            read -p "按任意键以继续"
+            exit 0
+            ;;
+        2)
+            ${pkgi} openbox pypanel xorg-xsetroot tigervnc -y
+            pip install PyXDG
+            cd /data/data/com.termux/files/usr/bin
+            echo -e "${BLUE}获取启动脚本中...${RESET}"
+            wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
+            chmod +x startopenbox
+            echo -e "${GREEN}完成${RESET}"
+            echo -e "输入${GREEN}startopenbox${RESET}以启动"
+            cd ~
+            read -p "按任意键以继续"
+            exit 0
+            ;;
+        3)
+            wait_for_dev_page
+            desktop_page
+            ;;
+        esac
+    else
+            ${pkgi} python -y
     fi
-    case $DESKTOP_CHOICE in
-    0)
-        termux_main_page
-        ;;
-    1)
-        echo "安装中..."
-        apt install openbox pypanel xorg-xsetroot xfce tigervnc -y 
-        pip install PyXDG
-        cd /data/data/com.termux/files/usr/bin
-        echo -e "${BLUE}获取启动脚本中...${RESET}"
-        wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
-        chmod +x startxfce
-        echo -e "${GREEN}完成${RESET}"
-        echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
-        cd ~
-        read -p "按任意键以继续"
-        exit 0
-        ;;
-    2)
-        apt install openbox pypanel xorg-xsetroot tigervnc -y
-        pip install PyXDG
-        cd /data/data/com.termux/files/usr/bin
-        echo -e "${BLUE}获取启动脚本中...${RESET}"
-        wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
-        chmod +x startopenbox
-        echo -e "${GREEN}完成${RESET}"
-        echo -e "输入${GREEN}startopenbox${RESET}以启动"
-        cd ~
-        read -p "按任意键以继续"
-        exit 0
-        ;;
-    3)
-        wait_for_dev_page
-        desktop_page
-        ;;
-    esac
 }
 
 function other_tool_page(){			#这里是其他功能页的function
@@ -532,7 +551,7 @@ function ssh_check_install(){
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${GREEN}安装中...${RESET}"
-		apt install openssh -y 
+		${pkgi} openssh -y 
         echo -e "${GREEN}"
         echo "完成"
         read -p "按任意键以继续"
@@ -574,7 +593,7 @@ function ssh_page(){
 			else
 				echo "sshpass未安装"
 				echo "installing..."
-				apt install sshpass -y
+                ${pkgi} sshpass -y
 				ssh_page
 			fi
 			;;
@@ -626,7 +645,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "未安装ping，正在安装..."
-				apt install termux-tools -y
+				${pkgi} termux-tools -y
 				tool_page
 			fi
 			;;
@@ -646,7 +665,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "ping6未安装,正在安装..."
-				apt install termux-tools -y
+				${pkgi} termux-tools -y
 				tool_page
 			fi
 			;;
@@ -671,7 +690,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 		4)
 			echo "只支持openjdk17"
 			read -p "按任意键以继续"	#我好水啊（）
-			apt install openjdk-17 -y
+			${pkgi} openjdk-17 -y
 			echo "安装完成"
 			;;
 		5)
@@ -723,19 +742,19 @@ function web_page(){				#这里是其他功能-网络类页面function
 			other_tool_page
 			;;
 		1)
-			apt install nginx -y
+			${pkgi} nginx -y
 			echo "done"
 			;;
 		2)
-			apt install apache2 -y
+			${pkgi} apache2 -y
 			echo "done"
 			;;
 		3)
-			apt install php -y
+			${pkgi} php -y
 			echo "done"
 			;;
 		4)
-			apt install mariadb -y
+			${pkgi} mariadb -y
 			echo "done"
 			;;
 	esac
@@ -774,25 +793,32 @@ function termux_main_page(){
             other_tool_page
             ;;
         3)
-            backup_page 
+            check_if_not_termux_warning
+            backup_page
             ;;
         4)
-            local BC=$(dialog --noshadow --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
-            exitstatus=$?
-            if [ $exitstatus != 0 ];then
+            if command -v bc > /dev/null;then
+                local BC=$(dialog --noshadow --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
+                exitstatus=$?
+                if [ $exitstatus != 0 ];then
+                    termux_main_page
+                fi
+                echo "计算开始时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
+                echo "scale=${BC}; 4*a(1)" | bc -l -q >> ~/.ntool/pi.txt
+                echo "计算结束时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
+                dialog --noshadow --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
+                termux_main_page
+            else
+                ${pkgi} bc
                 termux_main_page
             fi
-            echo "计算开始时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
-            echo "scale=${BC}; 4*a(1)" | bc -l -q >> ~/.ntool/pi.txt
-            echo "计算结束时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
-            dialog --noshadow --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
-            termux_main_page
             ;;
         5)
             dialog --noshadow --title "ntool-一言" --msgbox "`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`" 15 70
             termux_main_page
             ;;
         6)
+            check_if_not_android_warning
             desktop_page
             ;;
         7)
@@ -806,7 +832,5 @@ cd ${HOME}
 mkdir -p .ntool
 cd .ntool
 wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
-if [ "${OS}" == "Android" ];then
-    termux_main_page
-fi
+termux_main_page
 exit 0
