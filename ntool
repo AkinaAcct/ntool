@@ -62,7 +62,7 @@ function patch_frame_choose(){
     if (dialog --noshadow --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
         PATCHCHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
         exitstatus=$?
-        if [ $exitstatus != 0];then
+        if [ $exitstatus != 0 ];then
             termux_main_page
         fi
         case $PATCHCHOICE in
@@ -76,7 +76,7 @@ function patch_frame_choose(){
     else
         termux_main_page
     fi
-     install openjdk-17 -y
+    ${pkgi} openjdk-17 -y
     patch_apk
 }
 
@@ -709,9 +709,6 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 
 function check_update(){			#这里是检查/升级的function
     cd ${MAINPATH}
-    if [ ! -a local_version ];then
-        echo "ERROR" > local_version
-    fi
     if [ "`cat latest_version`" != "`cat local_version`" ];then
         if (dialog --noshadow --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？ \n最新版:`cat latest_version` \n本地版本:`cat local_version`" 15 70);then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
