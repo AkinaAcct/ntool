@@ -11,7 +11,7 @@
 #以下颜色代码为预设
 RED="\E[1;31m"
 GREEN="\E[1;32m"
-YELOW="\E[1;33m"
+YELLOW="\E[1;33m"
 BLUE="\E[1;34m"
 PINK="\E[1;35m"
 RESET="\E[0m"
@@ -336,7 +336,7 @@ function container_delete(){
 }
 
 function script_write(){
-cat << EOF > $PREFIX/bin/start${VERNAME}
+cat <<- EOF > $PREFIX/bin/start${VERNAME}
 #!/data/data/com.termux/files/usr/bin/bash
 #ntool ${CONTAINER_OS}${VERCODE}:${VERNAME}启动脚本
 #嗯...复制也是可以的啦...我不在意...
@@ -369,7 +369,7 @@ echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_group_add(){
-cat << EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
+cat <<- EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
@@ -428,7 +428,7 @@ function container_install(){
     if [ "$CONTAINER_OS" == "ubuntu" ] || [ "CONTAINER_OS" == "debian" ];then
         write_group_add
         echo ". setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
-        cat >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh <<- EOF
+        cat <<- EOF >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh
         echo -e "${GREEN}正在配置，请稍等${RESET}"
         bash /etc/.ntool/groupadd.sh
         apt update
@@ -492,8 +492,25 @@ function desktop_page(){
             ${pkgi} openbox pypanel xorg-xsetroot xfce tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
-            echo -e "${BLUE}获取启动脚本中...${RESET}"
-            wget ${RAWURL}/desktop/startxfce -O startxfce > /dev/null 2>&1
+            echo -e "${BLUE}写入启动脚本中...${RESET}"
+            cat <<- "EOF" >> startxfce
+            #!/data/data/com.termux/files/usr/bin/bash
+            read -p "输入vnc启动端口:" port
+            if [ -z ${port} ];then
+                echo -e "${RED}不允许的空输入${RESET}"
+                startxfce
+                exit 0
+            fi
+            export DISPLAY=:${port}
+            Xvnc --SecurityTypes=None $DISPLAY &
+            sleep 1s
+            openbox-session&
+            xsetroot -solid gray
+            pypanel &
+            aterm &
+            startxfce4
+            echo -e "${GREEN}连接地址：127.0.0.1:${port}${RESET}"
+EOF
             chmod +x startxfce
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
@@ -506,8 +523,23 @@ function desktop_page(){
             ${pkgi} openbox pypanel xorg-xsetroot tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
-            echo -e "${BLUE}获取启动脚本中...${RESET}"
-            wget ${RAWURL}/desktop/startopenbox -O startopenbox > /dev/null 2>&1
+            echo -e "${BLUE}写入启动脚本中...${RESET}"
+            cat <<- "EOF" >> startopenbox
+            #!/data/data/com.termux/files/usr/bin/bash
+            read -p "输入vnc启动端口:" port
+            if [ -z ${port} ];then
+                echo -e "${RED}不允许的空输入${RESET}"
+                startopenbox
+                exit 0
+            fi
+            export DISPLAY=:${port}
+            Xvnc --SecurityTypes=None $DISPLAY &
+            sleep 1s
+            openbox-session
+            xsetroot -solid gray
+            pypanel &
+            echo "连接地址：127.0.0.1:${port}"
+EOF
             chmod +x startopenbox
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startopenbox${RESET}以启动"
@@ -516,6 +548,12 @@ function desktop_page(){
             exit 0
             ;;
         3)
+            command -v openbox > /dev/null 2>&1
+            exitstatus=$?
+            if [ $exitstatus = 1 ];then
+                dialog --title "ntool-tui:WARNING" --msgbox "你没有安装桌面!" 15 70
+                desktop_page
+            fi
             DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
             exitstatus=$?
             if [ ${exitstatus} != 0 ];then
@@ -523,12 +561,8 @@ function desktop_page(){
                 exit 0
             fi
             ${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce
-            exitstatus=$?
-            if [ ${exitstatus} = 0 ];then
-                dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
-            else
-                dialog --title "ntool-tui:failed" --msgbox "卸载失败\n这太糟糕了\n请试着手动卸载:\n${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce" 15 70
-            fi
+            rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
+            dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
             desktop_page
             ;;
         esac
@@ -791,7 +825,7 @@ function termux_main_page(){
     "0" "退出")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        echo -e "${BLUE}bye${RESET}"
+        echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
         exit 0
     fi
     case $mainchoice in 
@@ -799,7 +833,7 @@ function termux_main_page(){
 	        check_update
         	;;
         0)
-            echo -e "${BLUE}bye${RESET}"
+            echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
             exit 0
             ;;
         1)
