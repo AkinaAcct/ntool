@@ -43,8 +43,8 @@ done
 cd ${HOME}
 mkdir -p .ntool
 #以下是shitcode之我自己都不认识的function（）
-function wait_for_dev_page(){
-    dialog --title "ntool-tui:developing page" --msgbox "正在开发" 15 70
+function wait_for_dev_tui(){
+    dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
 }
 
 function check_if_not_android_warning(){
@@ -61,7 +61,7 @@ function bad_empty_input(){
 function patch_frame_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
         if [ $exitstatus != 0 ];then
-            termux_main_page
+            termux_main_tui
         fi
         PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
         exitstatus=$?
@@ -74,7 +74,7 @@ function patch_frame_choose(){
                 ;;
         esac
     else
-        termux_main_page
+        termux_main_tui
     fi
     ${pkgi} openjdk-17
     patch_apk
@@ -121,29 +121,29 @@ function patch_apk(){
     exit 0
 }
 
-function backup_page(){      #备份页面function
+function backup_tui(){      #备份页面function
     clear
-    backup_page_choice=$(dialog --output-fd 1 --title "ntool-tui:backup page" --menu "选择一个以继续" 15 70 8 \
+    backup_tui_choice=$(dialog --output-fd 1 --title "ntool-tui:backup tui" --menu "选择一个以继续" 15 70 8 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
     "3" "删除备份" )
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        termux_main_page
+        termux_main_tui
     fi
-    case $backup_page_choice in
+    case $backup_tui_choice in
         0)
-            termux_main_page
+            termux_main_tui
             ;;
         1)
             BACKUP_NAME=$(dialog --output-fd 1 --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份com.termux/files以提高速度) " 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
-                backup_page
+                backup_tui
             elif  [ -z $BACKUP_NAME ];then
                 bad_empty_input
-                backup_page
+                backup_tui
             fi
         	cd ~
         	if command -v tar > /dev/null;then
@@ -155,7 +155,7 @@ function backup_page(){      #备份页面function
                     sha1sum ${STORAGEPATH}/${BACKUP_NAME}.tgz > ${STORAGEPATH}/${BACKUP_NAME}.tgz.sha
     				echo -e "${GREEN}完成备份${RESET}"
                     read -p  "按任意键退出"
-                    backup_page
+                    backup_tui
                 else
                     echo -e "${RED}termux-setup-storage未执行${RESET}"
                     echo -e "${BLUE}执行中...${RESET}"
@@ -163,24 +163,24 @@ function backup_page(){      #备份页面function
     				termux-setup-storage
                     echo "${GREEN}完成${RESET}"
                     sleep 1 
-                    backup_page
+                    backup_tui
                 fi
             else
                 echo "tar未安装"
                 echo "start installing..."
     			${pkgi} tar
-                backup_page
+                backup_tui
             fi
             ;;
         2)
             RESTORE_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录！" --inputbox ${STORAGEPATH} 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
-                backup_page
+                backup_tui
                 exit 0
             elif [ -z $RESTORE_PATH ];then
                 bad_empty_input
-                backup_page
+                backup_tui
             fi 
             cd ~
             echo "比对sha中..."
@@ -194,62 +194,62 @@ function backup_page(){      #备份页面function
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
                 dialog --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 15 70
-                backup_page 
+                backup_tui 
             fi
             ;;
         3)
             DEL_BACKUP_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录" --fselect ${STORAGEPATH} 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
-                backup_page
+                backup_tui
             elif [ -z $DEL_BACKUP_PATH ];then
                 bad_empty_input
-                backup_page
+                backup_tui
             fi 
             rm -v ${DEL_BACKUP_PATH}
             rm -v ${DEL_BACKUP_PATH}.sha
             read -p "按任意键继续"
-            backup_page
+            backup_tui
             ;;
     esac
 }
 
-function container_page(){      #容器OS选择
+function container_tui(){      #容器OS选择
     CONTAINER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
     "0" "返回上一页")       #我是鸽子咕咕咕，其他功能等我慢慢写
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        main_page
+        termux_main_tui
     fi
     case $CONTAINER_CHOICE in
         0)
-            termux_main_page
+            termux_main_tui
             ;;
         1)
             CONTAINER_OS=ubuntu
-            ubuntu_version_page
+            ubuntu_version_tui
             ;;
         2)
             CONTAINER_OS=debian
-            debian_version_page
+            debian_version_tui
             ;;
     esac
 }
 
-function debian_version_page(){     #Debian版本选择
+function debian_version_tui(){     #Debian版本选择
     DEBIAN_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Debian Version" --menu "选择一个以继续 \n同版本不可二次安装，不同版本可以哦" 15 70 8 \
     "1" "Debian10 Buster" \
     "2" "Debian11 Bullseye" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        container_page
+        container_tui
     fi
     case $DEBIAN_VER_CHOICE in
         0)
-            container_page
+            container_tui
             ;;
         1)
             VERCODE="10"
@@ -260,22 +260,22 @@ function debian_version_page(){     #Debian版本选择
             VERNAME="bullseye"
             ;;
     esac
-    container_control_page
+    container_control_tui
 }
 
-function ubuntu_version_page(){     #Ubuntu版本选择
+function ubuntu_version_tui(){     #Ubuntu版本选择
     cd ${MAINPATH}
-    UBUNTU_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续 15 60 8 \n同版本不可二次安装，不同版本可以哦" 15 70 7 \
+    UBUNTU_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续\n同版本不可二次安装，不同版本可以哦" 15 70 8 \
     "1" "Ubuntu22.04 Jammy Jellyfish" \
     "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        container_page
+        container_tui
     fi
     case $UBUNTU_VER_CHOICE in 
         0)
-            container_page
+            container_tui
             ;;
         1)
             VERCODE="22.04"
@@ -286,10 +286,10 @@ function ubuntu_version_page(){     #Ubuntu版本选择
             VERNAME="focal"
             ;;
     esac
-    container_control_page
+    container_control_tui
 }
 
-function container_control_page(){
+function container_control_tui(){
     clear
     CCPAGECHOICE=$(dialog --output-fd 1 --title "ntool-tui:container control" --menu "${CONTAINER_OS}${VERCODE} ${VERNAME}管理页面 \n选择一个以继续" 15 70 8 \
     "1" "安装" \
@@ -297,16 +297,16 @@ function container_control_page(){
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        container_page
+        container_tui
     fi
     case $CCPAGECHOICE in
         0)
-            container_page
+            container_tui
             ;;
         1)
             if [ -d ${CONTAINER_OS}-${VERNAME} ];then
                 dialog --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
-                container_control_page
+                container_control_tui
             fi
             container_install
             exit 0
@@ -314,12 +314,12 @@ function container_control_page(){
         2)
             if [ ! -d ${CONTAINER_OS}-${VERNAME} ];then
                 dialog --title "ntool-tui:WARNING" --msgbox "你还没有安装这个容器" 15 70
-                container_control_page
+                container_control_tui
             fi
             dialog --title "ntool-tui:WARNING" --defaultno --yesno "警告！\n这会删除你在容器里的全部数据\n如果你不知道你在干什么，请取消" 15 70
             exitstatus=$?
             if [ $exitstatus != 0 ];then
-                container_control_page
+                container_control_tui
                 exit 0
             fi
             container_delete
@@ -332,7 +332,7 @@ function container_delete(){
     rm -rvf ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     rm -v $PREFIX/bin/start${VERNAME}
     dialog --title "ntool-tui:success" --msgbox "删除完成" 15 70
-    container_page
+    container_tui
 }
 
 function script_write(){
@@ -425,9 +425,9 @@ function container_install(){
     rm ${CONTAINER_OS}-${VERNAME}.tar.xz > /dev/null 2>&1
     sleep 0.3
     echo -e "${GREEN}写入配置脚本中${RESET}"
+    write_group_add
     if [ "$CONTAINER_OS" == "ubuntu" ] || [ "CONTAINER_OS" == "debian" ];then
-        write_group_add
-        echo ". setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
+                echo ". setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
         cat <<- EOF >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh
         echo -e "${GREEN}正在配置，请稍等${RESET}"
         bash /etc/.ntool/groupadd.sh
@@ -449,20 +449,20 @@ EOF
     dialog --title "ntool-tui:success" --msgbox "安装${CONTAINER_OS}${VERCODE} ${VERNAME}成功\n输入start${VERNAME}启动容器并进行配置" 15 70
 }
 
-function change_source_page(){       #换源
+function change_source_tui(){       #换源
     SOURCE_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:change source" --menu "1.警告!这会重置你的源列表 \
     2.事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 15 70 8 \
     "1" "使用termux-change-repo(推荐)" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        other_tool_page 
+        other_tool_tui 
     elif [ -z $SOURCE_CHOICE ];then
-        other_tool_page
+        other_tool_tui
     fi
     case $SOURCE_CHOICE in 
         0)
-            other_tool_page
+            other_tool_tui
             ;;
         1)
             termux-change-repo
@@ -471,7 +471,7 @@ function change_source_page(){       #换源
     esac
 }
 
-function desktop_page(){
+function desktop_tui(){
     clear
     if command -v pip > /dev/null;then
         DESKTOP_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
@@ -481,11 +481,11 @@ function desktop_page(){
         "0" "返回脚本主页面")
         exitstatus=$?
         if [ $exitstatus != 0 ];then
-            termux_main_page
+            termux_main_tui
         fi
         case $DESKTOP_CHOICE in
         0)
-            termux_main_page
+            termux_main_tui
             ;;
         1)
             echo -e "${GREEN}安装中...${RESET}"
@@ -552,18 +552,18 @@ EOF
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 dialog --title "ntool-tui:WARNING" --msgbox "你没有安装桌面!" 15 70
-                desktop_page
+                desktop_tui
             fi
             DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
             exitstatus=$?
             if [ ${exitstatus} != 0 ];then
-                desktop_page
+                desktop_tui
                 exit 0
             fi
             ${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce
             rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
             dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
-            desktop_page
+            desktop_tui
             ;;
         esac
     else
@@ -571,28 +571,28 @@ EOF
     fi
 }
 
-function other_tool_page(){			#这里是其他功能页的function
-    OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 70 8 \
+function other_tool_tui(){			#这里是其他功能页的function
+    OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "网络页面" \
     "2" "工具页面" \
     "3" "换源" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        termux_main_page
+        termux_main_tui
     fi
     case $OTPC in 
         0)
-		    termux_main_page
+		    termux_main_tui
             ;;
         1)
-            web_page
+            web_tui
             ;;
 	    2)
-	    	tool_page
+	    	tool_tui
 		    ;;
         3)
-            change_source_page
+            change_source_tui
     esac
 }
 
@@ -600,7 +600,7 @@ function ssh_check_install(){
 	clear
 	if command -v ssh;then
 		dialog --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 15 70
-		ssh_page
+		ssh_tui
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${GREEN}安装中...${RESET}"
@@ -613,20 +613,20 @@ function ssh_check_install(){
 	fi
 }
 
-function ssh_page(){
+function ssh_tui(){
 	clear
-    SSH_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:ssh page" --menu "选择一个以继续" 15 70 8 \
+    SSH_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:ssh tui" --menu "选择一个以继续" 15 70 8 \
     "1" "打开sshd服务(让他人连接)" \
     "2" "通过密码连接远程服务器" \
     "3" "生成密钥" \
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        tool_page
+        tool_tui
     fi
 	case $SSH_CHOICE in
 		0)
-			tool_page
+			tool_tui
 			;;
 		1)
 			sshd
@@ -647,19 +647,19 @@ function ssh_page(){
 				echo "sshpass未安装"
 				echo "installing..."
                 ${pkgi} sshpass
-				ssh_page
+				ssh_tui
 			fi
 			;;
 		3)
-            wait_for_dev_page
-            ssh_page
+            wait_for_dev_tui
+            ssh_tui
 			;;
 	esac
 }
 
-function tool_page(){			#这里是其它工具-工具类页面的function
+function tool_tui(){			#这里是其它工具-工具类页面的function
 	clear
-    TPC=$(dialog --output-fd 1 --title "ntool-tui:tool page" --menu "选择一个以继续" 15 70 8 \
+    TPC=$(dialog --output-fd 1 --title "ntool-tui:tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "ping" \
     "2" "ping6" \
     "3" "文件查找" \
@@ -670,11 +670,11 @@ function tool_page(){			#这里是其它工具-工具类页面的function
     "0" "返回上一页")
     exitstatus=$?
     if [ $exitstatus != 0 ];then
-        other_tool_page
+        other_tool_tui
     fi
 	case $TPC in
 		0)
-			other_tool_page
+			other_tool_tui
 			;;
 		00)
 			echo "启 动 私 货"
@@ -690,7 +690,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 local size=$(dialog --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
-                    tool_page
+                    tool_tui
                 else 
                     echo -e "${BLUE}start ping${RESET}"
     				ping -i ${speed} -c${times} -s ${size} ${ip}
@@ -699,7 +699,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			else
 				echo "未安装ping，正在安装..."
 				${pkgi} termux-tools
-				tool_page
+				tool_tui
 			fi
 			;;
 		2)
@@ -710,7 +710,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 local size=$(dialog --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
-                    tool_page
+                    tool_tui
                 else
                     echo -e "${BLUE}start ping${RESET}"
                     ping6 -i ${speed} -c${time} -s ${size} ${ip}
@@ -719,7 +719,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			else
 				echo "ping6未安装,正在安装..."
 				${pkgi} termux-tools
-				tool_page
+				tool_tui
 			fi
 			;;
 		3)
@@ -738,7 +738,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
             echo -e "${GREEN}复制一份于~/filesearchresult"
             read -p "按回车继续"
             echo -e "$RESET"
-            tool_page
+            tool_tui
 			;;
 		4)
 			echo "只支持openjdk17"
@@ -754,7 +754,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 			sleep 2
 			echo -e "真是个笨蛋!!${RESET}"
 			sleep 2
-			tool_page
+			tool_tui
 			;;
 	esac
     exit 0
@@ -766,18 +766,18 @@ function check_update(){			#这里是检查/升级的function
         if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？ \n最新版:`cat latest_version` \n本地版本:`cat local_version`" 15 70);then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
-            termux_main_page
+            termux_main_tui
         fi
     else
         dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
-        termux_main_page
+        termux_main_tui
     fi 
 }
 
-function web_page(){				#这里是其他功能-网络类页面function
+function web_tui(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(dialog --output-fd 1 --title "ntool-tui:web page" --menu "选择一个以继续" 15 70 8 \
+    webc=$(dialog --output-fd 1 --title "ntool-tui:web tui" --menu "选择一个以继续" 15 70 8 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
     "3" "安装php环境" \
@@ -785,11 +785,11 @@ function web_page(){				#这里是其他功能-网络类页面function
     "0" "返回上一页")
     exitstatus=$?
 	if [ $exitstatus != 0 ];then
-        other_tool_page
+        other_tool_tui
     fi
 	case $webc in
 		0)
-			other_tool_page
+			other_tool_tui
 			;;
 		1)
 			${pkgi} nginx
@@ -810,10 +810,10 @@ function web_page(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-function termux_main_page(){
+function termux_main_tui(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main page" --menu "一言:`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null` \n选择一个以继续" 15 70 8  \
+    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null` \n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
@@ -821,6 +821,7 @@ function termux_main_page(){
     "5" "一言" \
     "6" "原系统桌面" \
     "7" "LSPatch/XPatch功能" \
+    "8" "ntafetch-使用ntafetch作为motd" \
     "00" "更新" \
     "0" "退出")
     exitstatus=$?
@@ -837,42 +838,50 @@ function termux_main_page(){
             exit 0
             ;;
         1)
-            container_page
+            container_tui
             ;;
         2)
-            other_tool_page
+            other_tool_tui
             ;;
         3)
             check_if_not_termux_warning
-            backup_page
+            backup_tui
             ;;
         4)
             if command -v bc > /dev/null;then
                 local BC=$(dialog --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
                 exitstatus=$?
                 if [ $exitstatus != 0 ];then
-                    termux_main_page
+                    termux_main_tui
                 fi
                 echo "计算开始时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
                 echo "scale=${BC}; 4*a(1)" | bc -l -q >> ~/.ntool/pi.txt
                 echo "计算结束时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
                 dialog --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
-                termux_main_page
+                termux_main_tui
             else
                 ${pkgi} bc
-                termux_main_page
+                termux_main_tui
             fi
             ;;
         5)
             dialog --title "ntool-一言" --msgbox "`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`" 15 70
-            termux_main_page
+            termux_main_tui
             ;;
         6)
             check_if_not_android_warning
-            desktop_page
+            desktop_tui
             ;;
         7)
             patch_frame_choose
+            ;;
+        8)
+            if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为${RED}没有经过足够的测试" 15 70);then
+                wait_for_dev_tui
+                termux_main_tui
+            else
+                termux_main_tui
+            fi
             ;;
     esac
 }
@@ -881,5 +890,5 @@ echo -e "${GREEN}正在获取最新版本号...${RESET}"
 mkdir -p .ntool
 cd .ntool
 wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
-termux_main_page
+termux_main_tui
 exit 0
