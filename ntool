@@ -25,17 +25,17 @@ MAINPATH="${HOME}/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
 
 if [ "${ARCH}" != "arm64" ];then
-    dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
+    dialog --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
 elif [ "${OS}" != "Android" ];then
     dialog --title "ntool-tui:WARNING" -msgbox "我还没适配除了Android以外的系统呢..."
     exit 0
 fi
-for pkgf in apt pacman yum;do
-    if command -v $pkgf > /dev/null;then
-        pkg="${pkgf}"
+for i in apt pacman yum;do
+    if command -v ${i} > /dev/null;then
+        pkg="${i}"
         if [ "${pkg}" == "apt" ];then
-            pkgi="apt install"
-            pkguni="apt purge"
+            pkgi="apt install -y"
+            pkguni="apt purge -y"
             pkgup="apt update && apt upgrade"
         fi
     fi
@@ -44,28 +44,28 @@ cd ${HOME}
 mkdir -p .ntool
 #以下是shitcode之我自己都不认识的function（）
 function wait_for_dev_page(){
-    dialog --noshadow --title "ntool-tui:developing page" --msgbox "正在开发" 15 70
+    dialog --title "ntool-tui:developing page" --msgbox "正在开发" 15 70
 }
 
 function check_if_not_android_warning(){
     if [ "${OS}" != "Android" ];then
-        dialog --noshadow --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
+        dialog --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
         exit 0
     fi
 }
 
 function bad_empty_input(){
-    dialog --noshadow --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
+    dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
 
 function patch_frame_choose(){
-    if (dialog --noshadow --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
-        PATCHCHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
-        exitstatus=$?
+    if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
         if [ $exitstatus != 0 ];then
             termux_main_page
         fi
-        case $PATCHCHOICE in
+        PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
+        exitstatus=$?
+            case $PATCHCHOICE in
             1)
                 PATCHFRAME="xpatch"
                 ;;
@@ -76,12 +76,12 @@ function patch_frame_choose(){
     else
         termux_main_page
     fi
-    ${pkgi} openjdk-17 -y
+    ${pkgi} openjdk-17
     patch_apk
 }
 
 function patch_apk(){
-    APKPATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n不是apk文件的上一级目录!!!" 15 70)
     exitstatus=$?
     if [ $exitstatus != 0 ];then
         patch_frame_choose
@@ -104,10 +104,10 @@ function patch_apk(){
         fi
     fi
     if [ ! -f ${APKPATH} ];then
-        dialog --noshadow --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n检查是否输入错误或有无给予内置存储权限" 15 70
+        dialog --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n检查是否输入错误或有无给予内置存储权限" 15 70
         patch_apk
     fi
-    MODULEPATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    MODULEPATH=$(dialog --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n不是apk文件的上一级目录!!!" 15 70)
     echo -e "${BLUE}可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
     if [ "$PATCHFRAME" == "xpatch" ];then
         java -jar ${MAINPATH}/patchedapks/xpatch.jar ${APKPATH} -xm ${MODULEPATH} -o /sdcard/xpatchedapk.apk
@@ -123,7 +123,7 @@ function patch_apk(){
 
 function backup_page(){      #备份页面function
     clear
-    backup_page_choice=$(dialog --noshadow --output-fd 1 --title "ntool-tui:backup page" --menu "选择一个以继续" 15 70 8 \
+    backup_page_choice=$(dialog --output-fd 1 --title "ntool-tui:backup page" --menu "选择一个以继续" 15 70 8 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
     "2" "恢复备份" \
@@ -137,7 +137,7 @@ function backup_page(){      #备份页面function
             termux_main_page
             ;;
         1)
-            BACKUP_NAME=$(dialog --noshadow --output-fd 1 --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份com.termux/files以提高速度) " 15 70)
+            BACKUP_NAME=$(dialog --output-fd 1 --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份com.termux/files以提高速度) " 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
                 backup_page
@@ -148,7 +148,7 @@ function backup_page(){      #备份页面function
         	cd ~
         	if command -v tar > /dev/null;then
                 if [ -d storage ];then
-                    dialog --noshadow --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 15 70
+                    dialog --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 15 70
                     cd /data/data/com.termux/
                     tar -cvpzf ${STORAGEPATH}/${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
@@ -168,12 +168,12 @@ function backup_page(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-    			${pkgi} tar -y 
+    			${pkgi} tar
                 backup_page
             fi
             ;;
         2)
-            RESTORE_PATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录！" --inputbox ${STORAGEPATH} 15 70)
+            RESTORE_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录！" --inputbox ${STORAGEPATH} 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
                 backup_page
@@ -193,12 +193,12 @@ function backup_page(){      #备份页面function
                 tar -xvpzf ${RESTORE_PATH} -C /data/data/com.termux/
                 echo -e  "${GREEN}完成，重启生效，按回车以退出${RESET}"
             else
-                dialog --noshadow --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 15 70
+                dialog --title "ntool-tui:WARNING" --msgbox "警告:不匹配的sha值!不进行恢复" 15 70
                 backup_page 
             fi
             ;;
         3)
-            DEL_BACKUP_PATH=$(dialog --noshadow --output-fd 1 --title "ntool-tui:输入完整目录" --fselect ${STORAGEPATH} 15 70)
+            DEL_BACKUP_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录" --fselect ${STORAGEPATH} 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
                 backup_page
@@ -215,7 +215,7 @@ function backup_page(){      #备份页面function
 }
 
 function container_page(){      #容器OS选择
-    CONTAINER_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
+    CONTAINER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
     "0" "返回上一页")       #我是鸽子咕咕咕，其他功能等我慢慢写
@@ -239,7 +239,7 @@ function container_page(){      #容器OS选择
 }
 
 function debian_version_page(){     #Debian版本选择
-    DEBIAN_VER_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:Debian Version" --menu "选择一个以继续 \n同版本不可二次安装，不同版本可以哦" 15 70 8 \
+    DEBIAN_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Debian Version" --menu "选择一个以继续 \n同版本不可二次安装，不同版本可以哦" 15 70 8 \
     "1" "Debian10 Buster" \
     "2" "Debian11 Bullseye" \
     "0" "返回上一页")
@@ -265,7 +265,7 @@ function debian_version_page(){     #Debian版本选择
 
 function ubuntu_version_page(){     #Ubuntu版本选择
     cd ${MAINPATH}
-    UBUNTU_VER_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续 15 60 8 \n同版本不可二次安装，不同版本可以哦" 15 70 7 \
+    UBUNTU_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续 15 60 8 \n同版本不可二次安装，不同版本可以哦" 15 70 7 \
     "1" "Ubuntu22.04 Jammy Jellyfish" \
     "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页")
@@ -291,7 +291,7 @@ function ubuntu_version_page(){     #Ubuntu版本选择
 
 function container_control_page(){
     clear
-    CCPAGECHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:container control" --menu "${CONTAINER_OS}${VERCODE} ${VERNAME}管理页面 \n选择一个以继续" 15 70 8 \
+    CCPAGECHOICE=$(dialog --output-fd 1 --title "ntool-tui:container control" --menu "${CONTAINER_OS}${VERCODE} ${VERNAME}管理页面 \n选择一个以继续" 15 70 8 \
     "1" "安装" \
     "2" "卸载" \
     "0" "返回上一页")
@@ -305,7 +305,7 @@ function container_control_page(){
             ;;
         1)
             if [ -d ${CONTAINER_OS}-${VERNAME} ];then
-                dialog --noshadow --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
+                dialog --title "ntool-tui:WARNING" --msgbox "不允许的二次安装" 15 70
                 container_control_page
             fi
             container_install
@@ -313,10 +313,15 @@ function container_control_page(){
             ;;
         2)
             if [ ! -d ${CONTAINER_OS}-${VERNAME} ];then
-                dialog --noshadow --title "ntool-tui:WARNING" --msgbox "你还没有安装这个容器" 15 70
+                dialog --title "ntool-tui:WARNING" --msgbox "你还没有安装这个容器" 15 70
                 container_control_page
             fi
             dialog --title "ntool-tui:WARNING" --defaultno --yesno "警告！\n这会删除你在容器里的全部数据\n如果你不知道你在干什么，请取消" 15 70
+            exitstatus=$?
+            if [ $exitstatus != 0 ];then
+                container_control_page
+                exit 0
+            fi
             container_delete
             exit 0
             ;;
@@ -326,7 +331,7 @@ function container_control_page(){
 function container_delete(){
     rm -rvf ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     rm -v $PREFIX/bin/start${VERNAME}
-    dialog --noshadow --title "ntool-tui:success" --msgbox "删除完成" 15 70
+    dialog --title "ntool-tui:success" --msgbox "删除完成" 15 70
     container_page
 }
 
@@ -378,7 +383,7 @@ EOF
 function container_install(){
     pkgup
     if command -v aria2c > /dev/null;then
-        ${pkgi} aria2 -y
+        ${pkgi} aria2
     fi
     mkdir -p ${MAINPATH}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
@@ -441,11 +446,11 @@ function container_install(){
 EOF
     fi
     sleep 0.3
-    dialog --noshadow --title "ntool-tui:success" --msgbox "安装${CONTAINER_OS}${VERCODE} ${VERNAME}成功\n输入start${VERNAME}启动容器并进行配置" 15 70
+    dialog --title "ntool-tui:success" --msgbox "安装${CONTAINER_OS}${VERCODE} ${VERNAME}成功\n输入start${VERNAME}启动容器并进行配置" 15 70
 }
 
 function change_source_page(){       #换源
-    SOURCE_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:change source" --menu "1.警告!这会重置你的源列表 \
+    SOURCE_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:change source" --menu "1.警告!这会重置你的源列表 \
     2.事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 15 70 8 \
     "1" "使用termux-change-repo(推荐)" \
     "0" "返回上一页")
@@ -469,9 +474,10 @@ function change_source_page(){       #换源
 function desktop_page(){
     clear
     if command -v pip > /dev/null;then
-        DESKTOP_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
+        DESKTOP_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
         "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
         "2" "仅安装openbox(基础图形环境)" \
+        "3" "卸载" \
         "0" "返回脚本主页面")
         exitstatus=$?
         if [ $exitstatus != 0 ];then
@@ -482,8 +488,8 @@ function desktop_page(){
             termux_main_page
             ;;
         1)
-            echo "安装中..."
-            ${pkgi} openbox pypanel xorg-xsetroot xfce tigervnc -y 
+            echo -e "${GREEN}安装中...${RESET}"
+            ${pkgi} openbox pypanel xorg-xsetroot xfce tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
             echo -e "${BLUE}获取启动脚本中...${RESET}"
@@ -496,7 +502,8 @@ function desktop_page(){
             exit 0
             ;;
         2)
-            ${pkgi} openbox pypanel xorg-xsetroot tigervnc -y
+            echo -e "${GREEN}${RESET}"
+            ${pkgi} openbox pypanel xorg-xsetroot tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
             echo -e "${BLUE}获取启动脚本中...${RESET}"
@@ -509,17 +516,29 @@ function desktop_page(){
             exit 0
             ;;
         3)
-            wait_for_dev_page
+            DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
+            exitstatus=$?
+            if [ ${exitstatus} != 0 ];then
+                desktop_page
+                exit 0
+            fi
+            ${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce
+            exitstatus=$?
+            if [ ${exitstatus} = 0 ];then
+                dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
+            else
+                dialog --title "ntool-tui:failed" --msgbox "卸载失败\n这太糟糕了\n请试着手动卸载:\n${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce" 15 70
+            fi
             desktop_page
             ;;
         esac
     else
-            ${pkgi} python -y
+            ${pkgi} python
     fi
 }
 
 function other_tool_page(){			#这里是其他功能页的function
-    OTPC=$(dialog --noshadow --output-fd 1 --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 70 8 \
+    OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool page" --menu "选择一个以继续" 15 70 8 \
     "1" "网络页面" \
     "2" "工具页面" \
     "3" "换源" \
@@ -546,12 +565,12 @@ function other_tool_page(){			#这里是其他功能页的function
 function ssh_check_install(){
 	clear
 	if command -v ssh;then
-		dialog --noshadow --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 15 70
+		dialog --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 15 70
 		ssh_page
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${GREEN}安装中...${RESET}"
-		${pkgi} openssh -y 
+		${pkgi} openssh
         echo -e "${GREEN}"
         echo "完成"
         read -p "按任意键以继续"
@@ -562,7 +581,7 @@ function ssh_check_install(){
 
 function ssh_page(){
 	clear
-    SSH_CHOICE=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ssh page" --menu "选择一个以继续" 15 70 8 \
+    SSH_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:ssh page" --menu "选择一个以继续" 15 70 8 \
     "1" "打开sshd服务(让他人连接)" \
     "2" "通过密码连接远程服务器" \
     "3" "生成密钥" \
@@ -593,7 +612,7 @@ function ssh_page(){
 			else
 				echo "sshpass未安装"
 				echo "installing..."
-                ${pkgi} sshpass -y
+                ${pkgi} sshpass
 				ssh_page
 			fi
 			;;
@@ -606,7 +625,7 @@ function ssh_page(){
 
 function tool_page(){			#这里是其它工具-工具类页面的function
 	clear
-    TPC=$(dialog --noshadow --output-fd 1 --title "ntool-tui:tool page" --menu "选择一个以继续" 15 70 8 \
+    TPC=$(dialog --output-fd 1 --title "ntool-tui:tool page" --menu "选择一个以继续" 15 70 8 \
     "1" "ping" \
     "2" "ping6" \
     "3" "文件查找" \
@@ -631,10 +650,10 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 
 		1)
 			if command -v ping > /dev/null;then
-                local ip=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
-                local time=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
-                local speed=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
-                local size=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
+                local ip=$(dialog --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
+                local time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
+                local speed=$(dialog --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
+                local size=$(dialog --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_page
@@ -645,16 +664,16 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "未安装ping，正在安装..."
-				${pkgi} termux-tools -y
+				${pkgi} termux-tools
 				tool_page
 			fi
 			;;
 		2)
 			if command -v ping6 > /dev/null;then
-                local ip=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)"15 70)
-                local time=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 70)
-                local speed=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
-                local size=$(dialog --noshadow --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
+                local ip=$(dialog --output-fd 1 --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)"15 70)
+                local time=$(dialog --output-fd 1 --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 70)
+                local speed=$(dialog --output-fd 1 --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
+                local size=$(dialog --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_page
@@ -665,13 +684,13 @@ function tool_page(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "ping6未安装,正在安装..."
-				${pkgi} termux-tools -y
+				${pkgi} termux-tools
 				tool_page
 			fi
 			;;
 		3)
-            local filename=$(dialog --noshadow --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的文件:" 15 70)
-            local filepath=$(dialog --noshadow --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的目录:" 15 70)
+            local filename=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的文件:" 15 70)
+            local filepath=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的目录:" 15 70)
             if [ -z $filename ] || [ -z $filepath ];then
                 bad_empty_input
             fi
@@ -690,7 +709,7 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 		4)
 			echo "只支持openjdk17"
 			read -p "按任意键以继续"	#我好水啊（）
-			${pkgi} openjdk-17 -y
+			${pkgi} openjdk-17
 			echo "安装完成"
 			;;
 		5)
@@ -710,13 +729,13 @@ function tool_page(){			#这里是其它工具-工具类页面的function
 function check_update(){			#这里是检查/升级的function
     cd ${MAINPATH}
     if [ "`cat latest_version`" != "`cat local_version`" ];then
-        if (dialog --noshadow --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？ \n最新版:`cat latest_version` \n本地版本:`cat local_version`" 15 70);then 
+        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？ \n最新版:`cat latest_version` \n本地版本:`cat local_version`" 15 70);then 
             bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
         else
             termux_main_page
         fi
     else
-        dialog --noshadow --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
+        dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
         termux_main_page
     fi 
 }
@@ -724,7 +743,7 @@ function check_update(){			#这里是检查/升级的function
 function web_page(){				#这里是其他功能-网络类页面function
 	clear
 	#echo "这里是最水的页面（doge）"
-    webc=$(dialog --noshadow --output-fd 1 --title "ntool-tui:web page" --menu "选择一个以继续" 15 70 8 \
+    webc=$(dialog --output-fd 1 --title "ntool-tui:web page" --menu "选择一个以继续" 15 70 8 \
     "1" "安装Nginx" \
     "2" "安装Apache2" \
     "3" "安装php环境" \
@@ -739,19 +758,19 @@ function web_page(){				#这里是其他功能-网络类页面function
 			other_tool_page
 			;;
 		1)
-			${pkgi} nginx -y
+			${pkgi} nginx
 			echo "done"
 			;;
 		2)
-			${pkgi} apache2 -y
+			${pkgi} apache2
 			echo "done"
 			;;
 		3)
-			${pkgi} php -y
+			${pkgi} php
 			echo "done"
 			;;
 		4)
-			${pkgi} mariadb -y
+			${pkgi} mariadb
 			echo "done"
 			;;
 	esac
@@ -760,7 +779,7 @@ function web_page(){				#这里是其他功能-网络类页面function
 function termux_main_page(){
     clear
     cd ${MAINPATH}
-    mainchoice=$(dialog --noshadow --output-fd 1 --title "ntool-tui:main page" --menu "一言:`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null` \n选择一个以继续" 15 70 8  \
+    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main page" --menu "一言:`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null` \n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
@@ -795,7 +814,7 @@ function termux_main_page(){
             ;;
         4)
             if command -v bc > /dev/null;then
-                local BC=$(dialog --noshadow --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
+                local BC=$(dialog --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
                 exitstatus=$?
                 if [ $exitstatus != 0 ];then
                     termux_main_page
@@ -803,7 +822,7 @@ function termux_main_page(){
                 echo "计算开始时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
                 echo "scale=${BC}; 4*a(1)" | bc -l -q >> ~/.ntool/pi.txt
                 echo "计算结束时间:`date '+%Y-%m-%d %H:%M:%S'`" >> ~/.ntool/pi.txt
-                dialog --noshadow --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
+                dialog --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
                 termux_main_page
             else
                 ${pkgi} bc
@@ -811,7 +830,7 @@ function termux_main_page(){
             fi
             ;;
         5)
-            dialog --noshadow --title "ntool-一言" --msgbox "`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`" 15 70
+            dialog --title "ntool-一言" --msgbox "`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null`" 15 70
             termux_main_page
             ;;
         6)
@@ -825,7 +844,6 @@ function termux_main_page(){
 }
 clear
 echo -e "${GREEN}正在获取最新版本号...${RESET}"
-cd ${HOME}
 mkdir -p .ntool
 cd .ntool
 wget ${RAWURL}/version -O latest_version > /dev/null 2>&1
