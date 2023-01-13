@@ -480,7 +480,7 @@ function change_source_tui(){       #换源
     esac
 }
 
-function desktop_tui(){
+function termux_install_gui_tui(){
     if command -v pip > /dev/null;then
         DESKTOP_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
         "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
@@ -560,18 +560,18 @@ EOF
             exitstatus=$?
             if [ $exitstatus = 1 ];then
                 dialog --title "ntool-tui:WARNING" --msgbox "你没有安装桌面!" 15 70
-                desktop_tui
+                termux_install_gui_tui
             fi
             DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
             exitstatus=$?
             if [ ${exitstatus} != 0 ];then
-                desktop_tui
+                termux_install_gui_tui
                 exit 0
             fi
             ${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce
             rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
             dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
-            desktop_tui
+            termux_install_gui_tui
             ;;
         esac
     else
@@ -873,7 +873,7 @@ function termux_main_tui(){
             ;;
         6)
             check_if_not_android_warning
-            desktop_tui
+            termux_install_gui_tui
             ;;
         7)
             patch_frame_choose
