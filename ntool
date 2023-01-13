@@ -378,7 +378,7 @@ echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_group_add(){
-cat -<< EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
+cat << EOF >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
