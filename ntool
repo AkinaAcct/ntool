@@ -42,22 +42,20 @@ for i in apt pacman yum;do
 done
 cd ${HOME}
 mkdir -p .ntool
-#以下是shitcode之我自己都不认识的function（）
+#常用功能function（）
 function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
 }
-
 function check_if_not_android_warning(){
     if [ "${OS}" != "Android" ];then
         dialog --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
         exit 0
     fi
 }
-
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
-
+#########################正式tui function
 function patch_frame_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
         if [ $exitstatus != 0 ];then
@@ -122,7 +120,6 @@ function patch_apk(){
 }
 
 function backup_tui(){      #备份页面function
-    clear
     backup_tui_choice=$(dialog --output-fd 1 --title "ntool-tui:backup tui" --menu "选择一个以继续" 15 70 8 \
     "0" "返回脚本主页" \
     "1" "备份termux" \
@@ -290,7 +287,6 @@ function ubuntu_version_tui(){     #Ubuntu版本选择
 }
 
 function container_control_tui(){
-    clear
     CCPAGECHOICE=$(dialog --output-fd 1 --title "ntool-tui:container control" --menu "${CONTAINER_OS}${VERCODE} ${VERNAME}管理页面 \n选择一个以继续" 15 70 8 \
     "1" "安装" \
     "2" "卸载" \
@@ -369,7 +365,7 @@ echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_group_add(){
-cat <<- EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
+cat << EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/.ntool/groupadd.sh
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
@@ -381,22 +377,22 @@ EOF
 }
 
 function container_install(){
-    pkgup
-    if command -v aria2c > /dev/null;then
-        ${pkgi} aria2
+    ${pkgup}
+    command -v aria2c > /dev/null
+    exitstatus=$?
+    if [ ${exitstatus} = 1 ];then
+        ${pkgi} aria2c
     fi
-    mkdir -p ${MAINPATH}
+    mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
     LATESTROOTFS=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
     echo -e "最新版(时间):${GREEN}${LATESTROOTFS}${RESET}"
     echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c或其他方式终止${RESET}"
-    cd ${MAINPATH}
     if [ -f ${CONTAINER_OS}-${VERNAME}*.tar.xz ];then
-        echo -e "${BLUE}发现存在的rootfs.删除中...${RESET}"
+        echo -e "${BLUE}发现存在的rootfs.为防止错误,删除中...${RESET}"
         rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
     fi
     aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
-    mkdir -p ${CONTAINER_OS}-${VERNAME}
     tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}写入启动脚本中${RESET}"
     sleep 0.3
@@ -428,7 +424,7 @@ function container_install(){
     write_group_add
     if [ "$CONTAINER_OS" == "ubuntu" ] || [ "CONTAINER_OS" == "debian" ];then
                 echo ". setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
-        cat <<- EOF >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh
+        cat -<< EOF >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh
         echo -e "${GREEN}正在配置，请稍等${RESET}"
         bash /etc/.ntool/groupadd.sh
         apt update
@@ -472,7 +468,6 @@ function change_source_tui(){       #换源
 }
 
 function desktop_tui(){
-    clear
     if command -v pip > /dev/null;then
         DESKTOP_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
         "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
@@ -597,7 +592,6 @@ function other_tool_tui(){			#这里是其他功能页的function
 }
 
 function ssh_check_install(){
-	clear
 	if command -v ssh;then
 		dialog --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 15 70
 		ssh_tui
@@ -614,7 +608,6 @@ function ssh_check_install(){
 }
 
 function ssh_tui(){
-	clear
     SSH_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:ssh tui" --menu "选择一个以继续" 15 70 8 \
     "1" "打开sshd服务(让他人连接)" \
     "2" "通过密码连接远程服务器" \
@@ -658,7 +651,6 @@ function ssh_tui(){
 }
 
 function tool_tui(){			#这里是其它工具-工具类页面的function
-	clear
     TPC=$(dialog --output-fd 1 --title "ntool-tui:tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "ping" \
     "2" "ping6" \
@@ -775,7 +767,6 @@ function check_update(){			#这里是检查/升级的function
 }
 
 function web_tui(){				#这里是其他功能-网络类页面function
-	clear
 	#echo "这里是最水的页面（doge）"
     webc=$(dialog --output-fd 1 --title "ntool-tui:web tui" --menu "选择一个以继续" 15 70 8 \
     "1" "安装Nginx" \
@@ -811,7 +802,6 @@ function web_tui(){				#这里是其他功能-网络类页面function
 }
 
 function termux_main_tui(){
-    clear
     cd ${MAINPATH}
     mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:`curl https://v1.hitokoto.cn/?encode=text 2>/dev/null` \n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
