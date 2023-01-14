@@ -68,15 +68,13 @@ function check_if_not_android_warning(){
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
-function log_info(){
-    local TIME="$(date '+%Y-%m-%d %H:%M:%S')"
-    local COMMAND="$@"
-    echo -e "${BLUE}INFO ${TIME}${RESET}:${COMMAND}" >> ${MAINPATH}/log.txt
-}
-function log_err(){
-    local TIME="$(date '+%Y-%m-%d %H:%M:%S')"
-    local COMMAND="$@"
-    echo -e "${RED}ERROR ${TIME}${RESET}:${COMMAND}" >> ${MAINPATH}/log.txt 
+function start(){
+    if [ "${*}" == "--debug" ];then
+        set -x
+        termux_main_tui
+    else
+        termux_main_tui
+    fi
 }
 #########################正式tui function
 function patch_frame_choose(){
@@ -828,7 +826,7 @@ function web_tui(){				#这里是其他功能-网络类页面function
 
 function termux_main_tui(){
     cd ${MAINPATH}
-    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:$(curl https://v1.hitokoto.cn/?encode=text 2>/dev/null)\n你的系统为${OS}\n选择一个以继续" 15 70 8  \
+    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:$(curl https://v1.hitokoto.cn/?encode=text 2>/dev/null)\n你的系统为:${OS}\n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
@@ -891,9 +889,20 @@ function termux_main_tui(){
             patch_frame_choose
             ;;
         8)
-            if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为${RED}没有经过足够的测试" 15 70);then
-                wait_for_dev_tui
-                termux_main_tui
+            if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70);then
+                local ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
+                if [ ! -z "$ISINSTALLED" ];then
+                    if (dialog --title "ntool-tui:WARNING" --defaultno --yesno "你已经安装过ntafetch了\n你确定要重装吗?" 15 70);then
+                        curl https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -o ${PREFIX}/bin/ntafetch
+                        chmod +x ${PREFIX}/bin/ntafetch
+                    else
+                        termux_main_tui
+                    fi
+                else
+                    curl https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch
+                    chmod +x ${PREFIX}/bin/ntafetch
+                    echo "ntafetch" >> ${PREFIX}/etc/termux-login.sh
+                fi
             else
                 termux_main_tui
             fi
@@ -901,5 +910,10 @@ function termux_main_tui(){
     esac
 }
 clear
-termux_main_tui
+if [ "${*}" == "--debug" ];then
+   debug="--debug"
+else
+    debug=""
+fi
+start ${debug}
 exit 0
