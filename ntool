@@ -68,6 +68,16 @@ function check_if_not_android_warning(){
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
+function log_info(){
+    local TIME="$(date '+%Y-%m-%d %H:%M:%S')"
+    local COMMAND="$@"
+    echo -e "${BLUE}INFO ${TIME}${RESET}:${COMMAND}" >> ${MAINPATH}/log.txt
+}
+function log_err(){
+    local TIME="$(date '+%Y-%m-%d %H:%M:%S')"
+    local COMMAND="$@"
+    echo -e "${RED}ERROR ${TIME}${RESET}:${COMMAND}" >> ${MAINPATH}/log.txt 
+}
 #########################正式tui function
 function patch_frame_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
