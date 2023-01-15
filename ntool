@@ -163,22 +163,22 @@ function backup_tui(){      #备份页面function
                 bad_empty_input
                 backup_tui
             fi
-        	cd ~
-        	if command -v tar > /dev/null;then
+            cd ~
+            if command -v tar > /dev/null;then
                 if [ -d storage ];then
                     dialog --title "ntool-tui:tips" --msgbox "备份可能会很慢,请耐心等待" 15 70
                     cd /data/data/com.termux/
                     tar -cvpzf ${STORAGEPATH}/${BACKUP_NAME}.tgz files
                     echo -e "${GREEN}计算sha1...${RESET}"
                     sha1sum ${STORAGEPATH}/${BACKUP_NAME}.tgz > ${STORAGEPATH}/${BACKUP_NAME}.tgz.sha
-    				echo -e "${GREEN}完成备份${RESET}"
+                    echo -e "${GREEN}完成备份${RESET}"
                     read -p  "按任意键退出"
                     backup_tui
                 else
                     echo -e "${RED}termux-setup-storage未执行${RESET}"
                     echo -e "${BLUE}执行中...${RESET}"
                     sleep 2
-    				termux-setup-storage
+                    termux-setup-storage
                     echo "${GREEN}完成${RESET}"
                     sleep 1 
                     backup_tui
@@ -186,7 +186,7 @@ function backup_tui(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-    			${pkgi} tar
+                ${pkgi} tar
                 backup_tui
             fi
             ;;
