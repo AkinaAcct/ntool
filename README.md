@@ -6,9 +6,7 @@
 ~~是一个完全遵循能跑就行原则的小脚本~~  
 ### 安装
 ```
-wget https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh  
-chmod +x install.sh  
-./install.sh
+bash <$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```
 ~~享受屎山代码的运行吧！~~  
 
