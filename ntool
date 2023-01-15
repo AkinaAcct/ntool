@@ -216,7 +216,7 @@ function backup_tui(){      #备份页面function
             fi
             ;;
         3)
-            DEL_BACKUP_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录" --fselect ${STORAGEPATH} 15 70)
+            DEL_BACKUP_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录" --inputbox "输入完整tgz文件路径" 15 70)
             exitstatus=$?
             if [ $exitstatus != 0 ];then
                 backup_tui
