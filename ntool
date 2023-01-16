@@ -39,7 +39,7 @@ for i in apt pacman yum;do
 done
 case $pkg in
     apt)
-        pvkgi="apt install -y"
+        pkgi="apt install -y"
         pkguni="apt purge -y"
         pkgup="apt update && apt upgrade"
         ;;
@@ -54,6 +54,8 @@ case $pkg in
         pkgup="yum update && yum upgrade -y"
         ;;
 esac
+#echo "pkgi:${pkgi} | pkguni:${pkguni} | pkgup:${pkgup}"
+#read -p "yon"
 ##########
 mkdir -p ${MAINPATH}
 #常用功能function
@@ -882,13 +884,18 @@ function termux_main_tui(){
                 if [ $exitstatus != 0 ];then
                     termux_main_tui
                 fi
-                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S')" >> ~/.ntool/pi.txt
-                echo "scale=${BC}; 4*a(1)" | bc -l -q >> ~/.ntool/pi.txt
-                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S')" >> ~/.ntool/pi.txt
-                dialog --title "ntool-tui:success" --msgbox "完成!计算结果可在~/.ntool/pi.txt看到" 15 70
+                echo -e "${GREEN}请耐心等待...${RESET}"
+                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S')" > ${HOME}/pi.txt
+                echo "scale=${BC}; 4*a(1)" | bc -l -q >> ${HOME}/pi.txt
+                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S')" >> ${HOME}/pi.txt
+                dialog --title "ntool-tui:success" --textbox "${HOME}/pi.txt" 20 80
                 termux_main_tui
             else
+                echo -e "${BLUE}正在安装bc计算器...${RESET}"
                 ${pkgi} bc
+                echo -e ${GREEN}
+                read -p "按回车返回"
+                echo -e ${RESET}
                 termux_main_tui
             fi
             ;;
