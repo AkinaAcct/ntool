@@ -34,7 +34,7 @@ elif [ "${OS}" != "Android" ];then
     exit 1
 fi
 ###以下部分目的为获取包管理器
-for i in apt pacman yum;do
+for i in pacman apt yum;do
     if [ $(command -v ${i}) ];then
         pkg=$i
     fi
