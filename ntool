@@ -73,6 +73,9 @@ function start(){
     if [ "${*}" == "--debug" ];then
         set -x
         termux_main_tui
+    elif [ "${*}" == "--strict" ];
+        set -e
+        termux_main_tui
     else
         termux_main_tui
     fi
