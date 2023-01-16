@@ -52,6 +52,7 @@ case $pkg in
         pkgi="yum install -y"
         pkguni="yum remove"
         pkgup="yum update && yum upgrade -y"
+        ;;
 esac
 ##########
 mkdir -p ${MAINPATH}
@@ -95,8 +96,12 @@ function patch_frame_choose(){
     else
         termux_main_tui
     fi
-    ${pkgi} openjdk-17
-    patch_apk
+    if command -v java > /dev/null 2>&1;then
+        patch_apk
+    else
+        ${pkgi} openjdk-17
+        patch_apk
+    fi
 }
 
 function patch_apk(){
