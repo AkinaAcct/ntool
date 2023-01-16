@@ -14,7 +14,9 @@ GREEN="\E[1;32m"
 YELLOW="\E[1;33m"
 BLUE="\E[1;34m"
 PINK="\E[1;35m"
+CYAN="\e[36m"
 RESET="\E[0m"
+RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
 #############
 ARCH="$(uname -m)"
 if [ "$ARCH" == "aarch64" ];then
@@ -74,15 +76,30 @@ function bad_empty_input(){
 ####启动function
 function start(){
     case $* in
-        --debug)
+        -d|--debug)
             set -x
-            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动\n所有执行的命令都会被打印出来再执行" 15 70
+            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行" 15 70
             termux_main_tui
             ;;
-        --strict)
+        -s|--strict)
             set -e
-            dialog --title "ntool-tui:WARNING" --msgbox "严格模式/set -e已经启动\n出现任何报错将直接终止脚本运行\n我可以保证容器安装必定会报错\n" 15 70
+            dialog --title "ntool-tui:WARNING" --msgbox "严格模式/set -e已经启动 \n出现任何报错将直接终止脚本运行 \n该模式下容器安装一定会报错" 15 70
             termux_main_tui
+            ;;
+        -v|--version)
+            local NTOOLVERSION="$(cat ${MAINPATH}/local_version > /dev/null 2>&1)"
+            if [ -z ${NTOOLVERSION} ];then
+                echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
+            else
+                echo -e "${RNTOOL}\n version:${NTOOLVERSION}\n mode:${GREEN}normal mode${RESET}"
+            fi
+            ;;
+        -h|--help)
+            echo -e "${RNTOOL} help."
+            echo -e "${GREEN}-h,--help${RESET}:print this help"
+            echo -e "${GREEN}-v,--version${RESET}:print then ntool' version that you've installed."
+            echo -e "${YELLOW}-d,--debug${RESET}:enable debug mode(set -x).All the commands will show first and then run."
+            echo -e "${YELLOW}-s,--strict${RESET}:enable ${RED}'set -e'${RESET} and it will cause many problems such uncompress failed."
             ;;
         *)
             termux_main_tui
@@ -91,7 +108,7 @@ function start(){
 }
 #########################正式tui function
 function patch_frame_choose(){
-    if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n你确定要继续吗" 15 70);then
+    if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70);then
         if [ $exitstatus != 0 ];then
             termux_main_tui
         fi
@@ -117,7 +134,7 @@ function patch_frame_choose(){
 }
 
 function patch_apk(){
-    APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n 不是apk文件的上一级目录!!!" 15 70)
     exitstatus=$?
     if [ $exitstatus != 0 ];then
         patch_frame_choose
@@ -140,10 +157,10 @@ function patch_apk(){
         fi
     fi
     if [ ! -f ${APKPATH} ];then
-        dialog --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n检查是否输入错误或有无给予内置存储权限" 15 70
+        dialog --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n 检查是否输入错误或有无给予内置存储权限" 15 70
         patch_apk
     fi
-    MODULEPATH=$(dialog --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n不是apk文件的上一级目录!!!" 15 70)
+    MODULEPATH=$(dialog --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n 不是apk文件的上一级目录!!!" 15 70)
     echo -e "${BLUE}可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
     if [ "$PATCHFRAME" == "xpatch" ];then
         java -jar ${MAINPATH}/patchedapks/xpatch.jar ${APKPATH} -xm ${MODULEPATH} -o /sdcard/xpatchedapk.apk
@@ -795,8 +812,14 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 
 function check_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
-        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then 
-            bash -c "$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install.sh)"
+        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
+            echo -e "${BLUE}更新中...${RESET}"
+            set -e
+            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
+            wget ${RAWURL}/version -O ${MAINPATH}/local_version
+            echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
+            set +e
+            exit 0
         else
             termux_main_tui
         fi
