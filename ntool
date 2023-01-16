@@ -31,7 +31,7 @@ if [ "${ARCH}" != "arm64" ];then
     dialog --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
 elif [ "${OS}" != "Android" ];then
     dialog --title "ntool-tui:WARNING" --msgbox "我还没适配除了Android以外的系统呢..." 15 70
-    exit 0
+    exit 1
 fi
 ###以下部分目的为获取包管理器
 for i in apt pacman yum;do
