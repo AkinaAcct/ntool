@@ -75,6 +75,10 @@ function bad_empty_input(){
 }
 ####启动function
 function start(){
+    if [ $# -gt 1 ];then
+        echo -e "${RED}不允许的两个传入参数${RESET}"
+        exit 1
+    fi
     case $* in
         -d|--debug)
             set -x
@@ -810,25 +814,6 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
     exit 0
 }
 
-function check_update(){			#这里是检查/升级的function
-    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
-        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
-            echo -e "${BLUE}更新中...${RESET}"
-            set -e
-            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
-            wget ${RAWURL}/version -O ${MAINPATH}/local_version
-            echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
-            set +e
-            exit 0
-        else
-            termux_main_tui
-        fi
-    else
-        dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
-        termux_main_tui
-    fi 
-}
-
 function web_tui(){				#这里是其他功能-网络类页面function
 	#echo "这里是最水的页面（doge）"
     webc=$(dialog --output-fd 1 --title "ntool-tui:web tui" --menu "选择一个以继续" 15 70 8 \
@@ -864,6 +849,26 @@ function web_tui(){				#这里是其他功能-网络类页面function
 	esac
 }
 
+function check_update(){			#这里是检查/升级的function
+    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
+        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
+            echo -e "${BLUE}更新中...${RESET}"
+            set -e
+            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
+            wget ${RAWURL}/version -O ${MAINPATH}/local_version
+            chmod +x ${PREFIX}/bin/ntool
+            echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
+            set +e
+            exit 0
+        else
+            termux_main_tui
+        fi
+    else
+        dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
+        termux_main_tui
+    fi 
+}
+######main tui
 function termux_main_tui(){
     cd ${MAINPATH}
     mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:$(curl https://v1.hitokoto.cn/?encode=text 2>/dev/null)\n你的系统为:${OS}\n选择一个以继续" 15 70 8  \
