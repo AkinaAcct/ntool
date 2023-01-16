@@ -69,16 +69,23 @@ function check_if_not_android_warning(){
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
 }
+####启动function
 function start(){
-    if [ "${*}" == "--debug" ];then
-        set -x
-        termux_main_tui
-    elif [ "${*}" == "--strict" ];
-        set -e
-        termux_main_tui
-    else
-        termux_main_tui
-    fi
+    case $* in
+        --debug)
+            set -x
+            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动\n所有执行的命令都会被打印出来再执行" 15 70
+            termux_main_tui
+            ;;
+        --strict)
+            set -e
+            dialog --title "ntool-tui:WARNING" --msgbox "严格模式/set -e已经启动\n出现任何报错将直接终止脚本运行\n我可以保证容器安装必定会报错\n" 15 70
+            termux_main_tui
+            ;;
+        *)
+            termux_main_tui
+            ;;
+    esac
 }
 #########################正式tui function
 function patch_frame_choose(){
@@ -897,31 +904,30 @@ function termux_main_tui(){
             patch_frame_choose
             ;;
         8)
+            function ntafetch_install(){
+                wget https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
+                chmod +x ${PREFIX}/bin/ntafetch
+                mv $PREFIX/etc/motd $PREFIX/etc/motd.bak > /dev/null 2>&1
+            }
             if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70);then
                 local ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
                 if [ ! -z "$ISINSTALLED" ];then
                     if (dialog --title "ntool-tui:WARNING" --defaultno --yesno "你已经安装过ntafetch了\n你确定要重装吗?" 15 70);then
-                        curl https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -o ${PREFIX}/bin/ntafetch
-                        chmod +x ${PREFIX}/bin/ntafetch
+                        ntafetch_install
                     else
                         termux_main_tui
                     fi
                 else
-                    curl https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch
-                    chmod +x ${PREFIX}/bin/ntafetch
+                    ntafetch_install
                     echo "ntafetch" >> ${PREFIX}/etc/termux-login.sh
                 fi
             else
                 termux_main_tui
             fi
+            termux_main_tui
             ;;
     esac
 }
-clear
-if [ "${*}" == "--debug" ];then
-   debug="--debug"
-else
-    debug=""
-fi
-start ${debug}
+INSERT=$*
+start ${INSERT}
 exit 0
