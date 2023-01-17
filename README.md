@@ -7,11 +7,17 @@
 ---
 
 ## 安装
+**推荐方式:**
+```
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/.install)
+```  
+**如果**上面的方式**失败了**那么:  
 ```
 wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool  
 chmod +x ntool  
 ./ntool -i
-```
+```  
+
 ~~享受屎山代码的运行吧XD~~  
 
 ---
