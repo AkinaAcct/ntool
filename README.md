@@ -9,7 +9,7 @@
 ## 安装
 **推荐方式:**
 ```
-bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/.install)
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```  
 **如果**上面的方式**失败了**那么:  
 ```
