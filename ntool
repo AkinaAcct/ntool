@@ -19,6 +19,7 @@ RESET="\E[0m"
 RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
 #############预准备
 ARCH="$(uname -m)"
+TIME=$(date '+%Y-%m-%d %H:%M:%S')
 if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
 fi
@@ -33,6 +34,7 @@ elif [ "${OS}" != "Android" ];then
     dialog --title "ntool-tui:WARNING" --msgbox "我还没适配除了Android以外的系统呢..." 15 70
     exit 1
 fi
+termux-wake-lock
 ###以下部分目的为获取包管理器
 for i in pacman apt yum;do
     if [ $(command -v ${i}) ];then
@@ -57,7 +59,7 @@ case $pkg in
         ;;
 esac
 #echo "PKGI:${PKGI} | PKGUNI:${PKGUNI} | PKGUP:${PKGUP}"
-#read -p "yon"
+#read -p "package manager debug"
 ##########
 mkdir -p ${MAINPATH}
 #常用功能function
@@ -83,8 +85,10 @@ function start(){
     fi
     case $* in
         -d|--debug)
+            echo ${TIME} > ~/log.txt
+            exec 2>> ~/log.txt
             set -x
-            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行" 15 70
+            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行\n 有一份命令复制保存在~/log.txt" 15 70
             termux_main_tui
             ;;
         -s|--strict)
@@ -738,7 +742,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
-			echo "启 动 私 货"
+			echo "太怪了"
 			echo "记得给我点个star哦"
 			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool > /dev/null 2>&1
 			;;
@@ -860,19 +864,14 @@ function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
         if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
-            set -e
-            echo "installing..."
+            ${PKGUP}
+            ${PKGI} git wget curl python x11-repo dialog
             wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
             chmod +x ${PREFIX}/bin/ntool
             rm ~/.ntool/local_version > /dev/null 2>&1
-		        		pkg update -y
-	    	pkg upgrade -y
-		    pkg install git wget curl python x11-repo dialog -y
-	    	mkdir -p .ntool
+		    mkdir -p .ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
-            rm ntool
-            set +e
             exit 0
         else
             termux_main_tui
@@ -920,7 +919,7 @@ function termux_main_tui(){
             ;;
         4)
             if command -v bc > /dev/null;then
-                local BC=$(dialog --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70 3>&1 1>&2 2>&3)
+                local BC=$(dialog --output-fd 1 --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70)
                 exitstatus=$?
                 if [ $exitstatus != 0 ];then
                     termux_main_tui
