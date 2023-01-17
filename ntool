@@ -127,7 +127,7 @@ function patch_frame_choose(){
         if [ $exitstatus != 0 ];then
             termux_main_tui
         fi
-        PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch" 15 70)
+        PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch\n两种patch方式都很像无极" 15 70)
         exitstatus=$?
             case $PATCHCHOICE in
             1)
@@ -162,12 +162,12 @@ function patch_apk(){
     if [ ! -f ${PATCHFRAME}.jar ];then
         echo -e "${BLUE}获取最新版本号中${RESET}"
         if [ "$PATCHFRAME" == "xpatch" ];then
-            tag=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
-            echo -e "${GREEN}${PATCHFRAME}最新版为${tag}${RESET}"
+            local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
+            echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
             wget https://github.com/WindySha/Xpatch/releases/download/${tag}/xpatch-${tag}.jar -o xpatch.jar
         else
-            tag=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
-            echo -e "${GREEN}${PATCHFRAME}最新版为${tag}${RESET}"
+            local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
+            echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
             wget https://github.com/LSPosed/LSPatch/releases/download/${tag}/lspatch.jar
         fi
     fi
@@ -742,8 +742,9 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
-			echo "太怪了"
-			echo "记得给我点个star哦"
+            figlet "ntool" | lolcat -a -d 2
+            figlet "Powered by" | lolcat -a -d 2
+            figlet "nya" | lolcat -a -d 2
 			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool > /dev/null 2>&1
 			;;
 
@@ -871,6 +872,7 @@ function check_and_update(){			#这里是检查/升级的function
             chmod +x ${PREFIX}/bin/ntool
             rm ~/.ntool/local_version > /dev/null 2>&1
 		    mkdir -p .ntool
+            rm ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
             exit 0
         else
