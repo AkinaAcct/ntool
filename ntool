@@ -17,7 +17,7 @@ PINK="\E[1;35m"
 CYAN="\e[36m"
 RESET="\E[0m"
 RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
-#############
+#############预准备
 ARCH="$(uname -m)"
 if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
@@ -63,15 +63,17 @@ mkdir -p ${MAINPATH}
 #常用功能function
 function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
+    return 1
 }
 function check_if_not_android_warning(){
     if [ "${OS}" != "Android" ];then
         dialog --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
-        exit 0
+        exit 1
     fi
 }
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
+    return 1
 }
 ####启动function
 function start(){
@@ -104,6 +106,11 @@ function start(){
             echo -e "${GREEN}-v,--version${RESET}:print then ntool' version that you've installed."
             echo -e "${YELLOW}-d,--debug${RESET}:enable debug mode(set -x).All the commands will show first and then run."
             echo -e "${YELLOW}-s,--strict${RESET}:enable ${RED}'set -e'${RESET} and it will cause many problems such uncompress failed."
+            ;;
+        -i|--install)
+            echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
+            check_and_update
+            exit 0
             ;;
         *)
             termux_main_tui
@@ -469,7 +476,7 @@ function container_install(){
         echo -e "${BLUE}发现存在的rootfs.为防止错误,删除中...${RESET}"
         rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
     fi
-    aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
+    wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
     tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}写入启动脚本中${RESET}"
     sleep 0.3
@@ -849,7 +856,7 @@ function web_tui(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-function check_update(){			#这里是检查/升级的function
+function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
         if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
@@ -870,8 +877,7 @@ function check_update(){			#这里是检查/升级的function
 }
 ######main tui
 function termux_main_tui(){
-    cd ${MAINPATH}
-    mainchoice=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "一言:$(curl https://v1.hitokoto.cn/?encode=text 2>/dev/null)\n你的系统为:${OS}\n选择一个以继续" 15 70 8  \
+    MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你的系统为:${OS}\n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
@@ -879,7 +885,7 @@ function termux_main_tui(){
     "5" "一言" \
     "6" "原系统桌面" \
     "7" "LSPatch/XPatch功能" \
-    "8" "ntafetch-使用ntafetch作为motd" \
+    "8" "ntafetch-使用ntafetch作为motd(测试)" \
     "00" "更新" \
     "0" "退出")
     exitstatus=$?
@@ -887,9 +893,9 @@ function termux_main_tui(){
         echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
         exit 0
     fi
-    case $mainchoice in 
+    case $MAINCHOICE in 
         00)
-	        check_update
+	        check_and_update
         	;;
         0)
             echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
@@ -939,10 +945,11 @@ function termux_main_tui(){
             patch_frame_choose
             ;;
         8)
+            check_if_not_android_warning
             function ntafetch_install(){
                 wget https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
                 chmod +x ${PREFIX}/bin/ntafetch
-                mv $PREFIX/etc/motd $PREFIX/etc/motd.bak > /dev/null 2>&1
+                mv $PREFIX/etc/motd ${PREFIX}/etc/motd.bak > /dev/null 2>&1
             }
             if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70);then
                 local ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
@@ -963,6 +970,6 @@ function termux_main_tui(){
             ;;
     esac
 }
-INSERT=$*
-start ${INSERT}
+ARG=$*
+start ${ARG}
 exit 0

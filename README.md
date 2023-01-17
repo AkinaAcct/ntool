@@ -4,10 +4,16 @@
 这意味着它是一个类似于工具箱的小玩意  
 ~~当然我不会告诉你这是一个屎山项目~~  
 ~~是一个完全遵循能跑就行原则的小脚本~~  
-### 安装
-```
-bash <$(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
-```
-~~享受屎山代码的运行吧！~~  
+---
 
-~~现容器功能已烂尾~~别说了别说了在重写了qwq
+## 安装
+```
+wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool  
+chmod +x ntool  
+./ntool -i
+```
+~~享受屎山代码的运行吧XD~~  
+
+---
+
+~~由于容器安装脚本的难度过大,更新会随缘的;(~~
