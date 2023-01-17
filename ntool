@@ -41,22 +41,22 @@ for i in pacman apt yum;do
 done
 case $pkg in
     apt)
-        pkgi="apt install -y"
-        pkguni="apt purge -y"
-        pkgup="apt update && apt upgrade"
+        PKGI="apt install -y"
+        PKGUNI="apt purge -y"
+        PKGUP="apt update && apt upgrade"
         ;;
     pacman)
-        pkgi="pacman -S"
-        pkguni="pacman -R"
-        pkgup="pacman -Syy"
+        PKGI="pacman -S"
+        PKGUNI="pacman -R"
+        PKGUP="pacman -Syy"
         ;;
     yum)
-        pkgi="yum install -y"
-        pkguni="yum remove"
-        pkgup="yum update && yum upgrade -y"
+        PKGI="yum install -y"
+        PKGUNI="yum remove"
+        PKGUP="yum update && yum upgrade -y"
         ;;
 esac
-#echo "pkgi:${pkgi} | pkguni:${pkguni} | pkgup:${pkgup}"
+#echo "PKGI:${PKGI} | PKGUNI:${PKGUNI} | PKGUP:${PKGUP}"
 #read -p "yon"
 ##########
 mkdir -p ${MAINPATH}
@@ -139,7 +139,7 @@ function patch_frame_choose(){
     if command -v java > /dev/null 2>&1;then
         patch_apk
     else
-        ${pkgi} openjdk-17
+        ${PKGI} openjdk-17
         patch_apk
     fi
 }
@@ -231,7 +231,7 @@ function backup_tui(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-                ${pkgi} tar
+                ${PKGI} tar
                 backup_tui
             fi
             ;;
@@ -461,11 +461,11 @@ EOF
 }
 
 function container_install(){
-    ${pkgup}
+    ${PKGUP}
     command -v aria2c > /dev/null
     exitstatus=$?
     if [ ${exitstatus} = 1 ];then
-        ${pkgi} aria2c
+        ${PKGI} aria2c
     fi
     mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
@@ -553,7 +553,7 @@ function termux_install_gui_tui(){
             ;;
         1)
             echo -e "${GREEN}安装中...${RESET}"
-            ${pkgi} openbox pypanel xorg-xsetroot xfce tigervnc
+            ${PKGI} openbox pypanel xorg-xsetroot xfce tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
             echo -e "${BLUE}写入启动脚本中...${RESET}"
@@ -584,7 +584,7 @@ EOF
             ;;
         2)
             echo -e "${GREEN}${RESET}"
-            ${pkgi} openbox pypanel xorg-xsetroot tigervnc
+            ${PKGI} openbox pypanel xorg-xsetroot tigervnc
             pip install PyXDG
             cd /data/data/com.termux/files/usr/bin
             echo -e "${BLUE}写入启动脚本中...${RESET}"
@@ -624,14 +624,14 @@ EOF
                 termux_install_gui_tui
                 exit 0
             fi
-            ${pkguni} tigervnc openbox pypanel xorg-xsetroot xfce
+            ${PKGUNI} tigervnc openbox pypanel xorg-xsetroot xfce
             rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
             dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
             termux_install_gui_tui
             ;;
         esac
     else
-            ${pkgi} python
+            ${PKGI} python
     fi
 }
 
@@ -667,7 +667,7 @@ function ssh_check_install(){
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${GREEN}安装中...${RESET}"
-		${pkgi} openssh
+		${PKGI} openssh
         echo -e "${GREEN}"
         echo "完成"
         read -p "按任意键以继续"
@@ -708,7 +708,7 @@ function ssh_tui(){
 			else
 				echo "sshpass未安装"
 				echo "installing..."
-                ${pkgi} sshpass
+                ${PKGI} sshpass
 				ssh_tui
 			fi
 			;;
@@ -759,7 +759,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "未安装ping，正在安装..."
-				${pkgi} termux-tools
+				${PKGI} termux-tools
 				tool_tui
 			fi
 			;;
@@ -779,7 +779,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "ping6未安装,正在安装..."
-				${pkgi} termux-tools
+				${PKGI} termux-tools
 				tool_tui
 			fi
 			;;
@@ -804,7 +804,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 		4)
 			echo "只支持openjdk17"
 			read -p "按任意键以继续"	#我好水啊（）
-			${pkgi} openjdk-17
+			${PKGI} openjdk-17
 			echo "安装完成"
 			;;
 		5)
@@ -838,19 +838,19 @@ function web_tui(){				#这里是其他功能-网络类页面function
 			other_tool_tui
 			;;
 		1)
-			${pkgi} nginx
+			${PKGI} nginx
 			echo "done"
 			;;
 		2)
-			${pkgi} apache2
+			${PKGI} apache2
 			echo "done"
 			;;
 		3)
-			${pkgi} php
+			${PKGI} php
 			echo "done"
 			;;
 		4)
-			${pkgi} mariadb
+			${PKGI} mariadb
 			echo "done"
 			;;
 	esac
@@ -858,13 +858,20 @@ function web_tui(){				#这里是其他功能-网络类页面function
 
 function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
-        if (dialog --title "ntool-tui:update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
+        if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
             set -e
+            echo "installing..."
             wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
             chmod +x ${PREFIX}/bin/ntool
+            rm ~/.ntool/local_version > /dev/null 2>&1
+		        		pkg update -y
+	    	pkg upgrade -y
+		    pkg install git wget curl python x11-repo dialog -y
+	    	mkdir -p .ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
+            rm ntool
             set +e
             exit 0
         else
@@ -926,7 +933,7 @@ function termux_main_tui(){
                 termux_main_tui
             else
                 echo -e "${BLUE}正在安装bc计算器...${RESET}"
-                ${pkgi} bc
+                ${PKGI} bc
                 echo -e ${GREEN}
                 read -p "按回车返回"
                 echo -e ${RESET}
@@ -970,6 +977,5 @@ function termux_main_tui(){
             ;;
     esac
 }
-ARG=$*
-start ${ARG}
+start $*
 exit 0
