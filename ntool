@@ -65,7 +65,7 @@ mkdir -p ${MAINPATH}
 #常用功能function
 function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
-    return 1
+    exit 1
 }
 function check_if_not_android_warning(){
     if [ "${OS}" != "Android" ];then
@@ -124,11 +124,11 @@ function start(){
 #########################正式tui function
 function patch_frame_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70);then
-        if [ $exitstatus != 0 ];then
+        if [ $EXITSTATUS != 0 ];then
             termux_main_tui
         fi
         PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch\n两种patch方式都很像无极" 15 70)
-        exitstatus=$?
+        EXITSTATUS=$?
             case $PATCHCHOICE in
             1)
                 PATCHFRAME="xpatch"
@@ -150,8 +150,8 @@ function patch_frame_choose(){
 
 function patch_apk(){
     APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n 不是apk文件的上一级目录!!!" 15 70)
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         patch_frame_choose
     elif [ -z $APKPATH ];then
         bad_empty_input
@@ -195,8 +195,8 @@ function backup_tui(){      #备份页面function
     "1" "备份termux" \
     "2" "恢复备份" \
     "3" "删除备份" )
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         termux_main_tui
     fi
     case $backup_tui_choice in
@@ -205,8 +205,8 @@ function backup_tui(){      #备份页面function
             ;;
         1)
             BACKUP_NAME=$(dialog --output-fd 1 --title "ntool-tui:backup name" --inputbox "输入备份名(仅备份com.termux/files以提高速度) " 15 70)
-            exitstatus=$?
-            if [ $exitstatus != 0 ];then
+            EXITSTATUS=$?
+            if [ $EXITSTATUS != 0 ];then
                 backup_tui
             elif  [ -z $BACKUP_NAME ];then
                 bad_empty_input
@@ -241,8 +241,8 @@ function backup_tui(){      #备份页面function
             ;;
         2)
             RESTORE_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录！" --inputbox ${STORAGEPATH} 15 70)
-            exitstatus=$?
-            if [ $exitstatus != 0 ];then
+            EXITSTATUS=$?
+            if [ $EXITSTATUS != 0 ];then
                 backup_tui
                 exit 0
             elif [ -z $RESTORE_PATH ];then
@@ -252,8 +252,8 @@ function backup_tui(){      #备份页面function
             cd ~
             echo "比对sha中..."
             sha1sum -c ${RESTORE_PATH}.sha >> /dev/null 2>&1
-            exitstatus=$?
-            if [ $exitstatus = 0 ];then 
+            EXITSTATUS=$?
+            if [ $EXITSTATUS = 0 ];then 
                 echo -e "${GREEN}sha正常${RESET}"
                 echo "${GREEN}3${BLUE}秒后开始恢复${RESET}"
                 sleep 3
@@ -266,8 +266,8 @@ function backup_tui(){      #备份页面function
             ;;
         3)
             DEL_BACKUP_PATH=$(dialog --output-fd 1 --title "ntool-tui:输入完整目录" --inputbox "输入完整tgz文件路径" 15 70)
-            exitstatus=$?
-            if [ $exitstatus != 0 ];then
+            EXITSTATUS=$?
+            if [ $EXITSTATUS != 0 ];then
                 backup_tui
             elif [ -z $DEL_BACKUP_PATH ];then
                 bad_empty_input
@@ -286,8 +286,8 @@ function container_tui(){      #容器OS选择
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
     "0" "返回上一页")       #我是鸽子咕咕咕，其他功能等我慢慢写
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         termux_main_tui
     fi
     case $CONTAINER_CHOICE in
@@ -310,8 +310,8 @@ function debian_version_tui(){     #Debian版本选择
     "1" "Debian10 Buster" \
     "2" "Debian11 Bullseye" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         container_tui
     fi
     case $DEBIAN_VER_CHOICE in
@@ -336,8 +336,8 @@ function ubuntu_version_tui(){     #Ubuntu版本选择
     "1" "Ubuntu22.04 Jammy Jellyfish" \
     "2" "Ubuntu20.04 Focal Fossa" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         container_tui
     fi
     case $UBUNTU_VER_CHOICE in 
@@ -361,8 +361,8 @@ function container_control_tui(){
     "1" "安装" \
     "2" "卸载" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         ${CONTAINER_OS}_version_tui
     fi
     case $CCPAGECHOICE in
@@ -383,8 +383,8 @@ function container_control_tui(){
                 container_control_tui
             fi
             dialog --title "ntool-tui:WARNING" --defaultno --yesno "警告！\n这会删除你在容器里的全部数据\n如果你不知道你在干什么，请取消" 15 70
-            exitstatus=$?
-            if [ $exitstatus != 0 ];then
+            EXITSTATUS=$?
+            if [ $EXITSTATUS != 0 ];then
                 container_control_tui
                 exit 0
             fi
@@ -467,8 +467,8 @@ EOF
 function container_install(){
     ${PKGUP}
     command -v aria2c > /dev/null
-    exitstatus=$?
-    if [ ${exitstatus} = 1 ];then
+    EXITSTATUS=$?
+    if [ ${EXITSTATUS} = 1 ];then
         ${PKGI} aria2c
     fi
     mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
@@ -523,8 +523,8 @@ function change_source_tui(){       #换源
     2.事实上,你可以使用termux-change-repo来换源,所以这里实际意义不大" 15 70 8 \
     "1" "使用termux-change-repo(推荐)" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         other_tool_tui 
     elif [ -z $SOURCE_CHOICE ];then
         other_tool_tui
@@ -547,8 +547,8 @@ function termux_install_gui_tui(){
         "2" "仅安装openbox(基础图形环境)" \
         "3" "卸载" \
         "0" "返回脚本主页面")
-        exitstatus=$?
-        if [ $exitstatus != 0 ];then
+        EXITSTATUS=$?
+        if [ $EXITSTATUS != 0 ];then
             termux_main_tui
         fi
         case $DESKTOP_CHOICE in
@@ -617,14 +617,14 @@ EOF
             ;;
         3)
             command -v openbox > /dev/null 2>&1
-            exitstatus=$?
-            if [ $exitstatus = 1 ];then
+            EXITSTATUS=$?
+            if [ $EXITSTATUS = 1 ];then
                 dialog --title "ntool-tui:WARNING" --msgbox "你没有安装桌面!" 15 70
                 termux_install_gui_tui
             fi
             DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
-            exitstatus=$?
-            if [ ${exitstatus} != 0 ];then
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} != 0 ];then
                 termux_install_gui_tui
                 exit 0
             fi
@@ -645,8 +645,8 @@ function other_tool_tui(){			#这里是其他功能页的function
     "2" "工具页面" \
     "3" "换源" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         termux_main_tui
     fi
     case $OTPC in 
@@ -686,8 +686,8 @@ function ssh_tui(){
     "2" "通过密码连接远程服务器" \
     "3" "生成密钥" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         tool_tui
     fi
 	case $SSH_CHOICE in
@@ -722,7 +722,62 @@ function ssh_tui(){
 			;;
 	esac
 }
-
+function qrcode_tui(){
+    QRCHOICE=$(dialog --output-fd 1 --title "ntool-tui:按<ESC>返回上一页" --yes-label "生成" --no-label "解码" --yesno "使用 \nqrencode 和 zbar实现 \n选择一个以继续" 15 70)
+    EXITSTATUS=$?
+    if [ ${EXITSTATUS} = 255 ];then
+        tool_tui
+    fi
+    case ${EXITSTATUS} in
+        0)
+            QRSPAWN=$(dialog --output-fd 1 --title "ntool-tui:qrcode spawn" --inputbox "输入你想要加密的文本" 15 70)
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} != 0 ];then
+                qrcode_tui
+            fi
+            dialog --output-fd 1 --title "ntool-tui:configure" --yesno "是否要保存该二维码到内置存储目录?" 15 70
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} != 0 ];then
+                qrencode -o - -t ANSI "${QRSPAWN}"
+                echo -e "${GREEN}"
+                read -p "按回车继续"
+                echo -e "${RESET}"
+                qrcode_tui
+            else
+                QRSTOREPATH=$(dialog --output-fd 1 --title "按空格选择" --dselect "/sdcard" 15 70)
+                EXITSTATUS=$?
+                if [ ${EXITSTATUS} != 0 ];then
+                    qrcode_tui
+                elif [ -z ${QRSTOREPATH} ];then
+                    bad_empty_input
+                    qrcode_tui
+                fi
+                qrencode -t png -o ${QRSTOREPATH}/qrcode-${QRSPAWN}.png "${QRSPAWN}"
+                catimg ${QRSTOREPATH}/qrcode-${QRSPAWN}.png
+                echo -e "${GREEN}完成!保存在${BLUE}${QRSTOREPATH}/qrcode-${QRSPAWN}.png${RESET}"
+                echo -e "${GREEN}"
+                read -p "按回车继续"
+                echo -e "${RESET}"
+                qrcode_tui
+            fi
+            ;;
+        1)
+            QRUNCODEPATH=$(dialog --output-fd 1 --title "ntool-tui:qrcode uncode" --fselect "选择好文件后按空格选择(删掉我),或者直接输入完整路径" 15 70)
+            EXITSTATUS=$?
+            if [ -z ${QRUNCODEPATH} ];then
+                bad_empty_input
+                qrcode_tui
+            elif [ ${EXITSTATUS} != 0 ];then
+                qrcode_tui
+            fi
+            echo -e "${BLUE}结果${RESET}:$(zbarimg ${QRUNCODEPATH} | sed -n '1p')"
+            echo -e "${GREEN}"
+            read -p "按回车继续"
+            echo -e "${RESET}"
+            qrcode_tui
+            ;;
+    esac
+}
 function tool_tui(){			#这里是其它工具-工具类页面的function
     TPC=$(dialog --output-fd 1 --title "ntool-tui:tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "ping" \
@@ -730,11 +785,11 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
     "3" "文件查找" \
     "4" "安装openjdk17" \
     "5" "ssh功能" \
-    "6" "?" \
+    "6" "二维码功能" \
     "00" "打开该项目地址(?)" \
     "0" "返回上一页")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         other_tool_tui
     fi
 	case $TPC in
@@ -816,11 +871,14 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			ssh_check_install
 			;;
 		6)
-			echo -e "${PINK}你为什么要选择一个'?'选项啊喂!"
-			sleep 2
-			echo -e "真是个笨蛋!!${RESET}"
-			sleep 2
-			tool_tui
+            command -v qrencode 
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} != 0 ];then
+                ${PKGI} libqrencode zbar
+                qrcode_tui
+            else
+                qrcode_tui
+            fi
 			;;
 	esac
     exit 0
@@ -834,8 +892,8 @@ function web_tui(){				#这里是其他功能-网络类页面function
     "3" "安装php环境" \
     "4" "安装MySQL(mariadb)" \
     "0" "返回上一页")
-    exitstatus=$?
-	if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+	if [ $EXITSTATUS != 0 ];then
         other_tool_tui
     fi
 	case $webc in
@@ -896,8 +954,8 @@ function termux_main_tui(){
     "8" "ntafetch-使用ntafetch作为motd(测试)" \
     "00" "更新" \
     "0" "退出")
-    exitstatus=$?
-    if [ $exitstatus != 0 ];then
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ];then
         echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
         exit 0
     fi
@@ -922,8 +980,8 @@ function termux_main_tui(){
         4)
             if command -v bc > /dev/null;then
                 local BC=$(dialog --output-fd 1 --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70)
-                exitstatus=$?
-                if [ $exitstatus != 0 ];then
+                EXITSTATUS=$?
+                if [ $EXITSTATUS != 0 ];then
                     termux_main_tui
                 fi
                 echo -e "${GREEN}请耐心等待...${RESET}"
