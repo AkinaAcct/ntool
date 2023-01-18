@@ -103,7 +103,7 @@ function start(){
             else
                 echo -e "${RNTOOL}\n version:${NTOOLVERSION}\n mode:${GREEN}normal mode${RESET}"
             fi
-            ;;
+            ;;deb
         -h|--help)
             echo -e "${RNTOOL} help."
             echo -e "${GREEN}-h,--help${RESET}:print this help"
