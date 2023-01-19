@@ -401,8 +401,8 @@ function container_delete(){
     container_tui
 }
 
-function script_write(){
-cat -<< EOF > $PREFIX/bin/start${VERNAME}
+function container_script_write(){
+cat > $PREFIX/bin/start${VERNAME} <<- EOF
 #!/data/data/com.termux/files/usr/bin/bash
 #ntool ${CONTAINER_OS}${VERCODE}:${VERNAME}启动脚本
 #嗯...复制也是可以的啦...我不在意...
@@ -434,7 +434,7 @@ echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_groupadd_sh(){
-cat << EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/groupadd.sh
+cat > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/groupadd.sh <<- EOF
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
 groupadd -g 20123 u0_a123_cache
@@ -444,7 +444,7 @@ EOF
 }
 
 function write_setupdeb_sh(){
-cat << EOF > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh
+cat > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh <<- EOF
 echo -e "${GREEN}正在配置，请稍等${RESET}"
 bash groupadd.sh
 apt update
@@ -473,22 +473,22 @@ function container_install(){
     fi
     mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
-    LATESTROOTFS=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
-    echo -e "最新版(时间):${GREEN}${LATESTROOTFS}${RESET}"
+    ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+    echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
     echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c或其他方式终止${RESET}"
     if [ -f ${CONTAINER_OS}-${VERNAME}*.tar.xz ];then
         echo -e "${BLUE}发现存在的rootfs.为防止错误,删除中...${RESET}"
         rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
     fi
-    wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${LATESTROOTFS}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
+    wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
     tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}写入启动脚本中${RESET}"
     sleep 0.3
-    script_write
+    container_script_write
     echo -e "${GREEN}写入dns中${RESET}"
     sleep 0.3
     mkdir -p ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/
-    #淦哦Ubuntu的rootfs解压后会出现err导致resolv.conf硬链接失效,只能手动创建文件夹然后重新写入
+    #淦哦deb系的rootfs解压后会出现err导致resolv.conf硬链接失效,只能手动创建文件夹然后重新写入
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/etc/resolv.conf
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/stub-resolv.conf
     sleep 0.3
@@ -1037,8 +1037,10 @@ function termux_main_tui(){
             if [ ${EXITSTATUS} = 255 ];then
                 termux_main_tui
             elif [ ${EXITSTATUS} = 0 ];then
-
-            am start
+                am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool/ > /dev/null 2>&1
+            elif [ ${EXITSTATUS} = 1 ];then
+                am start -a android.intent.action.VIEW -d https://nnyyaa.pages.dev/about/ > /dev/null 2>&1
+            fi
     esac
 }
 start $*
