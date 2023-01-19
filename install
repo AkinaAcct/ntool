@@ -1,13 +1,35 @@
 #!/bin/bash
-#嘿嘿嘿！
-#如你所见，这是一个顶级菜鸡的的一个脚本
-#属于是离谱了属于是
 cd ${HOME}
 if [ -d .ntool ];then
 	echo "看起来你似乎已经安装过ntool了"
 	echo "你确定要安装/升级吗？"
 	read -p "按回车继续"
 fi
+for i in pacman apt yum;do
+    if [ $(command -v ${i}) ];then
+        pkg=$i
+    fi
+done
+case $pkg in
+    apt)
+        PKGI="apt install -y"
+        PKGUNI="apt purge -y"
+        PKGUPD="apt update"
+        PKGUPG="apt upgrade -y"
+        ;;
+    pacman)
+        PKGI="pacman -Sy"
+        PKGUNI="pacman -R"
+        PKGUPD="pacman -Sy"
+        PKGUPG="pacman -Su"
+        ;;
+    yum)
+        PKGI="yum install -y"
+        PKGUNI="yum remove -y"
+        PKGUPD="yum update -y"
+        PKGUPG="yum update -y"
+        ;;
+esac
 while true
 do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
@@ -15,17 +37,14 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
-		pkg update -y
-		pkg upgrade -y
-		pkg install git wget curl python x11-repo dialog -y
+	    ${PKGUPD} && ${PKGUPG}
+        ${PKGI} git wget curl python x11-repo dialog bc jq gawk
 		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
 		mkdir -p .ntool
 		rm /data/data/com.termux/files/usr/bin/ntool
 		mv ntool /data/data/com.termux/files/usr/bin
 		chmod +x /data/data/com.termux/files/usr/bin/ntool
-		cd ~/.ntool
-        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O local_version > /dev/null 2>&1
-		cd ~
+        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -o ~/.ntool/local_version > /dev/null 2>&1
 		rm install.sh > /dev/null 2>&1
         echo "完成"
         echo "输入ntool测试启动"

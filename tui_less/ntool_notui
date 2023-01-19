@@ -1,0 +1,10 @@
+#!/bin/bash
+RED="\E[1;31m"
+GREEN="\E[1;32m"
+YELLOW="\E[1;33m"
+BLUE="\E[1;34m"
+PINK="\E[1;35m"
+CYAN="\e[36m"
+RESET="\E[0m"
+RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
+echo -e "${BLUE}while we were preparing...${RESET}"
