@@ -77,50 +77,7 @@ function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
     return 1
 }
-####启动function
-function start(){
-    if [ $# -gt 1 ];then
-        echo -e "${RED}不允许的两个传入参数${RESET}"
-        exit 1
-    fi
-    case $* in
-        -d|--debug)
-            echo ${TIME} > ~/log.txt
-            exec 2>> ~/log.txt
-            set -x
-            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行\n 有一份命令复制保存在~/log.txt" 15 70
-            termux_main_tui
-            ;;
-        -s|--strict)
-            set -e
-            dialog --title "ntool-tui:WARNING" --msgbox "严格模式/set -e已经启动 \n出现任何报错将直接终止脚本运行 \n该模式下容器安装一定会报错" 15 70
-            termux_main_tui
-            ;;
-        -v|--version)
-            local NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
-            if [ -z ${NTOOLVERSION} ];then
-                echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
-            else
-                echo -e "${RNTOOL}\n version:${NTOOLVERSION}\n mode:${GREEN}normal mode${RESET}"
-            fi
-            ;;
-        -h|--help)
-            echo -e "${RNTOOL} help."
-            echo -e "${GREEN}-h,--help${RESET}:print this help"
-            echo -e "${GREEN}-v,--version${RESET}:print then ntool' version that you've installed."
-            echo -e "${YELLOW}-d,--debug${RESET}:enable debug mode(set -x).All the commands will show first and then run."
-            echo -e "${YELLOW}-s,--strict${RESET}:enable ${RED}'set -e'${RESET} and it will cause many problems such uncompress failed."
-            ;;
-        -i|--install)
-            echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
-            check_and_update
-            exit 0
-            ;;
-        *)
-            termux_main_tui
-            ;;
-    esac
-}
+
 #########################正式tui function
 function patch_frame_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70);then
@@ -140,10 +97,10 @@ function patch_frame_choose(){
     else
         termux_main_tui
     fi
-    if command -v java > /dev/null 2>&1;then
+    if command -v java jq > /dev/null 2>&1;then
         patch_apk
     else
-        ${PKGI} openjdk-17
+        ${PKGI} openjdk-17 jq
         patch_apk
     fi
 }
@@ -164,11 +121,11 @@ function patch_apk(){
         if [ "$PATCHFRAME" == "xpatch" ];then
             local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/WindySha/Xpatch/releases/download/${tag}/xpatch-${tag}.jar -o xpatch.jar
+            wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -o xpatch.jar
         else
             local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/LSPosed/LSPatch/releases/download/${tag}/lspatch.jar
+            wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar
         fi
     fi
     if [ ! -f ${APKPATH} ];then
@@ -915,28 +872,6 @@ function web_tui(){				#这里是其他功能-网络类页面function
 	esac
 }
 
-function check_and_update(){			#这里是检查/升级的function
-    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
-        if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
-            echo -e "${BLUE}更新中...${RESET}"
-            ${PKGUP}
-            ${PKGI} git wget curl python x11-repo dialog
-            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
-            wget ${RAWURL}/version -O ${MAINPATH}/local_version
-            chmod +x ${PREFIX}/bin/ntool
-            rm ~/.ntool/local_version > /dev/null 2>&1
-		    mkdir -p .ntool
-            rm ntool
-            echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
-            exit 0
-        else
-            termux_main_tui
-        fi
-    else
-        dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
-        termux_main_tui
-    fi 
-}
 ######main tui
 function termux_main_tui(){
     MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你的系统为:${OS}\n选择一个以继续" 15 70 8  \
@@ -1041,6 +976,71 @@ function termux_main_tui(){
             elif [ ${EXITSTATUS} = 1 ];then
                 am start -a android.intent.action.VIEW -d https://nnyyaa.pages.dev/about/ > /dev/null 2>&1
             fi
+    esac
+}
+function check_and_update(){			#这里是检查/升级的function
+    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
+        if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
+            echo -e "${BLUE}更新中...${RESET}"
+            ${PKGUP}
+            ${PKGI} git wget curl python x11-repo dialog jq
+            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
+            wget ${RAWURL}/version -O ${MAINPATH}/local_version
+            chmod +x ${PREFIX}/bin/ntool
+            rm ~/.ntool/local_version > /dev/null 2>&1
+		    mkdir -p .ntool
+            rm ntool
+            echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
+            exit 0
+        else
+            termux_main_tui
+        fi
+    else
+        dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
+        termux_main_tui
+    fi 
+}
+####启动function
+function start(){
+    if [ $# -gt 1 ];then
+        echo -e "${RED}不允许的两个传入参数${RESET}"
+        exit 1
+    fi
+    case $* in
+        -d|--debug)
+            echo ${TIME} > ~/log.txt
+            exec 2>> ~/log.txt
+            set -x
+            dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行\n 有一份命令复制保存在~/log.txt" 15 70
+            termux_main_tui
+            ;;
+        -s|--strict)
+            set -e
+            dialog --title "ntool-tui:WARNING" --msgbox "严格模式/set -e已经启动 \n出现任何报错将直接终止脚本运行 \n该模式下容器安装一定会报错" 15 70
+            termux_main_tui
+            ;;
+        -v|--version)
+            local NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
+            if [ -z ${NTOOLVERSION} ];then
+                echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
+            else
+                echo -e "${RNTOOL}\n version:${NTOOLVERSION}\n mode:${GREEN}normal mode${RESET}"
+            fi
+            ;;
+        -h|--help)
+            echo -e "${RNTOOL} help."
+            echo -e "${GREEN}-h,--help${RESET}:print this help"
+            echo -e "${GREEN}-v,--version${RESET}:print then ntool' version that you've installed."
+            echo -e "${YELLOW}-d,--debug${RESET}:enable debug mode(set -x).All the commands will show first and then run."
+            echo -e "${YELLOW}-s,--strict${RESET}:enable ${RED}'set -e'${RESET} and it will cause many problems such uncompress failed."
+            ;;
+        -i|--install)
+            echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
+            check_and_update
+            ;;
+        *)
+            termux_main_tui
+            ;;
     esac
 }
 start $*
