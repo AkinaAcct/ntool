@@ -45,20 +45,21 @@ case $pkg in
     apt)
         PKGI="apt install -y"
         PKGUNI="apt purge -y"
-        PKGUP="apt update && apt upgrade"
+        PKGUPD="apt update"
+        PKGUPG="apt upgrade -y"
         ;;
     pacman)
         PKGI="pacman -S"
         PKGUNI="pacman -R"
-        PKGUP="pacman -Syy"
+        PKGUPD="pacman -Syy"
         ;;
     yum)
         PKGI="yum install -y"
         PKGUNI="yum remove"
-        PKGUP="yum update && yum upgrade -y"
+        PKGUPD="yum update && yum upgrade -y"
         ;;
 esac
-#echo "PKGI:${PKGI} | PKGUNI:${PKGUNI} | PKGUP:${PKGUP}"
+#echo "${PKGI}:${PKGI} | PKGUNI:PKGUNI | PKGUPD:PKGUPD"
 #read -p "package manager debug"
 ##########
 mkdir -p ${MAINPATH}
@@ -423,7 +424,7 @@ EOF
 }
 
 function container_install(){
-    ${PKGUP}
+    ${PKGUPD} && ${PKGUPG}
     command -v aria2c > /dev/null
     EXITSTATUS=$?
     if [ ${EXITSTATUS} = 1 ];then
@@ -582,7 +583,7 @@ EOF
                 termux_install_gui_tui
                 exit 0
             fi
-            ${PKGUNI} tigervnc openbox pypanel xorg-xsetroot xfce
+            PKGUNI tigervnc openbox pypanel xorg-xsetroot xfce
             rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
             dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
             termux_install_gui_tui
@@ -983,7 +984,7 @@ function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
         if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
-            ${PKGUP}
+            ${PKGUPD} && ${PKGUPG}
             ${PKGI} git wget curl python x11-repo dialog jq
             wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
