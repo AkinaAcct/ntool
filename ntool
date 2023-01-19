@@ -79,55 +79,56 @@ function bad_empty_input(){
 }
 
 #########################正式tui function
-function patch_frame_choose(){
+function patch_framework_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70);then
+        EXITSTATUS=$?
         if [ $EXITSTATUS != 0 ];then
             termux_main_tui
         fi
-        PATCHCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch\n两种patch方式都很像无极" 15 70)
+        FRAMEWORKCHOICE=$(dialog --output-fd 1 --title "ntool-tui:选择patch框架" --yes-label "XPatch" --no-label "LSPatch" --yesno "基于Java，选择任何一个选项都将安装OpenJdk17\n本页面用于免root使用lsp或xp注入应用\nLSPatch的应用仅支持安卓9及以上但较为稳定\nXPatch则是几乎全版本支持但稳定性不好,支持的模块也大大少于LSPatch\n两种patch方式都很像无极" 15 70)
         EXITSTATUS=$?
-            case $PATCHCHOICE in
-            1)
-                PATCHFRAME="xpatch"
+        case ${EXITSTATUS} in
+            0)
+                PATCHFRAMEWORK=xpatch
                 ;;
-            2)
-                PATCHFRAME="lspatch"
+            1)
+                PATCHFRAMEWORK=lspatch
                 ;;
         esac
+        if command -v java jq > /dev/null 2>&1;then
+            patch_apk
+        else
+            ${PKGI} openjdk-17 jq
+            patch_apk
+        fi
     else
         termux_main_tui
-    fi
-    if command -v java jq > /dev/null 2>&1;then
-        patch_apk
-    else
-        ${PKGI} openjdk-17 jq
-        patch_apk
     fi
 }
 
 function patch_apk(){
-    APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAME}" --inputbox "输入apk完整路径\n 不是apk文件的上一级目录!!!" 15 70)
+    APKPATH=$(dialog --output-fd 1 --title "ntool-tui:fast ${PATCHFRAMEWORK}" --inputbox "输入apk完整路径\n 不是apk文件的上一级目录!!!" 15 70)
     EXITSTATUS=$?
     if [ $EXITSTATUS != 0 ];then
-        patch_frame_choose
+        patch_framework_choose
     elif [ -z $APKPATH ];then
         bad_empty_input
         patch_apk
     fi
-    mkdir -p ${MAINPATH}/patchedapks
-    cd ${MAINPATH}/patchedapks
-    if [ ! -f ${PATCHFRAME}.jar ];then
-        echo -e "${BLUE}获取最新版本号中${RESET}"
-        if [ "$PATCHFRAME" == "xpatch" ];then
-            local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
+    mkdir -p ${MAINPATH}/patch
+    case ${PATCHFRAMEWORK} in
+        xpatch)
+            echo -e "${BLUE}获取最新版本号中${RESET}"
+            TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -o xpatch.jar
-        else
-            local TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
+            wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -o ${MAINPATH}/patch/xpatch.jar
+            ;;
+        lspatch)
+            TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar
-        fi
-    fi
+            wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar -o ${MAINPATH}/patch/lspatch.jar
+            ;;
+    esac
     if [ ! -f ${APKPATH} ];then
         dialog --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n 检查是否输入错误或有无给予内置存储权限" 15 70
         patch_apk
@@ -382,7 +383,7 @@ COMMAND+=" -b /proc"
 COMMAND+=" -w /root"
 COMMAND+=" /usr/bin/env -i"
 COMMAND+=" HOME=/root"
-COMMAND+=" PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games"
+COMMAND+=" PATH=/usr//sbin:/usr//bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr//games"
 COMMAND+=" TERM=xterm-256color"
 COMMAND+=" LANG=C.UTF-8"
 COMMAND+=" /bin/bash -l"
@@ -758,10 +759,10 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 
 		1)
 			if command -v ping > /dev/null;then
-                local ip=$(dialog --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
-                local time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
-                local speed=$(dialog --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
-                local size=$(dialog --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
+                 ip=$(dialog --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
+                 time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
+                 speed=$(dialog --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
+                 size=$(dialog --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_tui
@@ -778,10 +779,10 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			;;
 		2)
 			if command -v ping6 > /dev/null;then
-                local ip=$(dialog --output-fd 1 --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)"15 70)
-                local time=$(dialog --output-fd 1 --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 70)
-                local speed=$(dialog --output-fd 1 --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
-                local size=$(dialog --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
+                 ip=$(dialog --output-fd 1 --title "ntool-tui:ping6-ip" --inputbox "输入要进行ping6的IP/域名(必填)"15 70)
+                 time=$(dialog --output-fd 1 --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 70)
+                 speed=$(dialog --output-fd 1 --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
+                 size=$(dialog --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
                 if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ];then
                     bad_empty_input
                     tool_tui
@@ -797,8 +798,8 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			fi
 			;;
 		3)
-            local filename=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的文件:" 15 70)
-            local filepath=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的目录:" 15 70)
+             filename=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的文件:" 15 70)
+             filepath=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的目录:" 15 70)
             if [ -z $filename ] || [ -z $filepath ];then
                 bad_empty_input
             fi
@@ -911,7 +912,7 @@ function termux_main_tui(){
             ;;
         4)
             if command -v bc > /dev/null;then
-                local BC=$(dialog --output-fd 1 --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70)
+                 BC=$(dialog --output-fd 1 --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70)
                 EXITSTATUS=$?
                 if [ $EXITSTATUS != 0 ];then
                     termux_main_tui
@@ -940,7 +941,7 @@ function termux_main_tui(){
             termux_install_gui_tui
             ;;
         7)
-            patch_frame_choose
+            patch_framework_choose
             ;;
         8)
             check_if_not_android_warning
@@ -950,7 +951,7 @@ function termux_main_tui(){
                 mv $PREFIX/etc/motd ${PREFIX}/etc/motd.bak > /dev/null 2>&1
             }
             if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70);then
-                local ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
+                 ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
                 if [ ! -z "$ISINSTALLED" ];then
                     if (dialog --title "ntool-tui:WARNING" --defaultno --yesno "你已经安装过ntafetch了\n你确定要重装吗?" 15 70);then
                         ntafetch_install
@@ -980,7 +981,7 @@ function termux_main_tui(){
 }
 function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
-        if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
+        if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
             ${PKGUP}
             ${PKGI} git wget curl python x11-repo dialog jq
@@ -1020,7 +1021,7 @@ function start(){
             termux_main_tui
             ;;
         -v|--version)
-            local NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
+             NTOOLVERSION="$(cat ${MAINPATH}/_version 2> /dev/null)"
             if [ -z ${NTOOLVERSION} ];then
                 echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
             else
