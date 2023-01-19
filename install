@@ -30,16 +30,23 @@ case $pkg in
         PKGUPG="yum update -y"
         ;;
 esac
+${PKGUPD} && ${PKGUPG}
+${PKGI} git wget curl python x11-repo dialog bc jq gawk
 while true
 do
+if [ "${*}" == "-n" ];then
+    echo "从raw安装,不从release"
+    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool -o ${PREFIX}/bin/ntool
+    chmod +x ${PREFIX}/bin/ntool
+    echo -e "完成"
+    exit 0
+fi
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
-	    ${PKGUPD} && ${PKGUPG}
-        ${PKGI} git wget curl python x11-repo dialog bc jq gawk
-		wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool
+        TAG=$(TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name'))
 		mkdir -p .ntool
 		rm /data/data/com.termux/files/usr/bin/ntool
 		mv ntool /data/data/com.termux/files/usr/bin

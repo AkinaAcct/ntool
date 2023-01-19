@@ -11,11 +11,9 @@
 ```
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```  
-**如果**上面的方式**失败了**那么:  
+**如果**上面的方式**失败了**,或者你想要体验最新的**有Bug的**功能那么:  
 ```
-wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool  
-chmod +x ntool  
-./ntool -i
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) -n
 ```  
 
 ~~享受屎山代码的运行吧XD~~  
