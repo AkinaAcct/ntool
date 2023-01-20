@@ -508,6 +508,7 @@ function termux_install_gui_tui(){
         if [ $EXITSTATUS != 0 ];then
             termux_main_tui
         fi
+        ${PKGI} x11-repo
         case $DESKTOP_CHOICE in
         0)
             termux_main_tui
@@ -906,7 +907,6 @@ function termux_main_tui(){
             other_tool_tui
             ;;
         3)
-            check_if_not_termux_warning
             backup_tui
             ;;
         4)
@@ -936,7 +936,6 @@ function termux_main_tui(){
             termux_main_tui
             ;;
         6)
-            check_if_not_android_warning
             termux_install_gui_tui
             ;;
         7)
