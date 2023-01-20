@@ -497,102 +497,6 @@ function change_source_tui(){       #换源
     esac
 }
 
-function termux_install_gui_tui(){
-    if command -v pip > /dev/null;then
-        DESKTOP_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:desktop install" --menu "选择一个以继续" 15 70 8 \
-        "1" "安装xfce(**较为完整**而**不是完全完整**的图形环境)" \
-        "2" "仅安装openbox(基础图形环境)" \
-        "3" "卸载" \
-        "0" "返回脚本主页面")
-        EXITSTATUS=$?
-        if [ $EXITSTATUS != 0 ];then
-            termux_main_tui
-        fi
-        ${PKGI} x11-repo
-        case $DESKTOP_CHOICE in
-        0)
-            termux_main_tui
-            ;;
-        1)
-            echo -e "${GREEN}安装中...${RESET}"
-            ${PKGI} openbox pypanel xorg-xsetroot xfce tigervnc
-            pip install PyXDG
-            echo -e "${BLUE}写入启动脚本中...${RESET}"
-            cat > "${PREFIX}/bin/startxfce" <<- EOF
-            #!/data/data/com.termux/files/usr/bin/bash
-            read -p "输入vnc启动端口:" port
-            if [ -z ${port} ];then
-                echo -e "不允许的空输入"
-                startxfce
-                exit 0
-            fi
-            export DISPLAY=:${port}
-            Xvnc --SecurityTypes=None $DISPLAY &
-            sleep 1s
-            openbox-session&
-            xsetroot -solid gray
-            pypanel &
-            aterm &
-            startxfce4
-            echo -e "${GREEN}连接地址：127.0.0.1:${port}${RESET}"
-EOF
-            chmod +x ${PREFIX}/bin/startxfce
-            echo -e "${GREEN}完成${RESET}"
-            echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
-            read -p "按任意键以继续"
-            exit 0
-            ;;
-        2)
-            echo -e "${GREEN}${RESET}"
-            ${PKGI} openbox pypanel xorg-xsetroot tigervnc
-            pip install PyXDG
-            echo -e "${BLUE}写入启动脚本中...${RESET}"
-            cat > "${PREFIX}/bin/startopenbox" <<- EOF
-            #!/data/data/com.termux/files/usr/bin/bash
-            read -p "输入vnc启动端口:" port
-            if [ -z ${port} ];then
-                echo -e "${RED}不允许的空输入${RESET}"
-                startopenbox
-                exit 0
-            fi
-            export DISPLAY=:${port}
-            Xvnc --SecurityTypes=None $DISPLAY &
-            sleep 1s
-            openbox-session
-            xsetroot -solid gray
-            pypanel &
-            echo "连接地址：127.0.0.1:${port}"
-EOF
-            chmod +x ${PREFIX}/bin/startopenbox
-            echo -e "${GREEN}完成${RESET}"
-            echo -e "输入${GREEN}startopenbox${RESET}以启动"
-            read -p "按任意键以继续"
-            exit 0
-            ;;
-        3)
-            command -v openbox > /dev/null 2>&1
-            EXITSTATUS=$?
-            if [ $EXITSTATUS = 1 ];then
-                dialog --title "ntool-tui:WARNING" --msgbox "你没有安装桌面!" 15 70
-                termux_install_gui_tui
-            fi
-            DESKTOPUNI=$(dialog --output-fd 1 --title "ntool-tui:uninstall desktop" --defaultno --yesno "警告:\n这将删除你的桌面数据\n这将同时卸载xfce,openbox与启动脚本\npip安装的依赖不会被删除" 15 70)
-            EXITSTATUS=$?
-            if [ ${EXITSTATUS} != 0 ];then
-                termux_install_gui_tui
-                exit 0
-            fi
-            PKGUNI tigervnc openbox pypanel xorg-xsetroot xfce
-            rm -v ${PREFIX}/bin/startopenbox ${PREFIX}/bin/startxfce
-            dialog --title "ntool-tui:success" --msgbox "卸载成功" 15 70
-            termux_install_gui_tui
-            ;;
-        esac
-    else
-            ${PKGI} python
-    fi
-}
-
 function other_tool_tui(){			#这里是其他功能页的function
     OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "网络页面" \
@@ -973,7 +877,8 @@ function termux_main_tui(){
             termux_main_tui
             ;;
         6)
-            termux_install_gui_tui
+            dialog --title "ntool-tui:sorry" --msgbox "由于bug太多,已删除该功能" 15 70
+            termux_main_tui
             ;;
         7)
             patch_framework_choose
