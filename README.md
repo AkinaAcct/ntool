@@ -11,7 +11,7 @@
 ```
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```  
-**如果**上面的方式**失败了**,或者你想要体验最新的**有Bug的**功能那么:  
+如果你想要体验最新的**有Bug的**功能那么:  
 ```
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) -n
 ```  

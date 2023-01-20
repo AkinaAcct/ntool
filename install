@@ -36,7 +36,7 @@ for i in git wget curl python dialog bc jq gawk;do
 done
 if [ "${*}" == "-n" ];then
     echo "从raw安装,不从release"
-    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool -o ${PREFIX}/bin/ntool
+    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool-termux -o ${PREFIX}/bin/ntool
     chmod +x ${PREFIX}/bin/ntool
     echo -e "完成"
     exit 0
