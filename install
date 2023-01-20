@@ -49,7 +49,7 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
-        TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name'))
+        TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name')
         if [ "$(uname -o)" == "Android" ];then
             wget https://github.com/nnyyaa/ntool/releases/download/${TAG}/ntool-termux -O ${PREFIX}/bin/ntool
             chmod +x ${PREFIX}/bin/ntool
