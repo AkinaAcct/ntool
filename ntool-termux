@@ -536,7 +536,7 @@ function termux_install_gui_tui(){
             startxfce4
             echo -e "${GREEN}连接地址：127.0.0.1:${port}${RESET}"
 EOF
-            chmod +x startxfce
+            chmod +x ${PREFIX}/bin/startxfce
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startxfce${RESET}以启动xfce"
             read -p "按任意键以继续"
@@ -563,7 +563,7 @@ EOF
             pypanel &
             echo "连接地址：127.0.0.1:${port}"
 EOF
-            chmod +x startopenbox
+            chmod +x ${PREFIX}/bin/startopenbox
             echo -e "${GREEN}完成${RESET}"
             echo -e "输入${GREEN}startopenbox${RESET}以启动"
             read -p "按任意键以继续"
