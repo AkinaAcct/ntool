@@ -8,3 +8,4 @@ CYAN="\e[36m"
 RESET="\E[0m"
 RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
 echo -e "${BLUE}while we were preparing...${RESET}"
+exit 0
