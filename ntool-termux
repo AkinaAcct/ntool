@@ -1015,17 +1015,15 @@ function termux_main_tui(){
     esac
 }
 function check_and_update(){			#这里是检查/升级的function
-    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version)" ];then
+    if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version 2> /dev/null)" ];then
         if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
             ${PKGUPD} && ${PKGUPG}
             ${PKGI} git wget curl python x11-repo dialog jq
-            wget ${RAWURL}/ntool -O ${PREFIX}/bin/ntool
+            wget ${RAWURL}/ntool-termux -O ${PREFIX}/bin/ntool
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
             chmod +x ${PREFIX}/bin/ntool
-            rm ~/.ntool/local_version > /dev/null 2>&1
 		    mkdir -p .ntool
-            rm ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
             exit 0
         else
