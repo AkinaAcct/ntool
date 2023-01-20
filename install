@@ -1,5 +1,4 @@
 #!/bin/bash
-cd ${HOME}
 if [ -d .ntool ];then
 	echo "看起来你似乎已经安装过ntool了"
 	echo "你确定要安装/升级吗？"
@@ -50,13 +49,15 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
-        TAG=$(TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name'))
-		mkdir -p .ntool
-		rm /data/data/com.termux/files/usr/bin/ntool
-		mv ntool /data/data/com.termux/files/usr/bin
-		chmod +x /data/data/com.termux/files/usr/bin/ntool
-        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -o ~/.ntool/local_version > /dev/null 2>&1
-		rm install.sh > /dev/null 2>&1
+        TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name'))
+        if [ "$(uname -o)" == "Android" ];then
+            wget https://github.com/nnyyaa/ntool/releases/download/${TAG}/ntool-termux -O ${PREFIX}/bin/ntool
+            chmod +x ${PREFIX}/bin/ntool
+        else
+            echo "未适配"
+            exit 0
+        fi
+        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
         echo "完成"
         echo "输入ntool测试启动"
 		break
