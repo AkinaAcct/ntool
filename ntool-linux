@@ -14,7 +14,10 @@ if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
 fi
 OS="$(cat /etc/os-release | gawk 'NR==1' | gawk -F '"' '{print $2}' | gawk '{print $1}')"     #系统
-if [ "${OS}" != "Ubuntu" | "Debian" ]
+if [ "${OS}" != "Ubuntu" | "Debian" ];then
+    dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
+    exit 0
+fi
 STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
 MAINPATH="${HOME}/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
