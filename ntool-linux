@@ -14,7 +14,7 @@ if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
 fi
 OS="$(cat /etc/os-release | gawk 'NR==1' | gawk -F '"' '{print $2}' | gawk '{print $1}')"     #系统
-if [ "${OS}" != "Ubuntu" | "Debian" ];then
+if [[ "${OS}" != "Ubuntu" && "Debian" ]];then
     dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
     exit 0
 fi
@@ -40,6 +40,7 @@ case $PKG in
         PKGUNI="apt purge -y"
         PKGUPD="apt update"
         PKGUPG="apt upgrade -y"
+        PKGUP="${PKGUPD} && ${PKGUPG}"
         ;;
     pacman)
         PKGI="pacman -S"
@@ -61,12 +62,6 @@ function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
     exit 1
 }
-function check_if_android_warning(){
-    if [ "${OS}" == "Android" ];then
-        dialog --title "ntool-tui:WARNING" --msgbox "此为linux版,非Android版本,终止运行" 15 70
-        exit 1
-    fi
-}
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
     return 1
@@ -78,14 +73,17 @@ function change_source(){
     "mirrors.tuna.tsinghua.edu.cn" "TUNA 清华大学镜像站")
     case ${OS} in
         Ubuntu|ubuntu)
-            if [ "${ARCH}" == "amd64" | "i386" ];then
+            if [[ "${ARCH}" == "amd64" || "i386" ]];then
                 sed -i "s/archive.ubuntu.com/${MIRRORSITE}/" /etc/apt/sources.list
             else
                 sed -i "s/ports.ubuntu.com/${MIRRORSITE}/" /etc/apt/sources.list
             fi
+            ${PKGUP}
+            dialog --title "ntool-tui:success" --msgbox "完成!" 15 70
             ;;
         Debian|debian)
             sed -i "s/deb.debian.org//${MIRRORSITE}/" /etc/apt/sources.list
+            ${PKGUP}
             ;;
     esac
 }
@@ -97,10 +95,12 @@ MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你在使
 "2" "换源")
 case ${MAINCHOICE} in
     1)
+        wait_for_dev_tui
         package_installer
         ;;
     2)
         change_source
         ;;
 esac
+echo "bye"
 exit 0
