@@ -9,6 +9,13 @@ for i in pacman apt yum;do
         pkg=$i
     fi
 done
+printf "please wait..."
+printf "d8b   db d888888b  .d88b.   .d88b.  db\n"
+printf "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88\n"
+printf "88V8o 88    88    88    88 88    88 88\n"
+printf "88 V8o88    88    88    88 88    88 88\n"
+printf "88  V888    88    '8b  d8' '8b  d8' 88booo.\n"
+printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
 case $pkg in
     apt)
         PKGI="apt install -y"
