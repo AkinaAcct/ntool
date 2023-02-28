@@ -13,15 +13,10 @@ TIME=$(date '+%Y-%m-%d %H:%M:%S')
 if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
 fi
-OS="$(cat /etc/os-release | gawk 'NR==2' | gawk -F '"' '{print $2}')"     #系统
-if [[ "${OS}" != "Ubuntu" && "Debian" ]];then
-    dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
-    exit 0
-fi
-STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
 MAINPATH="${HOME}/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
 
+mkdir -p ${MAINPATH}
 if [ "${ARCH}" != "arm64" ];then
     dialog --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64/aarch64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
 elif [ "${OS}" == "Android" ];then
@@ -38,19 +33,12 @@ case $PKG in
     apt)
         PKGI="apt install -y"
         PKGUNI="apt purge -y"
-        PKGUPD="apt update"
-        PKGUPG="apt upgrade -y"
-        PKGUP="${PKGUPD} && ${PKGUPG}"
+        PKGUP="apt update && apt upgrade -y"
         ;;
     pacman)
-        PKGI="pacman -S"
+        PKGI="pacman -S --no-confirm"
         PKGUNI="pacman -R"
-        PKGUPD="pacman -Syy"
-        ;;
-    yum)
-        PKGI="yum install -y"
-        PKGUNI="yum remove"
-        PKGUPD="yum update && yum upgrade -y"
+        PKGUP="pacman -Syu"
         ;;
     *)
         dialog --title "ntool-tui:WARNING" --msgbox "未知的包管理器" 15 70
@@ -88,19 +76,53 @@ function change_source(){
     esac
 }
 
+function package_installer(){
+    PACKAGECHOICE=$(dialog --output-fd 1 --title "ntool-tui:package_installer" --menu "choose one" 15 70 8 \ 
+    "1" "java(openjdk-latest)" \
+    "0" "返回上一页")
+    case ${PACKAGECHOICE} in
+        0)
+            main_menu
+            ;;
+        1)
+            ${PKGUP}
+            ${PKGI} jdk-openjdk
+            ;;
+    esac
 
-
-MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你在使用linux版\n选择一个以继续" 17 70 8 \
-"1" "安装奇妙的软件" \
-"2" "换源")
-case ${MAINCHOICE} in
-    1)
-        wait_for_dev_tui
-        package_installer
-        ;;
-    2)
-        change_source
-        ;;
-esac
-echo "bye"
+}
+function main_menu(){
+    MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你在使用linux版\n选择一个以继续" 15 70 8 \
+    "1" "安装奇妙的软件" \
+    "2" "换源" \
+    "0" "退出")
+    case ${MAINCHOICE} in
+        0)
+            echo "bye"
+            exit 0
+            ;;
+        1)
+            wait_for_dev_tui
+            package_installer
+            ;;
+        2)
+            change_source
+            ;;
+    esac
+}
+OS="$(cat /etc/os-release | grep "ID=" | head -n 1 | sed 's/ID=//')"     #系统
+if [ "${OS}" != "ubuntu" ];then
+    if [ "${OS}" != "debian" ];then
+        if [ "${OS}" != "archarm" ];then
+            dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
+            exit 0
+        else
+            main_menu
+        fi
+    else
+        main_menu
+    fi
+else
+    main_menu
+fi
 exit 0
