@@ -17,8 +17,7 @@ bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) -n
 ```  
 
 ~~享受屎山代码的运行吧XD~~  
----
-2023.1.19,热烈庆祝屎山ntool堆到1000行了!
+
 ---
 
 ~~由于容器安装脚本的难度过大,更新会随缘的;(~~
