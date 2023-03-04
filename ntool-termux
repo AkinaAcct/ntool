@@ -575,8 +575,23 @@ function ssh_tui(){
 			fi
 			;;
 		3)
-            wait_for_dev_tui
-            ssh_tui
+            while true;
+            do
+            EmailInput=$(dialog --output-fd 1 --title "ntool-tui:keygen" --inputbox "使用RSA\n输入你的邮箱:" 15 70)
+            EXITSTATUS=$?
+            if [ -a EmailInput];then
+                bad_empty_input
+            elif [ $EXITSTATUS != 0 ];then
+                ssh_tui
+                break
+            else
+                break
+            fi
+            done
+            echo -e "${GREEN}接下来请一路回车${RESET}"
+            ssh-keygen -t rsa -C "$EmailInput"
+            echo -e "${GREEN}完成!\n公钥在:${HOME}/.ssh/id_rsa.pub\n私钥在:${HOME}/.ssh/id_rsa"
+            read -p "按任意键继续"
 			;;
 	esac
 }
@@ -822,10 +837,9 @@ function termux_main_tui(){
     "3" "备份功能" \
     "4" "计算圆周率(好水)" \
     "5" "一言" \
-    "6" "原系统桌面" \
-    "7" "LSPatch/XPatch功能" \
-    "8" "ntafetch-使用ntafetch作为motd(测试)" \
-    "9" "反映一个BUG" \
+    "6" "LSPatch/XPatch功能" \
+    "7" "ntafetch-使用ntafetch作为motd(测试)" \
+    "8" "反映一个BUG" \
     "00" "更新" \
     "0" "退出")
     EXITSTATUS=$?
@@ -877,13 +891,9 @@ function termux_main_tui(){
             termux_main_tui
             ;;
         6)
-            dialog --title "ntool-tui:sorry" --msgbox "由于bug太多,已删除该功能" 15 70
-            termux_main_tui
-            ;;
-        7)
             patch_framework_choose
             ;;
-        8)
+        7)
             check_if_not_android_warning
             function ntafetch_install(){
                 wget https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
@@ -907,7 +917,7 @@ function termux_main_tui(){
             fi
             termux_main_tui
             ;;
-        9)
+        8)
             dialog --title "ntool-tui:report" --yes-label "GitHub" --no-label "Blog" --yesno "你可以到ntool项目下提出issue \n或者到博客的关于页找我 \n我也会看的" 15 70
             EXITSTATUS=$?
             if [ ${EXITSTATUS} = 255 ];then
