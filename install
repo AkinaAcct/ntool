@@ -1,20 +1,28 @@
 #!/bin/bash
+set -e
+echo "\"set -e\"已经启动,任何报错都将终止安装"
 if [ -d .ntool ];then
 	echo "看起来你似乎已经安装过ntool了"
 	echo "你确定要安装/升级吗？"
 	read -p "按回车继续"
 fi
-for i in pacman apt yum;do
+for PKGMANAGER in pacman apt yum;do
     if [ $(command -v ${i}) ];then
-        pkg=$i
+        pkg="${PKGMANAGER}"
+    else
+	echo "unsupported OS or package manager!"
+	exit
     fi
 done
+clear
+
 printf "d8b   db d888888b  .d88b.   .d88b.  db\n"
 printf "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88\n"
 printf "88V8o 88    88    88    88 88    88 88\n"
 printf "88 V8o88    88    88    88 88    88 88\n"
 printf "88  V888    88    '8b  d8' '8b  d8' 88booo.\n"
-printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
+printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n\n\n"
+
 printf "please wait..."
 
 case $pkg in
@@ -43,7 +51,8 @@ for i in git wget curl python dialog bc jq gawk;do
     fi
 done
 if [ "${*}" == "-n" ];then
-    echo "从raw安装,不从release"
+    echo "从unstable安装,不从release"
+    echo "please wait..."
     wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool-termux -o ${PREFIX}/bin/ntool
     chmod +x ${PREFIX}/bin/ntool
     echo -e "完成"
@@ -57,12 +66,15 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
 		echo "installing..."
+        echo "while getting the latest releases..."
         TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name')
         if [ "$(uname -o)" == "Android" ];then
             wget https://github.com/nnyyaa/ntool/releases/download/${TAG}/ntool-termux -O ${PREFIX}/bin/ntool
             chmod +x ${PREFIX}/bin/ntool
-        else
-            echo "未适配"
+        elif ["$(uname -o)" == "Linux" ];then
+            wget https://github.com/nnyyaa/ntool/releases/download/${TAG}/ntool-linux -O ${PREFIX}/bin/ntool
+	    else
+            echo "未适配的系统:$(uname -o)"
             exit 0
         fi
         wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
@@ -75,7 +87,7 @@ case $answer in
 		break
 		;;
 	*)
-		echo "未知的输入: $answer 请确认输入无误"
+		echo "未知的输入:\"$answer\"请确认输入无误"
 		;;
 esac
 done
