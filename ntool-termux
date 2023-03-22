@@ -951,10 +951,6 @@ function check_and_update(){			#这里是检查/升级的function
 }
 ####启动function
 function start(){
-    if [ $# > 1 ];then
-        echo -e "${RED}不允许的两个传入参数${RESET}"
-        exit 1
-    fi
     case $* in
         -d|--debug)
             echo ${TIME} > ~/log.txt
