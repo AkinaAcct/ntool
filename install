@@ -17,7 +17,8 @@ done
 if [ "${*}" == "-n" ];then
     echo "从unstable安装,不从release"
     echo "please wait..."
-    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool-termux -O ${PREFIX}/bin/ntool
+    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool-termux
+    mv ntool-termux ${PREFIX}/bin/ntool
     chmod +x ${PREFIX}/bin/ntool
     echo -e "完成"
     exit 0
