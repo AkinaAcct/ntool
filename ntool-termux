@@ -965,11 +965,11 @@ function start(){
             termux_main_tui
             ;;
         -v|--version)
-             NTOOLVERSION="$(cat ${MAINPATH}/_version 2> /dev/null)"
+             NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
             if [ -z ${NTOOLVERSION} ];then
                 echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
             else
-                echo -e "${RNTOOL}\n version:${NTOOLVERSION}\n mode:${GREEN}normal mode${RESET}"
+                echo -e "${RNTOOL}\n version:${BLUE}${NTOOLVERSION}${RESET}\n mode:${GREEN}normal mode${RESET}"
             fi
             ;;
         -h|--help)
