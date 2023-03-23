@@ -120,12 +120,12 @@ function patch_apk(){
             echo -e "${BLUE}获取最新版本号中${RESET}"
             TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -o ${MAINPATH}/patch/xpatch.jar
+            wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -O ${MAINPATH}/patch/xpatch.jar
             ;;
         lspatch)
             TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
             echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-            wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar -o ${MAINPATH}/patch/lspatch.jar
+            wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar -O ${MAINPATH}/patch/lspatch.jar
             ;;
     esac
     if [ ! -f ${APKPATH} ];then
