@@ -111,18 +111,13 @@ function main_menu(){
     esac
 }
 OS="$(cat /etc/os-release | grep "ID=" | head -n 1 | sed 's/ID=//')"     #系统
-if [ "${OS}" != "ubuntu" ];then
-    if [ "${OS}" != "debian" ];then
-        if [ "${OS}" != "archarm" ];then
-            dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
-            exit 0
-        else
-            main_menu
-        fi
-    else
+case ${OS} in
+    ubuntu|debian|archarm)
         main_menu
-    fi
-else
-    main_menu
-fi
+    ;;
+    *)
+        dialog --title "ntool-tui:WARNING" --msgbox "未适配的linux发行版:${OS}" 15 70
+	exit 1
+	;;
+esac
 exit 0
