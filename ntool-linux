@@ -14,6 +14,7 @@ if [ "$ARCH" == "aarch64" ];then
     ARCH="arm64"
 fi
 MAINPATH="${HOME}/.ntool"      #主目录
+OS="$(cat /etc/os-release | grep "ID=" | head -n 1 | sed 's/ID=//')"     #系统
 RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
 
 mkdir -p ${MAINPATH}
@@ -110,7 +111,6 @@ function main_menu(){
             ;;
     esac
 }
-OS="$(cat /etc/os-release | grep "ID=" | head -n 1 | sed 's/ID=//')"     #系统
 case ${OS} in
     ubuntu|debian|archarm)
         main_menu
