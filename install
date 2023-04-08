@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+if [ "$(uname -o)" != "Android" ];then
+	echo "Warning!对于linux的支持于2023.4.8终止"
+	echo "退出安装"
+	exit 1
+fi
+
 if [ -d .ntool ];then
 	echo "看起来你似乎已经安装过ntool了"
 	echo "你确定要安装/升级吗？"
@@ -29,7 +36,9 @@ printf "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88\n"
 printf "88V8o 88    88    88    88 88    88 88\n"
 printf "88 V8o88    88    88    88 88    88 88\n"
 printf "88  V888    88    '8b  d8' '8b  d8' 88booo.\n"
-printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n\n\n"
+printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
+sleep 0.2
+printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 
 while true
 do
@@ -37,21 +46,13 @@ read -p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
-		echo "installing..."
-        	echo "while getting the latest releases..."
-	        TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/nnyyaa/ntool/releases/latest" | jq -r '.tag_name')
-        	if [ "$(uname -o)" == "Android" ];then
-	            wget https://raw.githubusercontent.com/nya-main/ntool/main/ntool-termux -O ${PREFIX}/bin/ntool
-        	    chmod +x ${PREFIX}/bin/ntool
-	        elif ["$(uname -o)" == "Linux" ];then
-        	    wget https://raw.githubusercontent.com/nya-main/ntool/main/ntool-linux -O /usr/bin/ntool
-		    else
-        	    echo "未适配的系统:$(uname -o)"
-	            exit 0
-        	fi
-	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
-        	echo "完成"
-	        echo "输入ntool测试启动"
+        if [ "$(uname -o)" == "Android" ];then
+	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntool-termux -O ${PREFIX}/bin/ntool
+            chmod +x ${PREFIX}/bin/ntool
+		fi
+	    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
+    	echo "完成"
+        echo "输入ntool测试启动"
 		break
 		;;
 	N|n)
