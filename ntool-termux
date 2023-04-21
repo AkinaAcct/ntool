@@ -35,31 +35,10 @@ elif [ "${OS}" != "Android" ];then
 fi
 termux-wake-lock
 ###以下部分目的为获取包管理器
-for i in pacman apt yum;do
-    if [ $(command -v ${i}) ];then
-        pkg=$i
-    fi
-done
-case $pkg in
-    apt)
-        PKGI="apt install -y"
-        PKGUNI="apt purge -y"
-        PKGUPD="apt update"
-        PKGUPG="apt upgrade -y"
-        ;;
-    pacman)
-        PKGI="pacman -S"
-        PKGUNI="pacman -R"
-        PKGUPD="pacman -Syy"
-        ;;
-    yum)
-        PKGI="yum install -y"
-        PKGUNI="yum remove"
-        PKGUPD="yum update && yum upgrade -y"
-        ;;
-esac
-#echo "${PKGI}:${PKGI} | PKGUNI:PKGUNI | PKGUPD:PKGUPD"
-#read -p "package manager debug"
+alias PKGI="apt install -y"
+alias PKGUNI="apt purge -y"
+alias PKGUPD="apt update"
+alias PKGUPG="apt upgrade -y"
 ##########
 mkdir -p ${MAINPATH}
 #常用功能function
@@ -98,7 +77,7 @@ function patch_framework_choose(){
         if command -v java jq > /dev/null 2>&1;then
             patch_apk
         else
-            ${PKGI} openjdk-17 jq
+            PKGI openjdk-17 jq
             patch_apk
         fi
     else
@@ -193,7 +172,7 @@ function backup_tui(){      #备份页面function
             else
                 echo "tar未安装"
                 echo "start installing..."
-                ${PKGI} tar
+                PKGI tar
                 backup_tui
             fi
             ;;
@@ -423,11 +402,11 @@ EOF
 }
 
 function container_install(){
-    ${PKGUPD} && ${PKGUPG}
+    PKGUPD && PKGUPG
     command -v aria2c > /dev/null
     EXITSTATUS=$?
     if [ ${EXITSTATUS} = 1 ];then
-        ${PKGI} aria2c
+        PKGI aria2c
     fi
     mkdir -p ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     echo -e "${GREEN}稍等，正在检查选择${CONTAINER_OS}的最新rootfs...${RESET}"
@@ -530,7 +509,7 @@ function ssh_check_install(){
 	else
 		echo "${RED}未安装ssh客户/服务端${RESET}"
 		echo "${GREEN}安装中...${RESET}"
-		${PKGI} openssh
+		PKGI openssh
         echo -e "${GREEN}"
         echo "完成"
         read -p "按任意键以继续"
@@ -571,7 +550,7 @@ function ssh_tui(){
 			else
 				echo "sshpass未安装"
 				echo "installing..."
-                ${PKGI} sshpass
+                PKGI sshpass
 				ssh_tui
 			fi
 			;;
@@ -727,7 +706,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "未安装ping，正在安装..."
-				${PKGI} termux-tools
+				PKGI termux-tools
 				tool_tui
 			fi
 			;;
@@ -747,7 +726,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
                 fi
 			else
 				echo "ping6未安装,正在安装..."
-				${PKGI} termux-tools
+				PKGI termux-tools
 				tool_tui
 			fi
 			;;
@@ -772,7 +751,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 		4)
 			echo "只支持openjdk17"
 			read -p "按任意键以继续"	#我好水啊（）
-			${PKGI} openjdk-17
+			PKGI openjdk-17
 			echo "安装完成"
 			;;
 		5)
@@ -782,7 +761,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
             command -v qrencode 
             EXITSTATUS=$?
             if [ ${EXITSTATUS} != 0 ];then
-                ${PKGI} libqrencode zbar
+                PKGI libqrencode zbar
                 qrcode_tui
             else
                 qrcode_tui
@@ -812,19 +791,19 @@ function web_tui(){				#这里是其他功能-网络类页面function
 			other_tool_tui
 			;;
 		1)
-			${PKGI} nginx
+			PKGI nginx
 			echo "done"
 			;;
 		2)
-			${PKGI} apache2
+			PKGI apache2
 			echo "done"
 			;;
 		3)
-			${PKGI} php
+			PKGI php
 			echo "done"
 			;;
 		4)
-			${PKGI} mariadb
+			PKGI mariadb
 			echo "done"
 			;;
 	esac
@@ -880,7 +859,7 @@ function termux_main_tui(){
                 termux_main_tui
             else
                 echo -e "${BLUE}正在安装bc计算器...${RESET}"
-                ${PKGI} bc
+                PKGI bc
                 echo -e ${GREEN}
                 read -p "按回车返回"
                 echo -e ${RESET}
@@ -934,8 +913,8 @@ function check_and_update(){			#这里是检查/升级的function
     if [ "$(curl ${RAWURL}/version 2> /dev/null)" != "$(cat ${MAINPATH}/local_version 2> /dev/null)" ];then
         if (dialog --title "ntool-tui:install&update" --yesno "你的版本不是最新版。是否更新？\n最新版:$(curl ${RAWURL}/version 2> /dev/null)\n本地版本:$(cat ${MAINPATH}/local_version)" 15 70);then
             echo -e "${BLUE}更新中...${RESET}"
-            ${PKGUPD} && ${PKGUPG}
-            ${PKGI} git wget curl python x11-repo dialog jq
+            PKGUPD && PKGUPG
+            PKGI git wget curl python x11-repo dialog jq
             wget ${RAWURL}/ntool-termux -O ${PREFIX}/bin/ntool
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
             chmod +x ${PREFIX}/bin/ntool
