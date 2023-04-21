@@ -852,9 +852,9 @@ function termux_main_tui(){
                     termux_main_tui
                 fi
                 echo -e "${GREEN}请耐心等待...${RESET}"
-                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S')" > ${HOME}/pi.txt
+                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S:%N')" > ${HOME}/pi.txt
                 echo "scale=${BC}; 4*a(1)" | bc -l -q >> ${HOME}/pi.txt
-                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S')" >> ${HOME}/pi.txt
+                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S:%N')" >> ${HOME}/pi.txt
                 dialog --title "ntool-tui:success" --textbox "${HOME}/pi.txt" 20 80
                 termux_main_tui
             else
