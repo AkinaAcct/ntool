@@ -905,7 +905,7 @@ function termux_main_tui(){
             elif [ ${EXITSTATUS} = 0 ];then
                 am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool/ > /dev/null 2>&1
             elif [ ${EXITSTATUS} = 1 ];then
-                dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?"
+                dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?" 0 0
                 EXITSTATUS=$?
                 if [ ${EXITSTATUS} = 255 ];then
                     echo -e "哼,连50都不愿意给我!!\n再也不见qwq"
