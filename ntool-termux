@@ -980,5 +980,4 @@ function start(){
             ;;
     esac
 }
-start $*
 exit 0

@@ -47,10 +47,17 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
-	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntool-termux -O ${PREFIX}/bin/ntool
+	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/bin/ntsource
             chmod +x ${PREFIX}/bin/ntool
 		fi
 	    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
+        cat > $PREFIX/bin/ntool <- EOF
+        #there is nothing in this file.
+        #all scripts are all in this file:$PREFIX/bin/ntsource
+        #so this is just an start script
+        #:D
+        start $*
+        EOF
     	echo "完成"
         echo "输入ntool测试启动"
 		break
