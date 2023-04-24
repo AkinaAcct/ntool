@@ -6,12 +6,6 @@ if [ "$(uname -o)" != "Android" ];then
 	exit 1
 fi
 
-if [ -d .ntool ];then
-	echo "看起来你似乎已经安装过ntool了"
-	echo "你确定要安装/升级吗？"
-	read -p "按回车继续"
-fi
-
 clear
 
 printf "please wait...\n"
@@ -36,11 +30,12 @@ function add_starter(){
 cat << 'EOF' > $PREFIX/bin/ntool
 #!/data/data/com.termux/files/usr/bin/bash
 #there is nothing in this file.
-#all scripts are all in this file:
+#all scripts are here:
 #/data/data/com.termux/files/usr/lib/ntool/ntsf
 #so this is just an start script
 #:D
 source /data/data/com.termux/files/usr/lib/ntool/ntsf
+#"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
 start $*
 EOF
 }
@@ -52,7 +47,7 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
-            mkdir ${PREFIX}/lib/ntool
+            mkdir -p ${PREFIX}/lib/ntool
 	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/lib/ntool/ntsf
             add_starter
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
