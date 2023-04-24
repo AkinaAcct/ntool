@@ -963,13 +963,14 @@ function start(){
             ;;
         -h|--help)
             echo -e "${RNTOOL} help."
-            echo -e "${GREEN}-h,--help${RESET}:print this help"
-            echo -e "${GREEN}-v,--version${RESET}:print then ntool's version that you've installed."
-            echo -e "${GREEN}-g,--github${RESET}:open ntool's github page"
-            echo -e "${YELLOW}-d,--debug${RESET}:enable debug mode(set -x).All the commands will show first and then run."
-            echo -e "${YELLOW}-s,--strict${RESET}:enable ${RED}'set -e'${RESET} and it will cause many problems such uncompress failed."
+            echo -e "${GREEN}-h,--help${RESET} print this help"
+            echo -e "${GREEN}-v,--version${RESET} print then ntool's version that you've installed."
+            echo -e "${GREEN}-g,--github${RESET} open ntool's github page."
+            echo -e "${GREEN}-u,--update${RESET} update ntool with github"
+            echo -e "${YELLOW}-d,--debug${RESET} enable debug mode(set -x).All the commands will show first and then run."
+            echo -e "${RED}-s,--strict${RESET} enable ${RED}\"set -e\"${RESET} and it will cause many problems such uncompress failed."
             ;;
-        -i|--install)
+        -u|--update)
             echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
             check_and_update
             ;;
