@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+#!/data/data/com.termux/files/usr/bin/bash
+
 if [ "$(uname -o)" != "Android" ];then
 	echo "Warning!对于linux的支持于2023.4.8终止"
 	echo "退出安装"
@@ -21,15 +21,7 @@ for i in git wget curl python dialog bc jq gawk;do
         pkg install -y ${i}
     fi
 done
-if [ "${*}" == "-n" ];then
-    echo "从unstable安装,不从release"
-    echo "please wait..."
-    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/ntool-termux
-    mv ntool-termux ${PREFIX}/bin/ntool
-    chmod +x ${PREFIX}/bin/ntool
-    echo -e "完成"
-    exit 0
-fi
+
 clear
 printf "d8b   db d888888b  .d88b.   .d88b.  db\n"
 printf "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88\n"
@@ -40,6 +32,19 @@ printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
 sleep 0.2
 printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 
+function add_starter(){
+cat << 'EOF' > $PREFIX/bin/ntool
+#!/data/data/com.termux/files/usr/bin/bash
+#there is nothing in this file.
+#all scripts are all in this file:
+#/data/data/com.termux/files/files/usr/bin/ntsource
+#so this is just an start script
+#:D
+source $PREFIX/bin/ntsource
+start $*
+EOF
+}
+
 while true
 do
 read -p "你确定要执行这个脚本吗？  [Y|N]" answer
@@ -48,18 +53,14 @@ case $answer in
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
 	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/bin/ntsource
-            chmod +x ${PREFIX}/bin/ntool
-		fi
-	    wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
-        cat > $PREFIX/bin/ntool <- EOF
-        #there is nothing in this file.
-        #all scripts are all in this file:$PREFIX/bin/ntsource
-        #so this is just an start script
-        #:D
-        start $*
-        EOF
-    	echo "完成"
-        echo "输入ntool测试启动"
+            add_starter
+	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
+        	echo "完成"
+            echo "输入ntool测试启动"
+        else
+            echo "你未在Android或termux环境中执行脚本."
+            exit 1
+        fi
 		break
 		;;
 	N|n)
