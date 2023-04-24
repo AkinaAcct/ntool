@@ -3,7 +3,7 @@
 #####################
 #  屎  山  代  码   #
 #####################
-#https://github.com/nnyyaa/ntool
+#https://github.com/nya-main/ntool
 #这也(一)许(定)后会成为一个烂尾工程吧
 #chroot不会写(也许)(大概)(心虚)
 #嗯只要没有人催我就不写a_@
@@ -25,7 +25,8 @@ fi
 OS="$(uname -o)"     #系统
 STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
 MAINPATH="${HOME}/.ntool"      #主目录
-RAWURL="https://raw.githubusercontent.com/nnyyaa/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
+RAWURL="https://raw.githubusercontent.com/nya-main/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
+GHPAGE="https://github.com/nya-main/ntool"
 
 if [ "${ARCH}" != "arm64" ];then
     dialog --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64/aarch64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70
@@ -687,7 +688,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
             figlet "ntool" | lolcat -a -d 2
             figlet "Powered by" | lolcat -a -d 2
             figlet "nya" | lolcat -a -d 2
-			am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool > /dev/null 2>&1
+			am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
 			;;
 
 		1)
@@ -876,7 +877,7 @@ function termux_main_tui(){
         7)
             check_if_not_android_warning
             function ntafetch_install(){
-                wget https://raw.githubusercontent.com/nnyyaa/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
+                wget https://raw.githubusercontent.com/nya-main/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
                 chmod +x ${PREFIX}/bin/ntafetch
                 mv $PREFIX/etc/motd ${PREFIX}/etc/motd.bak > /dev/null 2>&1
             }
@@ -903,7 +904,7 @@ function termux_main_tui(){
             if [ ${EXITSTATUS} = 255 ];then
                 termux_main_tui
             elif [ ${EXITSTATUS} = 0 ];then
-                am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool/ > /dev/null 2>&1
+                am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
             elif [ ${EXITSTATUS} = 1 ];then
                 dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?" 0 0
                 EXITSTATUS=$?
@@ -973,7 +974,7 @@ function start(){
             check_and_update
             ;;
         -g|--github)
-            am start -a android.intent.action.VIEW -d https://github.com/nnyyaa/ntool/ > /dev/null 2>&1
+            am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
             ;;
         *)
             termux_main_tui
