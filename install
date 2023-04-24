@@ -37,10 +37,10 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #!/data/data/com.termux/files/usr/bin/bash
 #there is nothing in this file.
 #all scripts are all in this file:
-#/data/data/com.termux/files/files/usr/bin/ntsource
+#/data/data/com.termux/files/usr/lib/ntool/ntsf
 #so this is just an start script
 #:D
-source $PREFIX/bin/ntsource
+source /data/data/com.termux/files/usr/lib/ntool/ntsf
 start $*
 EOF
 }
@@ -52,7 +52,8 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
-	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/bin/ntsource
+            mkdir ${PREFIX}/lib/ntool
+	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/lib/ntool/ntsf
             add_starter
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
         	echo "完成"
