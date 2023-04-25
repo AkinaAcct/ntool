@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 
 if [ "$(uname -o)" != "Android" ];then
 	echo "Warning!对于linux的支持于2023.4.8终止"
