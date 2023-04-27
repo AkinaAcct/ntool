@@ -47,12 +47,6 @@ function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
     exit 1
 }
-function check_if_not_android_warning(){
-    if [ "${OS}" != "Android" ];then
-        dialog --title "ntool-tui:WARNING" --msgbox "未适配linux的功能,终止运行" 15 70
-        exit 1
-    fi
-}
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
     return 1

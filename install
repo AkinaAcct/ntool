@@ -36,6 +36,7 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #:D
 source /data/data/com.termux/files/usr/lib/ntool/ntsf
 #"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
+#;(
 start $*
 EOF
 }
