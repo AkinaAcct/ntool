@@ -973,6 +973,10 @@ function check_and_update(){			#这里是检查/升级的function
 }
 ####启动function
 function start(){
+    if [ $# -gt 1 ];then
+        echo -e "${RED}more than one arg had been inputted${RESET}"
+        exit 1
+    fi
     case $* in
         -d|--debug)
             echo ${TIME} > ~/log.txt
