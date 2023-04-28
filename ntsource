@@ -1015,7 +1015,8 @@ function start(){
             am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
             ;;
         *)
-            termux_main_tui
+            echo -e "${RED}unknow arg:${1}${RESET}"
+            exit 1
             ;;
     esac
 }
