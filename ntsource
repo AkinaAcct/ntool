@@ -45,13 +45,23 @@ mkdir -p ${MAINPATH}
 #常用功能function
 function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
-    exit 1
+    return 1
 }
 function bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
     return 1
 }
-
+function download_check(){
+    EXITSTATUS=$?
+    if [ ${EXITSTATUS} != 0 ];then
+        echo -e "${RED}"
+        read -p "下载出错!按回车返回"
+        echo -e "${RESET}"
+        return 1
+    else
+        return 0
+    fi
+}
 #########################正式tui function
 function patch_framework_choose(){
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70);then
@@ -211,6 +221,35 @@ function backup_tui(){      #备份页面function
             backup_tui
             ;;
     esac
+}
+
+function container_testing_tui(){
+    LINUXNAME=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入Linux发行版名称" 15 70)
+    LINUXVER=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入发行版版本" 15 70)
+    if [ -z ${LINUXNAME} -o -z ${LINUXVER} ];then
+        bad_empty_input
+        container_testing_tui
+    else
+        echo -e "${GREEN}正在获取rootfs地址...${RESET}"
+        ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+        echo -e "${GREEN}检测获取的地址是否正确...${RESET}"
+        if [ -z ${ROOTFSTIME} ];then
+            echo -e "${RED}"
+            read -p  "获取到了错误的rootfs地址!按回车重新输入信息!"
+            echo -e "${RESET}"
+            container_testing_tui
+        else
+            echo -e "${GREEN}开始下载...${RESET}"
+            aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${LINUXNAME}/${LINUXVER}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz
+            download_check
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} = 1 ];then
+                container_testing_tui
+            fi
+            echo -e "${GREEN}下载完成!解压中...${RESET}"
+            wait_for_dev_tui
+        fi
+    fi
 }
 
 function container_tui(){      #容器OS选择
