@@ -3,10 +3,13 @@
 
 ---
 
-**just install and enjoy the shitcode**
+**just install and enjoy the shitcode**  
 
 ## Installation
 ```
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```  
 
+---
+
+~~You can even source [ntsource](https://github.com/nya-main/ntool/blob/main/ntsource) manually instead of using install script:D~~
