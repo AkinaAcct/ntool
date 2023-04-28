@@ -957,9 +957,8 @@ function check_and_update(){			#这里是检查/升级的function
             echo -e "${BLUE}更新中...${RESET}"
             PKGUPD && PKGUPG
             PKGI git wget curl python x11-repo dialog jq
-            wget ${RAWURL}/ntool-termux -O ${PREFIX}/bin/ntool
+            wget ${RAWURL}/ntsource -O ${PREFIX}/lib/ntool/ntsf
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
-            chmod +x ${PREFIX}/bin/ntool
 	    mkdir -p .ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
             exit 0
