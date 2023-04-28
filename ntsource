@@ -967,8 +967,7 @@ function check_and_update(){			#这里是检查/升级的function
         fi
     else
         dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
-        termux_main_tui
-    fi 
+        exit 0
 }
 ####启动function
 function start(){
