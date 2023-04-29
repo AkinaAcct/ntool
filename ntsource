@@ -977,7 +977,7 @@ function check_and_update(){			#这里是检查/升级的function
             PKGI git wget curl python x11-repo dialog jq
             wget ${RAWURL}/ntsource -O ${PREFIX}/lib/ntool/ntsf
             wget ${RAWURL}/version -O ${MAINPATH}/local_version
-	    mkdir -p .ntool
+            mkdir -p .ntool
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
             exit 0
         else
@@ -1016,6 +1016,7 @@ function start(){
             else
                 echo -e "${RNTOOL}\n version:${BLUE}${NTOOLVERSION}${RESET}\n mode:${GREEN}normal mode${RESET}"
             fi
+            exit 0
             ;;
         -h|--help)
             echo -e "${RNTOOL} help."
@@ -1025,6 +1026,7 @@ function start(){
             echo -e "${GREEN}-u,--update${RESET} update ntool from github."
             echo -e "${YELLOW}-d,--debug${RESET} enable debug mode(set -x).Logs will be redirected to ~/log.txt."
             echo -e "${RED}-s,--strict${RESET} enable ${RED}\"set -e\"${RESET} and it will cause many problems such as uncompress failed."
+            exit 0
             ;;
         -u|--update)
             echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
