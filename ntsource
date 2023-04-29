@@ -224,13 +224,27 @@ function backup_tui(){      #备份页面function
 }
 
 function container_testing_tui(){
+    dialog --title "ntool-tui:按ESC返回上一页" --yes-label "proot" --no-label "chroot" --yesno "选择一个\nchroot需要root,运行速度较快\nproot无需root,但运行速度较慢" 15 70
+    EXITSTATUS=$?
+    case ${EXITSTATUS} in
+        0)
+            CONTAINERPOR="PROOT" #CONTAINER PROOT OR CHROOT
+            ;;
+        1)
+            CONTAINERPOR="CHROOT" #CONTAINER PROOT OR CHROOT 
+            ;;
+        255)
+            container_tui
+            ;;
+    esac
     LINUXNAME=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入Linux发行版名称" 15 70)
     LINUXVER=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入发行版版本" 15 70)
-    if [ -z ${LINUXNAME} -o -z ${LINUXVER} ];then
+    LINUXPATH=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入安装路径" 15 70)
+    if [ -z ${LINUXNAME} -o -z ${LINUXVER} -o -z ${}r];then
         bad_empty_input
         container_testing_tui
     else
-        echo -e "${GREEN}正在获取rootfs地址...${RESET}"
+        echo -e "${GREEN}正在从BFSU镜像站获取rootfs地址...${RESET}"
         ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2> /dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
         echo -e "${GREEN}检测获取的地址是否正确...${RESET}"
         if [ -z ${ROOTFSTIME} ];then
@@ -244,10 +258,24 @@ function container_testing_tui(){
             download_check
             EXITSTATUS=$?
             if [ ${EXITSTATUS} = 1 ];then
+                rm ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz
                 container_testing_tui
             fi
             echo -e "${GREEN}下载完成!解压中...${RESET}"
             wait_for_dev_tui
+            tar -xvf ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz -C ${LINUXPATH}
+            case ${CONTAINERPOR} in
+                PROOT)
+                    write_groupadd_sh
+                    write_setupdeb_sh
+                    container_script_write
+                    ;;
+                CHROOT)
+                    wait_for_dev_tui
+                    exit 1
+                    ;;
+            esac
+            echo -e "${GREEN}完成${RESET}"
         fi
     fi
 }
@@ -256,6 +284,7 @@ function container_tui(){      #容器OS选择
     CONTAINER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
+    "3" "使用测试中的新容器安装脚本" \
     "0" "返回上一页")       #我是鸽子咕咕咕，其他功能等我慢慢写
     EXITSTATUS=$?
     if [ $EXITSTATUS != 0 ];then
@@ -272,6 +301,9 @@ function container_tui(){      #容器OS选择
         2)
             CONTAINER_OS=debian
             debian_version_tui
+            ;;
+        3)
+            container_testing_tui
             ;;
     esac
 }
@@ -373,6 +405,7 @@ function container_delete(){
 }
 
 function container_script_write(){
+echo -e "${GREEN}写入启动脚本中${RESET}"
 cat > $PREFIX/bin/start${VERNAME} <<- EOF
 #!/data/data/com.termux/files/usr/bin/bash
 #ntool ${CONTAINER_OS}${VERCODE}:${VERNAME}启动脚本
@@ -402,9 +435,11 @@ COMMAND+=" LANG=C.UTF-8"
 COMMAND+=" /bin/bash -l"
 EOF
 echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
+chmod +x ${PREFIX}/bin/start${LINUXVER}
 }
 
 function write_groupadd_sh(){
+echo -e "${GREEN}添加用户组中...${RESET}"
 cat > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/groupadd.sh <<- EOF
 groupadd -g 3003 inet
 groupadd -g 9997 everybody
@@ -415,9 +450,11 @@ EOF
 }
 
 function write_setupdeb_sh(){
+echo -e "${GREEN}写入初始化脚本中...${RESET}"
 cat > ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/root/setup.sh <<- EOF
 echo -e "${GREEN}正在配置，请稍等${RESET}"
 bash groupadd.sh
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 apt update
 apt upgrade -y
 apt install apt-transport-https -y
@@ -453,32 +490,14 @@ function container_install(){
     fi
     wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
     tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
-    echo -e "${GREEN}写入启动脚本中${RESET}"
-    sleep 0.3
     container_script_write
     echo -e "${GREEN}写入dns中${RESET}"
-    sleep 0.3
     mkdir -p ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/
     #淦哦deb系的rootfs解压后会出现err导致resolv.conf硬链接失效,只能手动创建文件夹然后重新写入
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/etc/resolv.conf
     echo "nameserver 8.8.8.8" > ${CONTAINER_OS}-${VERNAME}/run/systemd/resolve/stub-resolv.conf
-    sleep 0.3
-    echo -e "${GREEN}换源中,使用BFSU北京外国语大学镜像站${RESET}"
-    case $CONTAINER_OS in
-        ubuntu)
-            sed -i 's/ports.ubuntu.com/mirrors.bfsu.edu.cn/g' ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list
-            ;;
-        debian)
-            sed -i 's/deb.debian.org/mirrors.bfsu.edu.cn/g' ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/apt/sources.list
-            ;;
-    esac
-    sleep 0.3
-    echo -e "${GREEN}给予脚本执行权限${RESET}"
-    chmod +x ${PREFIX}/bin/start${VERNAME}
-    sleep 0.3
     echo -e "${GREEN}删除rootfs中${RESET}"
     rm ${CONTAINER_OS}-${VERNAME}.tar.xz > /dev/null 2>&1
-    sleep 0.3
     echo -e "${GREEN}写入配置脚本中${RESET}"
     echo "bash setup.sh" >> ${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
     write_groupadd_sh
