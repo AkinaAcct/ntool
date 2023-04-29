@@ -171,7 +171,6 @@ function backup_tui(){      #备份页面function
                     sleep 2
                     termux-setup-storage
                     echo "${GREEN}完成${RESET}"
-                    sleep 1 
                     backup_tui
                 fi
             else
@@ -987,6 +986,7 @@ function check_and_update(){			#这里是检查/升级的function
     else
         dialog --title "ntool-tui:check update" --msgbox "你的版本为最新版，无需更新" 15 70
         exit 0
+    fi
 }
 ####启动function
 function start(){
