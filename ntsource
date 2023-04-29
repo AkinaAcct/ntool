@@ -1028,6 +1028,7 @@ function start(){
             ;;
         -g|--github)
             am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
+            exit 0
             ;;
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"
