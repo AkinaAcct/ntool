@@ -991,10 +991,12 @@ function check_and_update(){			#这里是检查/升级的function
 ####启动function
 function start(){
     if [ $# -gt 1 ];then
-        echo -e "${RED}more than one arg had been inputted${RESET}"
+        echo -e "${RED}more than one parameter had been inputted${RESET}"
         exit 1
+    elif [ $# -lt 1 ];then
+        termux_main_tui
     fi
-    case $* in
+    case ${*} in
         -d|--debug)
             echo ${TIME} > ~/log.txt
             exec 2>> ~/log.txt
@@ -1031,9 +1033,6 @@ function start(){
         -g|--github)
             am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
             ;;
-        *)
-            echo -e "${RED}unknow arg:${1}${RESET}"
-            exit 1
-            ;;
     esac
+    echo -e "${RED}Unknown parameter:${*}${RESET}"
 }
