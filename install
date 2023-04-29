@@ -28,13 +28,13 @@ printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 
 function add_starter(){
 cat << 'EOF' > $PREFIX/bin/ntool
-#!/data/data/com.termux/files/usr/bin/bash
+#!/bin/bash
 #there is nothing in this file.
 #all scripts are here:
-#/data/data/com.termux/files/usr/lib/ntool/ntsf
+#${PREFIX}lib/ntool/ntsf
 #so this is just an start script
 #:D
-source /data/data/com.termux/files/usr/lib/ntool/ntsf
+source ${PREFIX}/lib/ntool/ntsf
 #"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
 #;(
 start $*
