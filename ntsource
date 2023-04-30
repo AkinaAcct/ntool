@@ -898,9 +898,9 @@ function termux_main_tui(){
                     termux_main_tui
                 fi
                 echo -e "${GREEN}请耐心等待...${RESET}"
-                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S:%N')" > ${HOME}/pi.txt
+                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" > ${HOME}/pi.txt
                 echo "scale=${BC}; 4*a(1)" | bc -l -q >> ${HOME}/pi.txt
-                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S:%N')" >> ${HOME}/pi.txt
+                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" >> ${HOME}/pi.txt
                 dialog --title "ntool-tui:success" --textbox "${HOME}/pi.txt" 20 80
                 termux_main_tui
             else
@@ -1014,7 +1014,7 @@ function start(){
             ;;
         -h|--help)
             echo -e "${RNTOOL} help."
-            echo -e "${GREEN}-h,--help${RESET} print this help"
+            echo -e "${GREEN}-h,--help${RESET} print this help."
             echo -e "${GREEN}-v,--version${RESET} print then ntool's version that you've installed."
             echo -e "${GREEN}-g,--github${RESET} open ntool's github page."
             echo -e "${GREEN}-u,--update${RESET} update ntool from github."
