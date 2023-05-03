@@ -51,6 +51,7 @@ case $answer in
             mkdir -p ${PREFIX}/lib/ntool
 	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/lib/ntool/ntsf
             add_starter
+            chmod +x $PREFIX/bin/ntool
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
         	echo "完成"
             echo "输入ntool测试启动"
