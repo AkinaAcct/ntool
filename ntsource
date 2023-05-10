@@ -233,7 +233,7 @@ function container_testing_tui(){
     LINUXNAME=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入Linux发行版名称" 15 70)
     LINUXVER=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入发行版版本" 15 70)
     LINUXPATH=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入安装路径" 15 70)
-    if [ -z ${LINUXNAME} -o -z ${LINUXVER} -o -z ${}r];then
+    if [ -z ${LINUXNAME} -o -z ${LINUXVER} -o -z ${LINUXPATH}];then
         bad_empty_input
         container_testing_tui
     else
