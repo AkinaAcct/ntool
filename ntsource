@@ -1,3 +1,4 @@
+#!/bin/bash
 #####################
 #  屎  山  代  码   #
 #####################
@@ -33,7 +34,7 @@ GHPAGE="https://github.com/nya-main/ntool"
 #    exit 1
 #fi
 #termux-wake-lock
-mkdir -p ${MAINPATH}
+mkdir -p ${MAINPATH}/rootfs
 #常用功能function
 function wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
@@ -231,7 +232,7 @@ function container_testing_tui(){
     LINUXNAME=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入Linux发行版名称" 15 70)
     LINUXVER=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入发行版版本" 15 70)
     LINUXPATH=$(dialog --output-fd 1 --title "ntool-tui:testing function" --inputbox "你在使用一个测试功能\n输入安装路径" 15 70)
-    if [ -z ${LINUXNAME} -o -z ${LINUXVER} -o -z ${LINUXPATH} ];then
+    if [ -z ${LINUXNAME} ]||[ -z ${LINUXVER} ]||[ -z ${LINUXPATH} ];then
         bad_empty_input
         container_testing_tui
     else
@@ -245,7 +246,10 @@ function container_testing_tui(){
             container_testing_tui
         else
             echo -e "${GREEN}开始下载...${RESET}"
-            aria2c https://mirrors.bfsu.edu.cn/lxc-images/images/${LINUXNAME}/${LINUXVER}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz
+            if [ -f ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz ];then
+                rm ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz
+            fi
+            wget https://mirrors.bfsu.edu.cn/lxc-images/images/${LINUXNAME}/${LINUXVER}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -O ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz
             download_check
             EXITSTATUS=$?
             if [ ${EXITSTATUS} = 1 ];then
@@ -253,6 +257,7 @@ function container_testing_tui(){
                 container_testing_tui
             fi
             echo -e "${GREEN}下载完成!解压中...${RESET}"
+            mkdir -p ${LINUXPATH}
             tar -xvf ${MAINPATH}/rootfs/${LINUXNAME}-${LINUXVER}.tar.xz -C ${LINUXPATH}
             case ${CONTAINERPOR} in
                 PROOT)
