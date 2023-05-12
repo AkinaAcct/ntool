@@ -170,7 +170,6 @@ function other_tool_tui(){			#这里是其他功能页的function
     OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool tui" --menu "选择一个以继续" 15 70 8 \
     "1" "网络页面" \
     "2" "工具页面" \
-    "3" "换源" \
     "0" "返回上一页")
     EXITSTATUS=$?
     if [ $EXITSTATUS != 0 ];then
@@ -186,8 +185,6 @@ function other_tool_tui(){			#这里是其他功能页的function
 	    2)
 	    	tool_tui
 		    ;;
-        3)
-            change_source_tui
     esac
 }
 
@@ -525,6 +522,7 @@ function termux_main_tui(){
             exit 0
             ;;
         1)
+            source ${PREFIX}/lib/ntool/container/container.sh
             container_tui
             ;;
         2)

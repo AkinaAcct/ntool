@@ -34,7 +34,7 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #${PREFIX}lib/ntool/ntsf
 #so this is just an start script
 #:D
-source ${PREFIX}/lib/ntool/ntsf
+source ${PREFIX}/lib/ntool/basic/*
 #"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
 #;(
 start $*
@@ -49,9 +49,9 @@ case $answer in
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
             mkdir -p ${PREFIX}/lib/ntool
-	        wget https://raw.githubusercontent.com/nya-main/ntool/main/ntsource -O ${PREFIX}/lib/ntool/ntsf
+	        git clone https://github.com/nya-main/ntool ${PREFIX}/lib/ntool/
             add_starter
-            chmod +x $PREFIX/bin/ntool
+            chmod +x ${PREFIX}/bin/ntool
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
         	echo "完成"
             echo "输入ntool测试启动"
