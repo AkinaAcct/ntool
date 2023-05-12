@@ -265,6 +265,7 @@ function container_testing_tui(){
                     write_setupdeb_sh
                     container_script_write
                     read -p "完成了!输入start${LINUXVER}启动"
+                    exit 0
                     ;;
                 CHROOT)
                     wait_for_dev_tui
