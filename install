@@ -26,15 +26,15 @@ printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
 sleep 0.2
 printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 
-function add_starter(){
+add_starter(){
 cat << 'EOF' > $PREFIX/bin/ntool
 #!/bin/bash
 #there is nothing in this file.
 #all scripts are here:
-#${PREFIX}lib/ntool/ntsf
+#${PREFIX}lib/ntool/
 #so this is just an start script
 #:D
-source ${PREFIX}/lib/ntool/basic/*
+source ${PREFIX}/lib/ntool/basic/pre.sh
 #"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
 #;(
 start $*
@@ -49,6 +49,7 @@ case $answer in
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
             mkdir -p ${PREFIX}/lib/ntool
+            rm -rf ${PREFIX}/lib/ntool
 	        git clone https://github.com/nya-main/ntool ${PREFIX}/lib/ntool/
             add_starter
             chmod +x ${PREFIX}/bin/ntool

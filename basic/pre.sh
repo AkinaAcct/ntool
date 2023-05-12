@@ -28,18 +28,19 @@ GHPAGE="https://github.com/nya-main/ntool"
 #termux-wake-lock
 mkdir -p ${MAINPATH}/rootfs
 #常用功能function
-function wait_for_dev_tui(){
+wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
     return 1
 }
-function bad_empty_input(){
+bad_empty_input(){
     dialog --title "ntool-tui:WARNING" --msgbox "严重错误:不允许的空选项" 15 70
     return 1
 }
-function download_check(){
+download_check(){
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
         echo "${RED}下载出错!停止运行.${RESET}"[]
         exit 1
     fi
 }
+source ${NTOOLLIB}/basic/start.sh

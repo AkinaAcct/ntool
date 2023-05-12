@@ -1,4 +1,4 @@
-function container_testing_tui(){
+container_testing_tui(){
     dialog --title "ntool-tui:按ESC返回上一页" --yes-label "proot" --no-label "chroot" --yesno "选择一个\nchroot需要root,运行速度较快\nproot无需root,但运行速度较慢" 15 70
     EXITSTATUS=$?
     case ${EXITSTATUS} in
@@ -60,7 +60,7 @@ function container_testing_tui(){
     fi
 }
 
-function container_tui(){      #容器OS选择
+container_tui(){      #容器OS选择
     CONTAINER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:container installer" --menu "选择一个以继续" 15 70 8 \
     "1" "Ubuntu 我的存在是因为大家的存在" \
     "2" "Debian 为爱发电,爱的结晶" \
@@ -88,7 +88,7 @@ function container_tui(){      #容器OS选择
     esac
 }
 
-function debian_version_tui(){     #Debian版本选择
+debian_version_tui(){     #Debian版本选择
     DEBIAN_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Debian Version" --menu "选择一个以继续 \n同版本不可二次安装，不同版本可以哦" 15 70 8 \
     "1" "Debian10 Buster" \
     "2" "Debian11 Bullseye" \
@@ -113,7 +113,7 @@ function debian_version_tui(){     #Debian版本选择
     container_control_tui
 }
 
-function ubuntu_version_tui(){     #Ubuntu版本选择
+ubuntu_version_tui(){     #Ubuntu版本选择
     cd ${MAINPATH}
     UBUNTU_VER_CHOICE=$(dialog --output-fd 1 --title "ntool-tui:Ubuntu Version" --menu "选择一个以继续\n同版本不可二次安装，不同版本可以哦" 15 70 8 \
     "1" "Ubuntu22.04 Jammy Jellyfish" \
@@ -139,7 +139,7 @@ function ubuntu_version_tui(){     #Ubuntu版本选择
     container_control_tui
 }
 
-function container_control_tui(){
+container_control_tui(){
     CCPAGECHOICE=$(dialog --output-fd 1 --title "ntool-tui:container control" --menu "${CONTAINER_OS}${VERCODE} ${VERNAME}管理页面 \n选择一个以继续" 15 70 8 \
     "1" "安装" \
     "2" "卸载" \
