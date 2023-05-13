@@ -1,3 +1,4 @@
+source ${NTOOLLIB}/basic/mode_change.sh
 source ${NTOOLLIB}/basic/print_help.sh
 source ${NTOOLLIB}/ntsource
 start(){
@@ -25,7 +26,7 @@ start(){
             if [ -z ${NTOOLVERSION} ];then
                 echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
             else
-                echo -e "${RNTOOL}\n version:${BLUE}${NTOOLVERSION}${RESET}\n mode:${GREEN}normal mode${RESET}"
+                echo -e "${RNTOOL}\n version:${BLUE}${NTOOLVERSION}${RESET}\n mode:${GREEN}$(cat ${MAINPATH}/.mode)${RESET}"
             fi
             exit 0
             ;;
@@ -39,6 +40,9 @@ start(){
         -g|--github)
             am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
             exit 0
+            ;;
+        -m|--mode)
+            mode_change
             ;;
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"
