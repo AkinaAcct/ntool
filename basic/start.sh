@@ -1,5 +1,6 @@
 source ${NTOOLLIB}/basic/mode_change.sh
 source ${NTOOLLIB}/basic/print_help.sh
+source ${NTOOLLIB}/basic/update.sh
 source ${NTOOLLIB}/ntsource
 start(){
     if [ $# -gt 1 ];then
