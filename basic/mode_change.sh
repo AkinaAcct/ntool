@@ -2,7 +2,7 @@ mode_change(){
     CURRENTMODE="$(cat ${MAINPATH}/.mode)"
     case ${CURRENTMODE} in
         NORMAL_MULTI-FILE_MODE)
-            cp -f ${NTOOLLIB}/ntsource ntsource.mode0
+            cp  ${NTOOLLIB}/ntsource ntsource.mode0
             cat ${NTOOLLIB}/basic/* >> ${NTOOLLIB}/ntsource
             cat ${NTOOLLIB}/container/* >> ${NTOOLLIB}/ntsource
             echo "SINGLE_FILE_MODE" > ${MAINPATH}/.mode

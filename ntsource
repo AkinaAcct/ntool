@@ -243,9 +243,9 @@ function ssh_tui(){
 		3)
             while true;
             do
-            EmailInput=$(dialog --output-fd 1 --title "ntool-tui:keygen" --inputbox "使用RSA\n输入你的邮箱:" 15 70)
+            EMAILINPUT=$(dialog --output-fd 1 --title "ntool-tui:keygen" --inputbox "使用RSA\n输入你的邮箱:" 15 70)
             EXITSTATUS=$?
-            if [ -a EmailInput];then
+            if [ -a EMAILINPUT  ];then
                 bad_empty_input
             elif [ $EXITSTATUS != 0 ];then
                 ssh_tui

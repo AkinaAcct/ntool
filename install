@@ -35,7 +35,7 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #so this is just an start script
 #:D
 source ${PREFIX}/lib/ntool/basic/pre.sh
-#"ntsf" means "ntool's function" not "NTFS" or "cerebral fs"
+#from 2023.12.5，ntool entered spilt file version
 #;(
 start $*
 EOF
