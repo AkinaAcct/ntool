@@ -43,6 +43,7 @@ start(){
             ;;
         -m|--mode)
             mode_change
+            exit 1
             ;;
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"
