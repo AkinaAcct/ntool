@@ -17,7 +17,7 @@ STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载�
 NTOOLLIB="${PREFIX}/lib/ntool"
 MAINPATH="${HOME}/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nya-main/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
-GHPAGE="https://github.com/nya-main/ntool"
+GHREPO="https://github.com/nya-main/ntool"
 
 #if [ "${ARCH}" != "arm64" ];then
 #    dialog --title "ntool-tui:WARNING" --msgbox "你的架构是${ARCH}而不是arm64/aarch64\n通常来说这会造成问题,但是我已竭力适配不同的架构了\n你可以测试一下" 15 70

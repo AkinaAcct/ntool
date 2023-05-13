@@ -1,22 +1,22 @@
+set -x
+CURRENTMODE="$(cat ${MAINPATH}/.mode)"
 mode_change(){
-    CURRENTMODE="$(cat ${MAINPATH}/.mode)"
-    case ${CURRENTMODE} in
-        NORMAL_MULTI-FILE_MODE)
-            cp  ${NTOOLLIB}/ntsource ntsource.mode0
-            cat ${NTOOLLIB}/basic/* >> ${NTOOLLIB}/ntsource
-            cat ${NTOOLLIB}/container/* >> ${NTOOLLIB}/ntsource
-            echo "SINGLE_FILE_MODE" > ${MAINPATH}/.mode
+    ACTIONNUM=$(dialog --output-fd 1  --title "ntool:mode change" --menu "当前你的模式为:$(cat ${MAINPATH}/.mode)" 15 70 8 \
+    "0" "退出" \
+    "1" "切换至默认模式(多文件模式)" \
+    "2" "切换至无tui模式")
+    case ${ACTIONNUM} in
+        0)
+            exit 0
             ;;
-        SINGLE_FILE_MODE)
-            rm ${NTOOLLIB}/ntsource
-            mv ntsource.mode0 ntsource
-            echo "NORMAL_MULTI-FILE_MODE" > ${MAINPATH}/.mode
+        1)
+            rm -rf ${NTOOLLIB}
+            git clone ${GHREPO} ${NTOOLLIB}
+            dialog --title "ntool:mode change" --msgbox "更换完成!当前模式为:$(cat ${MAINPATH}/.mode)"
+            exit 0
+            ;;
+        2)
+            wait_for_dev_tui
             ;;
     esac
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} != 0 ];then
-        echo -e "${RED}出错了qwq!请重新安装ntool ;(${RESET}"
-    fi
-    echo -e "${GREEN}切换完成!${RESET}现在模式:$(cat ${MAINPATH}/.mode)${RESET}"
-    return 0
 }

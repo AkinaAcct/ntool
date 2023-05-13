@@ -39,7 +39,7 @@ start(){
             check_and_update
             ;;
         -g|--github)
-            am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
+            am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
             exit 0
             ;;
         -m|--mode)
