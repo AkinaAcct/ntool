@@ -54,6 +54,7 @@ case $answer in
             add_starter
             chmod +x ${PREFIX}/bin/ntool
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
+            echo "NORMAL_MULIT-FILE_MODE" > ~/.ntool/.mode
         	echo "完成"
             echo "输入ntool测试启动"
         else
