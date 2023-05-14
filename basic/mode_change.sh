@@ -12,7 +12,7 @@ mode_change(){
         1)
             rm -rf ${NTOOLLIB}
             git clone ${GHREPO} ${NTOOLLIB}
-            dialog --title "ntool:mode change" --msgbox "更换完成!当前模式为:$(cat ${MAINPATH}/.mode)"
+            dialog --title "ntool:mode change" --msgbox "更换完成!当前模式为:$(cat ${MAINPATH}/.mode)" 15 70
             exit 0
             ;;
         2)
