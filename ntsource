@@ -604,4 +604,3 @@ function termux_main_tui(){
             fi
     esac
 }
-

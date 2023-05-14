@@ -1,6 +1,3 @@
-source ${NTOOLLIB}/basic/mode_change.sh
-source ${NTOOLLIB}/basic/print_help.sh
-source ${NTOOLLIB}/basic/update.sh
 source ${NTOOLLIB}/ntsource
 start(){
     if [ $# -gt 1 ];then
@@ -32,9 +29,11 @@ start(){
             exit 0
             ;;
         -h|--help)
+            source ${NTOOLLIB}/basic/print_help.sh
             print_help
             ;;
         -u|--update)
+            source ${NTOOLLIB}/basic/update.sh
             echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
             check_and_update
             ;;
@@ -43,6 +42,7 @@ start(){
             exit 0
             ;;
         -m|--mode)
+            source ${NTOOLLIB}/basic/mode_change.sh
             mode_change
             exit 1
             ;;
