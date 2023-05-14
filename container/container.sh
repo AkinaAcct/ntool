@@ -268,7 +268,7 @@ function container_install(){
         echo -e "${BLUE}发现存在的rootfs.为防止错误,删除中...${RESET}"
         rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
     fi
-    wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -o ${CONTAINER_OS}-${VERNAME}.tar.xz
+    wget https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/${ROOTFSTIME}/rootfs.tar.xz -O ${CONTAINER_OS}-${VERNAME}.tar.xz
     tar -xvf ${CONTAINER_OS}-${VERNAME}.tar.xz -C ${MAINPATH}/${CONTAINER_OS}-${VERNAME}
     container_script_write
     echo -e "${GREEN}写入dns中${RESET}"
