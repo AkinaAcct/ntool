@@ -215,7 +215,7 @@ COMMAND+=" LANG=C.UTF-8"
 COMMAND+=" /bin/bash -l"
 EOF
 echo 'exec $COMMAND' >> ${PREFIX}/bin/start${VERNAME}
-chmod +x ${PREFIX}/bin/start${LINUXVER}
+chmod +x ${PREFIX}/bin/start${VERNAME}
 }
 
 function write_groupadd_sh(){
