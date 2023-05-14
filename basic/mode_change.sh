@@ -14,7 +14,6 @@ mode_change(){
             echo "NORMAL_MULIT-FILE_MODE" > ${MAINPATH}/.mode
             ;;
         2)
-            wait_for_dev_tui
             cat ${NTOOLLIB}/basic/* >> ${NTOOLLIB}/ntsource
             cat ${NTOOLLIB}/container/* >> ${NTOOLLIB}/ntsource
             sed -i '/source/d' ${NTOOLLIB}/ntsource
