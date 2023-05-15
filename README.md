@@ -9,6 +9,7 @@
 ~~*just install and enjoy the shitcode*~~
 
 ## Installation
+
 ```
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```
