@@ -1,6 +1,5 @@
-CURRENTMODE="$(cat ${MAINPATH}/.mode)"
 mode_change(){
-    ACTIONNUM=$(dialog --output-fd 1  --title "ntool:mode changer" --menu "当前你的模式为:${CURRENTMODE}" 15 70 8 \
+    ACTIONNUM=$(dialog --output-fd 1  --title "ntool:mode changer" --menu "当前你的模式为:$(cat ${MAINPATH}/.mode)" 15 70 8 \
     "0" "退出" \
     "1" "切换至默认模式(多文件模式)" \
     "2" "单文件模式(启动速度非常慢)")
@@ -20,6 +19,6 @@ mode_change(){
             echo "SINGLE_FILE_MODE" > ${MAINPATH}/.mode
             ;;
     esac
-    dialog --title "ntool:mode change" --msgbox "更换完成!当前模式为:${CURRENTMODE}" 15 70
+    dialog --title "ntool:mode change" --msgbox "更换完成!当前模式为:$(cat ${MAINPATH}/.mode)" 15 70
     exit 0
 }
