@@ -6,7 +6,7 @@ check_and_update(){
             pkg install -y git wget curl python x11-repo dialog jq
             rm -rf ${NTOOLLIB}
             git clone https://github.com/nya-main/ntool ${NTOOLLIB}
-            curl ${RAWURL}/version > ${MAINPATH}/local_version
+            curl ${RAWURL}/version -o ${MAINPATH}/local_version
             echo -e "${GREEN}完成!输入ntool以启动!${RESET}"
             exit 0
         else
