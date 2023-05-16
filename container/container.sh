@@ -1,4 +1,16 @@
 container_testing_tui(){
+    read -p "Regardless of why you use the container installation function of this script, I recommend the project from moe-hacker:termux-container.It supports both chroot and proot containers.\nType enter to continue"
+    read -p "which projects you want to install? [N:ntool T:termux-container]" CHOICE
+    case ${CHOICE} in
+        T|t)
+            source ${NTOOLLIB}/other/termux-container.sh
+            install_termux-container
+            ;;
+        *)
+            echo -e "${RED}No choice.Exited ntool${RESET}"
+            exit 1
+            ;;
+    esac
     dialog --title "ntool-tui:按ESC返回上一页" --yes-label "proot" --no-label "chroot" --yesno "选择一个\nchroot需要root,运行速度较快\nproot无需root,但运行速度较慢" 15 70
     EXITSTATUS=$?
     case ${EXITSTATUS} in
