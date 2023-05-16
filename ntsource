@@ -601,7 +601,8 @@ function termux_main_tui(){
                     echo -e "哼,连50都不愿意给我!!\n再也不见qwq"
                     exit 123
                 else
-                    echo -e "好耶!"
+                    echo -e "${CYAN}好耶!${RESET}"
+                    read -p "press enter please"
                     termux_main_tui
                 fi
             fi
