@@ -370,10 +370,13 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
+            pkg i figlet ruby -y
+            gem install lolcat
+            clear
             figlet "ntool" | lolcat -a -d 2
             figlet "Powered by" | lolcat -a -d 2
             figlet "nya" | lolcat -a -d 2
-			am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
+			am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
 			;;
 
 		1)
@@ -590,7 +593,7 @@ function termux_main_tui(){
             if [ ${EXITSTATUS} = 255 ];then
                 termux_main_tui
             elif [ ${EXITSTATUS} = 0 ];then
-                am start -a android.intent.action.VIEW -d ${GHPAGE} > /dev/null 2>&1
+                am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
             elif [ ${EXITSTATUS} = 1 ];then
                 dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?" 0 0
                 EXITSTATUS=$?
