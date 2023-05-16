@@ -373,9 +373,9 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
             pkg i figlet ruby -y
             gem install lolcat
             clear
-            figlet "ntool" | lolcat -a -d 2
-            figlet "Powered by" | lolcat -a -d 2
-            figlet "nya" | lolcat -a -d 2
+            figlet "ntool" | lolcat -a -d 3
+            figlet "written by" | lolcat -a -d 3
+            figlet "nya" | lolcat -a -d 3
 			am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
 			;;
 
