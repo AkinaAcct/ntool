@@ -34,7 +34,6 @@ start(){
             ;;
         -u|--update)
             source "${NTOOLLIB}/basic/update.sh"
-            echo -e "${GREEN}请稍等,正在拉取最新版本号...${RESET}"
             check_and_update
             ;;
         -g|--github)
@@ -44,11 +43,12 @@ start(){
         -m|--mode)
             source "${NTOOLLIB}/basic/mode_change.sh"
             mode_change
-            exit 1
+            exit 0
             ;;
         --uninstall)
             source "${NTOOLLIB}/basic/uninstall.sh"
             uninstall_ntool
+            exit 0
             ;;
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"

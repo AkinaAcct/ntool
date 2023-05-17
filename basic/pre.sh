@@ -44,4 +44,5 @@ download_check(){
     fi
 }
 source "${NTOOLLIB}/basic/print_author.sh"
+source "${NTOOLLIB}/basic/update.sh"
 source "${NTOOLLIB}/basic/start.sh"

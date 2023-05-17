@@ -373,10 +373,10 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
             for i in figlet ruby gem;do
                 if command -v ${i} > /dev/null 2>&1;then
                     clear
-                fi
             else
                 pkg i -y figlet ruby
                 gem install -y lolcat
+                fi
             done
             print_author ntool nya
 			am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
@@ -512,7 +512,7 @@ function termux_main_tui(){
     "6" "LSPatch/XPatch功能" \
     "7" "ntafetch-使用ntafetch作为motd(测试)" \
     "8" "反映一个BUG" \
-    "9" "卸载 ntool"
+    "9" "卸载 ntool" \
     "00" "更新" \
     "0" "退出")
     EXITSTATUS=$?
