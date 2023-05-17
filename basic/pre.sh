@@ -43,4 +43,4 @@ download_check(){
         exit 1
     fi
 }
-source ${NTOOLLIB}/basic/start.sh
+source "${NTOOLLIB}/basic/start.sh"

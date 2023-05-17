@@ -7,5 +7,6 @@ print_help(){
     echo -e "${YELLOW}-d,--debug${RESET} enable debug mode(set -x).Logs will be redirected to ~/log.txt."
     echo -e "${YELLOW}-m,--mode${RESET} change mode(sigle file mode or multi file mode)."
     echo -e "${RED}-s,--strict${RESET} enable ${RED}\"set -e\"${RESET} and it will cause many problems such as uncompress failed."
+    echo -e "${RED}--uninstall${RESET} uninstall ntool.${RED}YOUR DATA will be LOST.${RESET}"
     exit 0
 }
