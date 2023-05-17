@@ -36,7 +36,6 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #:D
 source ${PREFIX}/lib/ntool/basic/pre.sh
 #from 2023.12.5，ntool entered spilt file version
-#;(
 start $*
 EOF
 }
