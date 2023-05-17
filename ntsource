@@ -370,9 +370,14 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
-            pkg i figlet ruby -y
-            gem install lolcat
-            clear
+            for i in figlet ruby gem;do
+                if command -v ${i} > /dev/null 2>&1;then
+                    clear
+                fi
+            else
+                pkg i -y figlet ruby
+                gem install -y lolcat
+            done
             figlet "ntool" | lolcat -a -d 3
             figlet "written by" | lolcat -a -d 3
             figlet "nya" | lolcat -a -d 3
@@ -380,7 +385,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			;;
 
 		1)
-			if command -v ping > /dev/null;then
+			if command -v ping > /dev/null 2>&1;then
                  ip=$(dialog --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
                  time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
                  speed=$(dialog --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
