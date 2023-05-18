@@ -7,10 +7,11 @@ CYAN="\e[36m"
 RESET="\E[0m"
 RNTOOL="${RED}n${YELLOW}t${BLUE}o${PINK}o${CYAN}l${RESET}"
 #############预准备
-ARCH="$(uname -m)"
 TIME=$(date '+%Y-%m-%d %H:%M:%S')
-if [ "$ARCH" == "aarch64" ];then
+if [ "$(uname -m)" == "aarch64" ];then
     ARCH="arm64"
+else
+    ARCH="$(uname -m)"
 fi
 OS="$(uname -o)"     #系统
 STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
@@ -25,7 +26,8 @@ GHREPO="https://github.com/nya-main/ntool"
 #    dialog --title "ntool-tui:WARNING" --msgbox "我还没适配除了Android以外的系统呢..." 15 70
 #    exit 1
 #fi
-#termux-wake-lock
+#deleted bacause something went wrong on some devices
+termux-wake-lock
 mkdir -p ${MAINPATH}/rootfs
 #常用功能function
 wait_for_dev_tui(){
@@ -54,7 +56,7 @@ print_author(){
     done
     figlet "${1}
 written by
-${2}" | lolcat -a -d 3
+${!#}" | lolcat -a -d 3
 }
 source "${NTOOLLIB}/basic/update.sh"
 source "${NTOOLLIB}/basic/start.sh"
