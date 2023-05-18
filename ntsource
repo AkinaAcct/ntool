@@ -370,14 +370,6 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
-            for i in figlet ruby gem;do
-                if command -v ${i} > /dev/null 2>&1;then
-                    clear
-            else
-                pkg i -y figlet ruby
-                gem install -y lolcat
-                fi
-            done
             print_author ntool nya
 			am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
 			;;

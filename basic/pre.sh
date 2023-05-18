@@ -39,10 +39,22 @@ bad_empty_input(){
 download_check(){
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
-        echo "${RED}下载出错!停止运行.${RESET}"[]
+        echo "${RED}下载出错!停止运行.${RESET}"
         exit 1
     fi
 }
-source "${NTOOLLIB}/basic/print_author.sh"
+print_author(){
+    for i in figlet ruby gem;do
+        if command -v ${i} > /dev/null 2>&1;then
+            clear
+        else
+            pkg i -y figlet ruby
+            gem install -y lolcat
+        fi
+    done
+    figlet "${1}
+written by
+${2}" | lolcat -a -d 3
+}
 source "${NTOOLLIB}/basic/update.sh"
 source "${NTOOLLIB}/basic/start.sh"
