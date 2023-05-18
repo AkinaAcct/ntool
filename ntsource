@@ -370,7 +370,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			other_tool_tui
 			;;
 		00)
-            print_author ntool nya
+            print_author NTool nya
 			am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
 			;;
 
@@ -505,6 +505,7 @@ function termux_main_tui(){
     "7" "ntafetch-使用ntafetch作为motd(测试)" \
     "8" "反映一个BUG" \
     "9" "卸载 ntool" \
+    "10" "大佬们的项目" \
     "00" "更新" \
     "0" "退出")
     EXITSTATUS=$?
@@ -606,6 +607,10 @@ function termux_main_tui(){
         9)
             source "${NTOOLLIB}/basic/uninstall.sh"
             uninstall_ntool
+            ;;
+        10)
+            source ${NTOOLLIB}/other/other_main.sh
+            other_main_tui
             ;;
     esac
     exit 0
