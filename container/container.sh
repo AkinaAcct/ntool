@@ -5,6 +5,7 @@ container_testing_tui(){
         T|t)
             source ${NTOOLLIB}/other/termux-container.sh
             install_termux-container
+            exit 0
             ;;
         *)
             echo -e "${RED}No choice.Exited ntool${RESET}"
