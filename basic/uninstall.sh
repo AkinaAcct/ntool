@@ -6,6 +6,7 @@ function uninstall_ntool() {
         Y|y)
             rm -rf ${NTOOLLIB} 
             rm -rf ${MAINPATH}
+            rm -rf ${PREFIX}/bin/ntool
             echo -e "${GREEN}完成.ntool已经被卸载了.${RESET}"
             exit 0
             ;;
