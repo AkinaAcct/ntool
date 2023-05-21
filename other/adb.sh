@@ -1,6 +1,6 @@
 #事实上,这个功能的初衷是我自己要用XD
 function check_tun(){
-    ifconfig -a | grep tun
+    ifconfig | awk '{print $1}' | grep tun
     EXITSTATUS=$?
     if [ ${EXITSTATUS} = 0 ];then
         echo -e "${RED}检测到VPN连接.停止运行"
@@ -14,10 +14,12 @@ function adb_pair(){
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能"
     read -p "选择与\"配对码\"有关的选项并将码填写至此: " PAIRCODE
     read -p "输入同时出现的端口: " PAIRPORT
-    read -p "${YELLOW}确保你未使用VPN!${GREEN}如果有使用,请${YELLOW}现在关闭."
+    echo -e "${YELLOW}确保你未使用VPN!${GREEN}如果有使用,请${YELLOW}现在关闭."
+    read -p "按回车以继续"
+    echo -e "${RESET}"
     check_tun
     echo -e "${RESET}"
-    adb pair $(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:"):${PAIRPORT} ${PAIRCODE}
+    adb pair $(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:"):${PAIRPORT} "${PAIRCODE}"
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
         echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
@@ -61,6 +63,7 @@ function adb_main(){
             esac
             echo -e "${RED}"
             read -p "你确定要继续吗?你未保存的工作数据将丢失! [CTRL-C:exit ENTER:continue]"
+            echo -e "${RESET}"
             adb reboot ${MODE}
             ;;
         0)
