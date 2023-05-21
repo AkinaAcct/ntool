@@ -3,6 +3,7 @@ other_main_tui(){
     "1" "termux-container_moe-hacker" \
     "2" "xbtooln_myxuebi" \
     "3" "NeoVim-Config_nya" \
+    "4" "wireless-adb-tools_nya" \
     "0" "返回脚本主页")
     echo -e "${BLUE}安装中...${RESET}"
     case ${MAINCHOICE} in
@@ -22,6 +23,10 @@ other_main_tui(){
             git clone https://github.com/nya-main/VimConfigBackup ~/vcb-nya
             mkdir -p ~/.config
             cp -rf ~/vcb-nya/nvim ~/.config
+            ;;
+        4)
+            source ${NTOOLLIB}/other/adb.sh
+            adb_main
             ;;
         0)
             termux_main_tui

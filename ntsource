@@ -505,7 +505,7 @@ function termux_main_tui(){
     "7" "ntafetch-使用ntafetch作为motd(测试)" \
     "8" "反映一个BUG" \
     "9" "卸载 ntool" \
-    "10" "一些好用的github项目" \
+    "10" "一些好用的东西" \
     "00" "更新" \
     "0" "退出")
     EXITSTATUS=$?
