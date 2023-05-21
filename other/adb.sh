@@ -50,6 +50,7 @@ function adb_main(){
             echo -e "${RED}"
             read -p "你确定要继续吗?你未保存的工作数据将丢失! [CTRL-C:exit ENTER:continue]"
             adb reboot ${MODE}
+            ;;
         0)
             other_main_tui
             ;;
