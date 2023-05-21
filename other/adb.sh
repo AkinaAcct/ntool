@@ -17,6 +17,7 @@ function adb_main(){
     adb_pair
     CHOICE=$(dialog --output-fd 1 --title "ntool:adb_main" --menu "本页面所有功能仅供支持无线adb的设备使用!\n选择一个以继续" 15 70 8 \
     "1" "修复类原生ROM网络连接受限" \
+    "2" "进入rec/fastboot" \
     "0" "返回上级菜单")
     case ${CHOICE} in
         1)
@@ -25,6 +26,30 @@ function adb_main(){
             adb shell settings put global captive_portal_http_url http://connect.rom.miui.com/generate_204
             echo -e "${GREEN}完成!请开关飞行模式或重启手机使其生效${RESET}"
             ;;
+        2)
+            echo -e "${BLUE}1. system\n2. recovery\n3. fastboot\n4. edl"
+            read -l "选择一个以继续: ${RESET}" REBOOTMODE
+            case ${REBOOTMODE} in
+                1)
+                    MODE=
+                    ;;
+                2)
+                    MODE=recovery
+                    ;;
+                3)
+                    MODE=fastboot
+                    ;;
+                4)
+                    MODE=edl
+                    ;;
+                *)
+                    echo -e "${RED}出错了!输入正确的数字啊qwq${RESET}"
+                    exec adb_main
+                    ;;
+            esac
+            echo -e "${RED}"
+            read -p "你确定要继续吗?你未保存的工作数据将丢失! [CTRL-C:exit ENTER:continue]"
+            adb reboot ${MODE}
         0)
             other_main_tui
             ;;
