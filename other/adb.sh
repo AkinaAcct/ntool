@@ -1,11 +1,23 @@
 #事实上,这个功能的初衷是我自己要用XD
+function check_tun(){
+    ifconfig -a | grep tun
+    EXITSTATUS=$?
+    if [ ${EXITSTATUS} = 0 ];then
+        echo -e "${RED}检测到VPN连接.停止运行"
+        read -p "按回车继续"
+        adb_main
+    fi
+}
+
 function adb_pair(){
     echo -e "${RED}警告!本功能仅支持能够使用无线adb的设备!不支持无线adb的设备将无法使用!"
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能"
     read -p "选择与\"配对码\"有关的选项并将码填写至此: " PAIRCODE
     read -p "输入同时出现的端口: " PAIRPORT
+    read -p "${YELLOW}确保你未使用VPN!${GREEN}如果有使用,请${YELLOW}现在关闭."
+    check_tun
     echo -e "${RESET}"
-    adb pair 127.0.0.1:${PAIRPORT} ${PAIRCODE}
+    adb pair $(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:"):${PAIRPORT} ${PAIRCODE}
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
         echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
