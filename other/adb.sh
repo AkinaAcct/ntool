@@ -62,7 +62,7 @@ function adb_main(){
                     ;;
             esac
             echo -e "${RED}"
-            read -p "你确定要继续吗?你未保存的工作数据将丢失! [CTRL-C:exit ENTER:continue]"
+            read -p "你确定要继续吗?你将进入${MODE}模式!你未保存的工作数据将丢失! [CTRL-C:exit ENTER:continue]"
             echo -e "${RESET}"
             adb reboot ${MODE}
             ;;
