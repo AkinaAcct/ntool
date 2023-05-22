@@ -63,7 +63,7 @@ function patch_apk(){
     fi
     MODULEPATH=$(dialog --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n 不是apk文件的上一级目录!!!" 15 70)
     echo -e "${BLUE}可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
-    if [ "$PATCHFRAME" == "xpatch" ];then
+    if [ "${PATCHFRAMEWORK}" == "xpatch" ];then
         java -jar ${MAINPATH}/patchedapks/xpatch.jar ${APKPATH} -xm ${MODULEPATH} -o /sdcard/xpatchedapk.apk
         rm ${MAINPATH}/patchedapks/xpatch.jar
     else
