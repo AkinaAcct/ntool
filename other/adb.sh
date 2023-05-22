@@ -1,4 +1,5 @@
 #事实上,这个功能的初衷是我自己要用XD
+set -x
 function check_tun(){
     ifconfig | awk '{print $1}' | grep tun
     EXITSTATUS=$?
@@ -10,21 +11,23 @@ function check_tun(){
 }
 
 function adb_pair(){
-    echo -e "${RED}警告!本功能仅支持能够使用无线adb的设备!不支持无线adb的设备将无法使用!"
-    echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能"
-    read -p "选择与\"配对码\"有关的选项并将码填写至此: " PAIRCODE
+    echo -e "${RED}警告!本功能仅支持能够使用无线adb的设备(Android 11+)!不支持无线adb的设备将无法使用!"
+    echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
     read -p "输入同时出现的端口: " PAIRPORT
-    echo -e "${YELLOW}确保你未使用VPN!${GREEN}如果有使用,请${YELLOW}现在关闭."
+    echo -e "${YELLOW}确保你未使用VPN!${RESET}如果有使用,请${YELLOW}现在关闭.${RESET}"
     read -p "按回车以继续"
     echo -e "${RESET}"
     check_tun
     echo -e "${RESET}"
-    adb pair $(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:"):${PAIRPORT} "${PAIRCODE}"
+    echo -e "在下方输入配对码"
+    adb pair $(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:"):${PAIRPORT} ${PAIRCODE}
     EXITSTATUS=$?
+    read -p "end of pairing"
     if [ ${EXITSTATUS} != 0 ];then
         echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
         exit 1
     fi
+    read -p "end of adb_pair"
 }
 
 function adb_main(){
@@ -42,7 +45,8 @@ function adb_main(){
             ;;
         2)
             echo -e "${BLUE}1. system\n2. recovery\n3. fastboot\n4. edl"
-            read -l "选择一个以继续: ${RESET}" REBOOTMODE
+            read -p "选择一个以继续: " REBOOTMODE
+            echo -e "${RESET}"
             case ${REBOOTMODE} in
                 1)
                     MODE=
@@ -58,7 +62,7 @@ function adb_main(){
                     ;;
                 *)
                     echo -e "${RED}出错了!输入正确的数字啊qwq${RESET}"
-                    exec adb_main
+                    adb_main
                     ;;
             esac
             echo -e "${RED}"
