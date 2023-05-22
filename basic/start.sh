@@ -40,11 +40,6 @@ start(){
             am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
             exit 0
             ;;
-        -m|--mode)
-            source "${NTOOLLIB}/basic/mode_change.sh"
-            mode_change
-            exit 0
-            ;;
         --uninstall)
             source "${NTOOLLIB}/basic/uninstall.sh"
             uninstall_ntool
