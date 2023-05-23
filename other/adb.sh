@@ -11,7 +11,7 @@ function check_tun(){
 }
 
 function adb_pair(){
-    echo -e "${RED}警告!本功能仅支持能够使用无线adb的设备(Android 11+)!不支持无线adb的设备将无法使用!"
+    echo -e "${RED}警告!本功能仅支持能够使用无线adb并能够以配对码配对的的设备(Android 11+)!不支持无线adb的设备将无法使用!"
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
     read -p "输入同时出现的端口: " PAIRPORT
     echo -e "${YELLOW}确保你未使用VPN!${RESET}如果有使用,请${YELLOW}现在关闭.${RESET}"
