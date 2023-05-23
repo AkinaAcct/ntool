@@ -25,6 +25,7 @@ printf "88  V888    88    '8b  d8' '8b  d8' 88booo.\n"
 printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
 sleep 0.2
 printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
+#这里的字符是由 figlet 生成的
 
 add_starter(){
 cat << 'EOF' > $PREFIX/bin/ntool
