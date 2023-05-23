@@ -46,14 +46,11 @@ download_check(){
     fi
 }
 print_author(){
-    for i in figlet ruby gem;do
-        if command -v ${i} > /dev/null 2>&1;then
-            clear
-        else
-            pkg i -y figlet ruby
-            gem install -y lolcat
-        fi
-    done
+    if ! command -v gem > /dev/null 2>&1;then
+        pkg install -y gem
+    elif !  command -v figlet > /dev/null 2>&1;then
+        gem install figlet
+    fi
     figlet "${1}
 written by
 ${!#}" | lolcat -a -d 3
