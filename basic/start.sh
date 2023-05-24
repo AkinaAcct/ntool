@@ -40,6 +40,9 @@ start(){
             am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
             exit 0
             ;;
+        --special)
+            echo -e "${BLUE}没有事情发生${RESET}" #你看没有事情发生吧XD
+            ;;
         --uninstall)
             source "${NTOOLLIB}/basic/uninstall.sh"
             uninstall_ntool
