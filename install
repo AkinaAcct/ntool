@@ -35,8 +35,8 @@ cat << 'EOF' > $PREFIX/bin/ntool
 #${PREFIX}lib/ntool/
 #so this is just an start script
 #:D
-source ${PREFIX}/lib/ntool/basic/pre.sh
-#from 2023.12.5，ntool entered spilt file version
+source ${PREFIX}/lib/ntool/basic/preload.sh
+#from 2023.4.5，ntool entered spilt file version
 start $*
 EOF
 }
