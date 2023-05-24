@@ -1,4 +1,4 @@
-source "${NTOOLLIB}/ntsource"
+source "${NTOOLLIB}/ntmain"
 start(){
     if [ $# -gt 1 ];then
         echo -e "${RED}more than one parameter had been inputted${RESET}"
