@@ -102,94 +102,6 @@ function ssh_tui(){
 			;;
 	esac
 }
-function qrcode_tui(){
-    QRCHOICE=$(dialog --output-fd 1 --title "ntool-tui:按<ESC>返回上一页" --yes-label "生成" --no-label "解码" --yesno "使用 \nqrencode 和 zbar实现 \n选择一个以继续" 15 70)
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} = 255 ];then
-        tool_tui
-    fi
-    case ${EXITSTATUS} in
-        0)
-            QRSPAWN=$(dialog --output-fd 1 --title "ntool-tui:qrcode spawn" --inputbox "输入你想要加密的文本" 15 70)
-            EXITSTATUS=$?
-            if [ ${EXITSTATUS} != 0 ];then
-                qrcode_tui
-            fi
-            dialog --output-fd 1 --title "ntool-tui:configure" --yesno "是否要保存该二维码到内置存储目录?" 15 70
-            EXITSTATUS=$?
-            if [ ${EXITSTATUS} != 0 ];then
-                qrencode -o - -t ANSI "${QRSPAWN}"
-                echo -e "${GREEN}"
-                read -p "按回车继续"
-                echo -e "${RESET}"
-                qrcode_tui
-            else
-                QRSTOREPATH=$(dialog --output-fd 1 --title "按空格选择" --dselect "/sdcard" 15 70)
-                EXITSTATUS=$?
-                if [ ${EXITSTATUS} != 0 ];then
-                    qrcode_tui
-                elif [ -z ${QRSTOREPATH} ];then
-                    bad_empty_input
-                    qrcode_tui
-                fi
-                qrencode -t png -o ${QRSTOREPATH}/qrcode-${QRSPAWN}.png "${QRSPAWN}"
-                catimg ${QRSTOREPATH}/qrcode-${QRSPAWN}.png
-                echo -e "${GREEN}完成!保存在${BLUE}${QRSTOREPATH}/qrcode-${QRSPAWN}.png${RESET}"
-                echo -e "${GREEN}"
-                read -p "按回车继续"
-                echo -e "${RESET}"
-                qrcode_tui
-            fi
-            ;;
-        1)
-            QRUNCODEPATH=$(dialog --output-fd 1 --title "ntool-tui:qrcode uncode" --fselect "选择好文件后按空格选择(删掉我),或者直接输入完整路径" 15 70)
-            EXITSTATUS=$?
-            if [ -z ${QRUNCODEPATH} ];then
-                bad_empty_input
-                qrcode_tui
-            elif [ ${EXITSTATUS} != 0 ];then
-                qrcode_tui
-            fi
-            echo -e "${BLUE}结果${RESET}:$(zbarimg ${QRUNCODEPATH} | sed -n '1p')"
-            echo -e "${GREEN}"
-            read -p "按回车继续"
-            echo -e "${RESET}"
-            qrcode_tui
-            ;;
-    esac
-}
-
-function rm_to_trash(){
-    dialog --title "ntool-tui:按ESC退出" --yes-label "trash-cli" --no-label "rm" --yesno "trash-cli是一个适用于linux命令行下的回收站应用\n相对于rm的直接删除它更为安全,因为可以恢复\n删除后的文件将被保存在回收站\n真的是我的血的教训" 15 70
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} = 255 ];then
-        tool_tui
-    fi
-    case ${EXITSTATUS} in
-        0)
-            if [ $(cat ${PREFIX}/etc/profile | grep trash) ];then
-                dialog --title "ntool-tui:tips" --msgbox "你已经安装过啦!下面是一些使用提示: \nrm-文件转移到~/.trash \nrl-显示回收站里的文件 \nrm-restore-选择要从回收站里恢复的文件 \ntrash-empty-清除回收站" 15 70
-                exit 0
-            else
-                if [ ! $(command -v trash) ];then
-                    pip install trash-cli
-                fi
-                cat >> ${PREFIX}/etc/profile << EOF
-alias rm='trash-put --trash-dir ~/.trash'
-alias rl='trash-list --trash-dir ~/.trash'
-alias rm-restore='trash-restore --trash-dir ~/.trash'
-alias trash-empty='trash-empty --trash-dir ~/.trash'
-EOF
-                dialog --title "ntool-tui:tips" --msgbox "完成!重启termux以应用.下面是一些使用提示: \nrm-文件转移到~/.trash \nrl-显示回收站里的文件 \nrm-restore-选择要从回收站里恢复的文件 \ntrash-empty-清除回收站" 15 70
-            fi
-            ;;
-        1)
-            sed -i '/trash/d' ${PREFIX}/etc/profile
-            dialog --title "ntool-tui:tips" --msgbox "完成!" 15 70
-            tool_tui
-            ;;
-    esac
-}
 
 function tool_tui(){			#这里是其它工具-工具类页面的function
     TPC=$(dialog --output-fd 1 --title "ntool-tui:tool tui" --menu "选择一个以继续" 15 70 8 \
@@ -280,9 +192,11 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
 			echo "安装完成"
 			;;
 		5)
+            source "${NTOOLLIB}/basic/ssh.sh"
 			ssh_check_install
 			;;
 		6)
+            source "${NTOOLLIB}/basic/qrcode.sh"
             command -v qrencode 
             EXITSTATUS=$?
             if [ ${EXITSTATUS} != 0 ];then
@@ -293,6 +207,7 @@ function tool_tui(){			#这里是其它工具-工具类页面的function
             fi
 			;;
         7)
+            source "${NTOOLLIB}/basic/trashbin.sh"
             rm_to_trash
             ;;
 	esac
@@ -370,7 +285,7 @@ function termux_main_tui(){
             other_tool_tui
             ;;
         3)
-            source "${NTOOLLIB}/other/backup.sh"
+            source "${NTOOLLIB}/basic/backup.sh"
             backup_tui
             ;;
         4)
@@ -400,7 +315,7 @@ function termux_main_tui(){
             termux_main_tui
             ;;
         6)
-            source "${NTOOLLIB}/other/lsxpatch.sh"
+            source "${NTOOLLIB}/basic/lsxpatch.sh"
             patch_framework_choose
             ;;
         7)
