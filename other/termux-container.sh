@@ -7,5 +7,5 @@ install_termux-container() {
     git clone https://github.com/moe-hacker/termux-container ~/termux-container
     cd ~/termux-container
     make
-    apt install -f ./termux-container.deb
+    make install
 }
