@@ -1,4 +1,0 @@
-#!/bin/python
-print("这里是ntool的Python实现版本")
-print("1.退出\n2.启动ntool的bash模式")
-input("? ")
