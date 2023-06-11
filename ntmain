@@ -251,7 +251,7 @@ function web_tui(){				#这里是其他功能-网络类页面function
 
 ######main tui
 function termux_main_tui(){
-    MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "你的系统为:${OS}\n选择一个以继续" 15 70 8  \
+    MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "$(whoami)欢迎!\n你的系统为:${OS}\n选择一个以继续" 15 70 8  \
     "1" "已烂尾的容器功能" \
     "2" "其它功能" \
     "3" "备份功能" \
