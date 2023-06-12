@@ -6,7 +6,7 @@ function rm_to_trash(){
     fi
     case ${EXITSTATUS} in
         0)
-            if [ $(cat ${PREFIX}/etc/profile | grep trash) ];then
+            if [ $(cat ${PREFIX}/etc/profile | grep trash) ] && command -v trash-put > /dev/null 2>&1;then
                 dialog --title "ntool-tui:tips" --msgbox "你已经安装过啦!下面是一些使用提示: \nrm-文件转移到~/.trash \nrl-显示回收站里的文件 \nrm-restore-选择要从回收站里恢复的文件 \ntrash-empty-清除回收站" 15 70
                 exit 0
             else
