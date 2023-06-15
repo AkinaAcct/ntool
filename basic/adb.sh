@@ -52,6 +52,7 @@ function adb_main(){
     "1" "修复类原生ROM网络连接受限" \
     "2" "修改安卓进程限制(保后台)" \
     "3" "进入rec/fastboot" \
+    "4" "进入高通EDL模式(9008模式)" \
     "0" "返回上级菜单")
     case ${CHOICE} in
         1)
@@ -96,6 +97,18 @@ function adb_main(){
             fi
             adb shell device_config set_sync_disabled_for_tests persistent
             adb shell device_config put activity_manager max_phantom_processes ${MAXPROCNMUM}
+            ;;
+        4)
+            echo -e "${RED}你确定要进入EDL(9008)模式吗"
+            read -p "[Y|N,默认N]" CHOICE
+            case ${CHOICE} in
+                Y|y)
+                    adb reboot edl
+                    ;;
+                *)
+                    adb_main
+                    ;;
+            esac
             ;;
         0)
             other_main_tui
