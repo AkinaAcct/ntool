@@ -55,6 +55,8 @@ case $answer in
             chmod +x ${PREFIX}/bin/ntool
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
             echo "NORMAL_MULIT-FILE_MODE" > ~/.ntool/.mode
+            echo "本项目使用:Apache License 2.0"
+            cat ${PREFIX}/lib/ntool/LICENSE
         	echo "完成"
             echo "输入ntool测试启动"
         else
