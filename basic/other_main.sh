@@ -25,7 +25,7 @@ other_main_tui(){
             exit 0
             ;;
         4)
-            source ${NTOOLLIB}/other/adb.sh
+            source ${NTOOLLIB}/basic/adb.sh
             adb_main
             ;;
         0)

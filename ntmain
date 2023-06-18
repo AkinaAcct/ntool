@@ -125,7 +125,7 @@ function termux_main_tui(){
             uninstall_ntool
             ;;
         10)
-            source "${NTOOLLIB}/other/other_main.sh"
+            source "${NTOOLLIB}/basic/other_main.sh"
             other_main_tui
             ;;
     esac
