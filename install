@@ -11,7 +11,7 @@ clear
 printf "please wait...\n"
 
 for i in git wget curl python dialog bc jq gawk;do
-    if [ ! $(command -v ${i}) ];then
+    if [ ! "$(command -v ${i})" ];then
         pkg install -y ${i}
     fi
 done
@@ -28,7 +28,7 @@ printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 #这里的字符是由 figlet 生成的
 
 add_starter(){
-cat << 'EOF' > $PREFIX/bin/ntool
+cat << 'EOF' > "$PREFIX/bin/ntool"
 #!/bin/bash
 #there is nothing in this file.
 #all scripts are here:
@@ -43,20 +43,20 @@ EOF
 
 while true
 do
-read -p "你确定要执行这个脚本吗？  [Y|N]" answer
+read -r-p "你确定要执行这个脚本吗？  [Y|N]" answer
 case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
-            mkdir -p ${PREFIX}/lib/ntool
-            rm -rf ${PREFIX}/lib/ntool
-	        git clone https://github.com/nya-main/ntool ${PREFIX}/lib/ntool/
+            mkdir -p "${PREFIX}/lib/ntool"
+            rm -rf "${PREFIX}/lib/ntool"
+	        git clone https://github.com/nya-main/ntool "${PREFIX}/lib/ntool/"
             add_starter
-            chmod +x ${PREFIX}/bin/ntool
+            chmod +x "${PREFIX}/bin/ntool"
 	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
             echo "NORMAL_MULIT-FILE_MODE" > ~/.ntool/.mode
             echo "本项目使用:Apache License 2.0"
-            cat ${PREFIX}/lib/ntool/LICENSE
+            cat "${PREFIX}/lib/ntool/LICENSE"
         	echo "完成"
             echo "输入ntool测试启动"
         else

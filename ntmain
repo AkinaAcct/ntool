@@ -54,17 +54,17 @@ function termux_main_tui(){
                     termux_main_tui
                 fi
                 echo -e "${GREEN}请耐心等待...${RESET}"
-                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" > ${HOME}/pi.txt
-                echo "scale=${BC}; 4*a(1)" | bc -l -q >> ${HOME}/pi.txt
-                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" >> ${HOME}/pi.txt
+                echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" > "${HOME}/pi.txt"
+                echo "scale=${BC}; 4*a(1)" | bc -l -q >> "${HOME}/pi.txt"
+                echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" >> "${HOME}/pi.txt"
                 dialog --title "ntool-tui:success" --textbox "${HOME}/pi.txt" 20 80
                 termux_main_tui
             else
                 echo -e "${BLUE}正在安装bc计算器...${RESET}"
                 pkg install -y bc
-                echo -e ${GREEN}
-                read -p "按回车返回"
-                echo -e ${RESET}
+                echo -e "${GREEN}"
+                read -r -p "按回车返回"
+                echo -e "${RESET}"
                 termux_main_tui
             fi
             ;;
@@ -79,13 +79,13 @@ function termux_main_tui(){
         7)
             check_if_not_android_warning
             function ntafetch_install(){
-                wget https://raw.githubusercontent.com/nya-main/ntafetch/main/ntafetch -O ${PREFIX}/bin/ntafetch
-                chmod +x ${PREFIX}/bin/ntafetch
-                mv $PREFIX/etc/motd ${PREFIX}/etc/motd.bak > /dev/null 2>&1
+                wget https://raw.githubusercontent.com/nya-main/ntafetch/main/ntafetch -O "${PREFIX}/bin/ntafetch"
+                chmod +x "${PREFIX}/bin/ntafetch"
+                mv "$PREFIX/etc/motd" "${PREFIX}/etc/motd.bak" > /dev/null 2>&1
             }
             if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70);then
-                 ISINSTALLED="$(cat ${PREFIX}/etc/termux-login.sh | grep ntafetch)"
-                if [ ! -z "$ISINSTALLED" ];then
+                 ISINSTALLED="$(cat "${PREFIX}/etc/termux-login.sh" | grep ntafetch)"
+                if [ -n "$ISINSTALLED" ];then
                     if (dialog --title "ntool-tui:WARNING" --defaultno --yesno "你已经安装过ntafetch了\n你确定要重装吗?" 15 70);then
                         ntafetch_install
                     else
@@ -93,7 +93,7 @@ function termux_main_tui(){
                     fi
                 else
                     ntafetch_install
-                    echo "ntafetch" >> ${PREFIX}/etc/termux-login.sh
+                    echo "ntafetch" >> "${PREFIX}/etc/termux-login.sh"
                 fi
             else
                 termux_main_tui
@@ -106,7 +106,7 @@ function termux_main_tui(){
             if [ ${EXITSTATUS} = 255 ];then
                 termux_main_tui
             elif [ ${EXITSTATUS} = 0 ];then
-                am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
+                am start -a android.intent.action.VIEW -d "${GHREPO}" > /dev/null 2>&1
             elif [ ${EXITSTATUS} = 1 ];then
                 dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?" 0 0
                 EXITSTATUS=$?
@@ -115,7 +115,7 @@ function termux_main_tui(){
                     exit 123
                 else
                     echo -e "${CYAN}好耶!${RESET}"
-                    read -p "press enter please"
+                    read -r -p "press enter please"
                     termux_main_tui
                 fi
             fi
