@@ -28,7 +28,7 @@ GHREPO="https://github.com/nya-main/ntool"
 #fi
 #deleted bacause something went wrong on some devices
 termux-wake-lock
-mkdir -p ${MAINPATH}/rootfs
+mkdir -p "${MAINPATH}/rootfs"
 #常用功能function
 wait_for_dev_tui(){
     dialog --title "ntool-tui:developing tui" --msgbox "正在开发" 15 70
