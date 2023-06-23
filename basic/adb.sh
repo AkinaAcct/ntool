@@ -14,7 +14,7 @@ function check_tun(){
 
 function adb_connect() {
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
-    read -p "输入出现的端口: " PORT
+    read -r -p "输入出现的端口: " PORT
     adb connect ${LOCALIP}:${PORT}
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
@@ -51,8 +51,7 @@ function adb_main(){
     CHOICE=$(dialog --output-fd 1 --title "ntool:adb_main" --menu "本页面所有功能仅供支持无线adb的设备使用!\n选择一个以继续" 15 70 8 \
     "1" "修复类原生ROM网络连接受限" \
     "2" "修改安卓进程限制(保后台)" \
-    "3" "进入rec/fastboot" \
-    "4" "进入高通EDL模式(9008模式)" \
+    "3" "高级重启" \
     "0" "返回上级菜单")
     case ${CHOICE} in
         1)
@@ -61,7 +60,17 @@ function adb_main(){
             adb shell settings put global captive_portal_http_url http://connect.rom.miui.com/generate_204
             echo -e "${GREEN}完成!请开关飞行模式或重启手机使其生效${RESET}"
             ;;
-        2)
+         2)
+            MAXPROCNMUM=$(dialog --output-fd 1 --title "ntool:adb" --inputbox "输入要修改的最大进程数\n最大为21474836473" 15 70)
+            if [ -z ${MAXPROCNMUM} ];then
+                bad_empty_input
+                adb_main
+                exit 0
+            fi
+            adb shell device_config set_sync_disabled_for_tests persistent
+            adb shell device_config put activity_manager max_phantom_processes ${MAXPROCNMUM}
+            ;;
+        3)
             echo -e "${BLUE}1. system\n2. recovery\n3. fastboot\n4. edl"
             read -p "选择一个以继续: " REBOOTMODE
             echo -e "${RESET}"
@@ -88,29 +97,7 @@ function adb_main(){
             echo -e "${RESET}"
             adb reboot ${MODE}
             ;;
-        3)
-            MAXPROCNMUM=$(dialog --output-fd 1 --title "ntool:adb" --inputbox "输入要修改的最大进程数\n最大为21474836473" 15 70)
-            if [ -z ${MAXPROCNMUM} ];then
-                bad_empty_input
-                adb_main
-                exit 0
-            fi
-            adb shell device_config set_sync_disabled_for_tests persistent
-            adb shell device_config put activity_manager max_phantom_processes ${MAXPROCNMUM}
-            ;;
-        4)
-            echo -e "${RED}你确定要进入EDL(9008)模式吗"
-            read -p "[Y|N,默认N]" CHOICE
-            case ${CHOICE} in
-                Y|y)
-                    adb reboot edl
-                    ;;
-                *)
-                    adb_main
-                    ;;
-            esac
-            ;;
-        0)
+        *)
             other_main_tui
             ;;
     esac
