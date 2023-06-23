@@ -1,7 +1,5 @@
 #事实上,这个功能的初衷是我自己要用XD
 
-LOCALIP="$(ifconfig | grep "inet" | grep -v "127.0.0.1" | grep -v "inet6" | awk '{print $2}' | tr -d "addr:")"
-
 function check_tun(){
     ifconfig | awk '{print $1}' | grep tun
     EXITSTATUS=$?
@@ -15,7 +13,7 @@ function check_tun(){
 function adb_connect() {
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
     read -r -p "输入出现的端口: " PORT
-    adb connect ${LOCALIP}:${PORT}
+    adb connect 127.0.0.1:${PORT}
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
         echo -e "${RED}出错了!请重新运行!${RESET}"
@@ -34,7 +32,7 @@ function adb_pair(){
     check_tun
     echo -e "${RESET}"
     echo -e "在下方输入配对码"
-    adb pair ${LOCALIP}:${PAIRPORT} ${PAIRCODE}
+    adb pair 127.0.0.1:${PAIRPORT}
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ];then
         echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
