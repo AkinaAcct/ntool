@@ -4,7 +4,7 @@ function qrcode_tui(){
     if [ ${EXITSTATUS} = 255 ];then
         tool_tui
     fi
-    case ${EXITSTATUS} in
+    case ${QRCHOICE} in
         0)
             QRSPAWN=$(dialog --output-fd 1 --title "ntool-tui:qrcode spawn" --inputbox "输入你想要加密的文本" 15 70)
             EXITSTATUS=$?
