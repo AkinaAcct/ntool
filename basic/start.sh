@@ -40,6 +40,10 @@ start(){
             am start -a android.intent.action.VIEW -d ${GHREPO} > /dev/null 2>&1
             exit 0
             ;;
+        --cli)
+            source "${NTOOLLIB}/basic/cli.sh"
+            cli_shell
+            ;;
         --special)
             echo -e "${BLUE}没有事情发生${RESET}" #你看没有事情发生吧XD
             ;;
