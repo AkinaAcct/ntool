@@ -1,7 +1,6 @@
 #!/bin/bash
 #April fool's day
 #XD
-set -x
 RED="\E[1;31m"
 GREEN="\E[1;32m"
 YELLOW="\E[1;33m"
