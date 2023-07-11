@@ -1,9 +1,13 @@
 #!/bin/bash
 
-if [ "$(uname -o)" != "Android" ];then
-	echo "Warning!对于linux的支持于2023.4.8终止"
-	echo "退出安装"
-	exit 1
+if [ "$(uname -o)" == "Android" ];then
+    if $(dirname "$0")|grep termux;then
+        echo "环境通过,为termux环境."
+    fi
+    sleep 1234
+else
+    echo "你未在termux环境中运行此脚本..."
+    exit 1
 fi
 
 clear
