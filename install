@@ -1,10 +1,11 @@
 #!/bin/bash
 
 if [ "$(uname -o)" == "Android" ];then
-    if $(dirname "$0")|grep termux;then
+   if command -v termux-info > /dev/null 2>&1;then
         echo "环境通过,为termux环境."
+    else
+        echo "奇怪的环境...你是在非Termux软件的终端下执行的这个脚本吗?"
     fi
-    sleep 1234
 else
     echo "你未在termux环境中运行此脚本..."
     exit 1
