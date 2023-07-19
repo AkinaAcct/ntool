@@ -16,7 +16,8 @@ cli_crack() {
     echo -e "${BLUE}I:checking...${RESET}"
     if [ -z "${1}" ];then
         echo -e "${RED}E:You need to input an path.${CYAN}see command \"help.\"${RESET}"
-    elif [ -f "${1}" ];then
+    fi
+    if [ -f "${1}" ];then
         echo -e "${RED}E:No such file.Check the path of the file.${RESET}"
     else
         echo -e "${BLUE}T:Please wait.We need 10s to finish the hacking."
