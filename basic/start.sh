@@ -20,11 +20,11 @@ start(){
             termux_main_tui
             ;;
         -v|--version)
-             NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
+             NTOOLVERSION="$(cat ${NTOOLLIB}/.local_version 2> /dev/null)"
             if [ -z ${NTOOLVERSION} ];then
                 echo -e "${RNTOOL}\n\tversion:${RED}ERR-FILE-NOT-FOUND${RESET}\n\tmode:${GREEN}normal mode${RESET}"
             else
-                echo -e "${RNTOOL}\n\tversion:${BLUE}${NTOOLVERSION}${RESET}\n\tmode:${GREEN}$(cat ${MAINPATH}/.mode)${RESET}"
+                echo -e "${RNTOOL}\n\tversion:${BLUE}${NTOOLVERSION}${RESET}\n\tmode:${GREEN}$(cat ${NTOOLLIB}/.mode)${RESET}"
             fi
             exit 0
             ;;
