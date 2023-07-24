@@ -53,16 +53,15 @@ case $answer in
 	Y|y)
 		rm ~/.ntool/local_version > /dev/null 2>&1
         if [ "$(uname -o)" == "Android" ];then
-            mkdir -p "${PREFIX}/lib/ntool"
-            rm -rf "${PREFIX}/lib/ntool"
-	        git clone https://github.com/nya-main/ntool "${PREFIX}/lib/ntool/"
+            mkdir -p "${HOME}/.local/ntool"
+            rm -rf "${HOME}/.local/ntool"
+	        git clone https://github.com/nya-main/ntool "${HOME}/.local/ntool/"
             add_starter
             chmod +x "${PREFIX}/bin/ntool"
-	        wget https://raw.githubusercontent.com/nnyyaa/ntool/main/version -O ~/.ntool/local_version > /dev/null 2>&1
-            touch ~/.ntool/.mode
-            echo "NORMAL_MULIT-FILE_MODE" > ~/.ntool/.mode
+	        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version > "${HOME}/.local/ntool/.local_version > /dev/null 2>&1"
+            touch "${HOME}/.local/ntool/.mode"
+            echo "NORMAL_MULIT-FILE_MODE" > "${HOME}/.local/ntool/.mode"
             echo "本项目使用:Apache License 2.0"
-            cat "${PREFIX}/lib/ntool/LICENSE"
         	echo "完成"
             echo "输入ntool测试启动"
         else

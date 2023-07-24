@@ -15,7 +15,7 @@ else
 fi
 OS="$(uname -o)"     #系统
 STORAGEPATH="/storage/emulated/0/Download/backup"       #备份及rootfs下载目录
-NTOOLLIB="${PREFIX}/lib/ntool"
+NTOOLLIB="${HOME}/.local/ntool"
 MAINPATH="${HOME}/.ntool"      #主目录
 RAWURL="https://raw.githubusercontent.com/nya-main/ntool/main"       #GitHub raw地址(我是一只懒懒的猫猫)
 GHREPO="https://github.com/nya-main/ntool"
