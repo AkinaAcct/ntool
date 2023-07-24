@@ -58,7 +58,7 @@ case $answer in
 	        git clone https://github.com/nya-main/ntool "${HOME}/.local/ntool/"
             add_starter
             chmod +x "${PREFIX}/bin/ntool"
-	        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version > "${HOME}/.local/ntool/.local_version > /dev/null 2>&1"
+	        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version > "${HOME}/.local/ntool/.local_version"
             touch "${HOME}/.local/ntool/.mode"
             echo "NORMAL_MULIT-FILE_MODE" > "${HOME}/.local/ntool/.mode"
             echo "本项目使用:Apache License 2.0"
