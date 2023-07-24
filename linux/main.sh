@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${NTOOLLIB}/linux/color_echo.sh"
+source "${NTOOLLIB}/linux/preload.sh"
 
 GetPkgManager(){
     for i in pacman apt;do
