@@ -22,9 +22,9 @@ start(){
         -v|--version)
              NTOOLVERSION="$(cat ${MAINPATH}/local_version 2> /dev/null)"
             if [ -z ${NTOOLVERSION} ];then
-                echo -e "${RNTOOL}\n version:${RED}ERR-FILE-NOT-FOUND${RESET}\n mode:${GREEN}normal mode${RESET}"
+                echo -e "${RNTOOL}\n\tversion:${RED}ERR-FILE-NOT-FOUND${RESET}\n\tmode:${GREEN}normal mode${RESET}"
             else
-                echo -e "${RNTOOL}\n version:${BLUE}${NTOOLVERSION}${RESET}\n mode:${GREEN}$(cat ${MAINPATH}/.mode)${RESET}"
+                echo -e "${RNTOOL}\n\tversion:${BLUE}${NTOOLVERSION}${RESET}\n\tmode:${GREEN}$(cat ${MAINPATH}/.mode)${RESET}"
             fi
             exit 0
             ;;
