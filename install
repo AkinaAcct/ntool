@@ -7,7 +7,7 @@ if [ "$(uname -o)" == "Android" ];then
         echo "奇怪的环境...你是在非Termux软件的终端下执行的这个脚本吗?"
     fi
 else
-    echo "你未在termux环境中运行此脚本..."
+    echo "你未在Android Termux环境中运行此脚本..."
     exit 1
 fi
 
