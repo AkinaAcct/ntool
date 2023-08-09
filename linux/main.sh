@@ -1,28 +1,25 @@
 #!/bin/bash
 
-source "${NTOOLLIB}/linux/preload.sh"
-
-GetPkgManager(){
-    for i in pacman apt;do
-        if (command -v ${i} > /dev/null 2>&1);then
-            echo -e "${GREEN}找到包管理器:${i}.${RESET}"
-            export PKGMANAGER="${i}"
-        fi
-    done
-    case ${PKGMANAGER} in
-        apt)
-            alias PKGUP="apt update && sudo apt upgrade -y"
-            alias PKGI="sudo apt install -y"
-            alias PKGUNI="sudo apt purge"
-            ;;
-        pacman)
-            alias PKGUP="sudo pacman -Syyu"
-            alias PKGI="sudo pacman -S"
-            alias PKGUNI="sudo pacman -R"
-            ;;
-        *)
-            echo -e "${RED}未检测到适配的包管理器.(非pacman或apt)${RESET}"
-            ;;
-    esac
-}
-
+dialog --output-fd 1 --title "ntool" --menu "Welcome!Chose one to continue." 15 70 8 \
+    "1" "换源" \
+    "2" "没想好" \
+    "0" "退出"
+EXITSTATUS=$?
+case ${EXITSTATUS} in
+    1)
+        echo -e "${GREEN}T代表清华源,B代表北外源,U代表中科大源${RESET}"
+        read -p -r "选择你的捍卫者(划掉)  选择你要更改的镜像站: " answer
+        case answer in
+            T|t) STATION="mirrors.tuna.tsinghua.edu.cn";;
+            B|b) STATION="mirrors.bfsu.edu.cn";;
+            U|u) STATION="mirrors.ustc.edu.cn";;
+            *) 
+                echo -e "${RED}未知的选项:${RESET} ${answer}"
+                echo -e "别乱选啊喂!"
+                sleep 3
+                ;;
+        esac
+        ;;
+    2) echo -e "${BLUE}我说没想好辣...${RESET}";;
+    0) exit 0;;
+esac
