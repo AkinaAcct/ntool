@@ -9,10 +9,12 @@ PINK="\E[1;35m"
 CYAN="\e[36m"
 RESET="\E[0m"
 
-cli_help() {
-    echo -e "${GREEN}help\tshow this help.\ncrack path/to/file\tcrack an file.\nquit/exit\texit ntool shell.${RESET}"
+function cli_help() {
+    echo -e "${GREEN}help \t show this help.\n
+    crack path/to/file \t crack an file.\n
+    quit/exit \t exit ntool shell.${RESET}"
 }
-cli_crack() {
+function cli_crack() {
     echo -e "${BLUE}I:checking...${RESET}"
     if [ -z "${1}" ]; then
         echo -e "${RED}E:You need to input an path.${CYAN}see command \"help.\"${RESET}"
@@ -30,13 +32,21 @@ cli_crack() {
         } && echo -e "${BLUE}I:Success.${RESET}"
     fi
 }
-cli_shell() {
+function cli_shell() {
     echo -e "${GREEN}welcome to ntool shell!${RESET}"
     while true; do
         read -r -p "nya@cli $ " COMMAND
-        #  crack filepat
+        # while true;do
+        #     read -N 1 key
+        #     if [[ "${key}" == "$(printf "\004")" ]];then
+        #         echo "CTRL-D"
+        #     fi
+        # done  
+        # 
+        # check for CTRL-D 
         CRACKPATH="$(echo "${COMMAND}" | awk '{print $2}')"
         local COMMAND="$(echo "${COMMAND}" | awk '{print $1}')"
+        trap "" SIGINT
         case "${COMMAND}" in
         exit | quit)
             echo -e "${BLUE}I:Process exited.${RESET}"
