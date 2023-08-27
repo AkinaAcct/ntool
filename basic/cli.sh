@@ -12,6 +12,7 @@ RESET="\E[0m"
 function cli_help() {
     echo -e "${GREEN}help \t show this help.\n
     crack path/to/file \t crack an file.\n
+    
     quit/exit \t exit ntool shell.${RESET}"
 }
 function cli_crack() {

@@ -20,7 +20,7 @@ start() {
         termux_main_tui
         ;;
     -v | --version)
-        NTOOLVERSION="$(cat ${NTOOLLIB}/.local_version 2>/dev/null)"
+        NTOOLVERSION="$(cat ${MAINPATH}/local_version 2>/dev/null)"
         if [ -z ${NTOOLVERSION} ]; then
             echo -e "${RNTOOL}\n\tversion:${RED}ERR-FILE-NOT-FOUND${RESET}\n\tmode:${GREEN}normal mode${RESET}"
         else
@@ -45,7 +45,7 @@ start() {
         cli_shell
         ;;
     --special)
-        echo -e "${BLUE}没有事情发生${RESET}" #你看没有事情发生吧XD
+        echo -e "${BLUE}没有事情发生${RESET}" #你看没有事情发生吧:P
         ;;
     --uninstall)
         source "${NTOOLLIB}/basic/uninstall.sh"
