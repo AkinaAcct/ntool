@@ -57,7 +57,7 @@ container_testing_tui() {
             fi
             echo -e "${GREEN}下载完成!解压中...${RESET}"
             mkdir -p ${LINUXPATH}
-            pv ${LINUXNAME}-${LINUXVER}.tar.xz | tar -xvf -C ${LINUXPATH} > /dev/null
+            pv ${LINUXNAME}-${LINUXVER}.tar.xz | tar -xJC ${LINUXPATH} > /dev/null
             case ${CONTAINERPOR} in
             PROOT)
                 write_groupadd_sh
