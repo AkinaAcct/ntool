@@ -5,8 +5,12 @@ clear
 printf "please wait...\n"
 
 for i in git wget curl python dialog bc jq gawk; do
-    if [ ! "$(command -v ${i})" ]; then
-        pkg install -y ${i}
+    if [[ (command -v ${i}) ]]; then
+    echo "软件包${i}已经安装过了!跳过..."
+    sleep 0.1
+    else
+    echo "软件包${i}并未安装!请手动安装!"
+    exit 127
     fi
 done
 
