@@ -4,7 +4,7 @@ clear
 
 printf "please wait...\n"
 
-for i in git wget curl python dialog bc jq gawk; do
+for i in git wget curl python pip dialog bc jq gawk; do
     if command -v ${i} >/dev/null; then
         echo -e "软件包${i}已经安装过了!跳过...\n"
         sleep 0.1
@@ -35,11 +35,11 @@ while true; do
         rm ~/.ntool/local_version >/dev/null 2>&1
         rm -rf "${HOME}/.local/ntool"
         git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
-        chmod u+x ${HOME}/.local/ntool/ntbin/ntool*
+        chmod u+x ${HOME}/.local/ntool/ntbin/ntool
         if [[ "$(uname -o)" == "Android" ]]; then
-            mv ${HOME}/.local/ntool/ntbin/ntool ${PREFIX}/bin
+            mv ${HOME}/.local/ntool/ntbin/ntool ${PREFIX}/bin/ntool
         else
-            sudo mv ${HOME}/.local/ntool/ntbin/ntool-linux /usr/bin/ntool
+            sudo mv ${HOME}/.local/ntool/ntbin/ntool /usr/bin/ntool
         fi
         curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version >"${HOME}/.local/ntool/.local_version"
         echo "NORMAL_MULIT-FILE_MODE" >"${HOME}/.local/ntool/.mode"

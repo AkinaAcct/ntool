@@ -4,9 +4,10 @@
 #${PREFIX}lib/ntool/
 #so this is just an start script
 #:D
+if [[ "$(uname -o)" == "Android" ]]; then
+    source "${HOME}/.local/ntool/basic/preload.sh"
+else
+    source "${HOME}/.local/ntool/linux/preload.sh"
+fi
 
-source ${HOME}/.local/ntool/basic/preload.sh
-#from 2023.4.5，ntool entered spilt file version
-
-start $*
 #EOF
