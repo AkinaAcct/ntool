@@ -1,4 +1,4 @@
-print_help(){
+print_help() {
     echo -e "${RNTOOL} help."
     echo -e "${GREEN}-h,--help${RESET} print this help."
     echo -e "${GREEN}-v,--version${RESET} print then ntool's version that you've installed."
