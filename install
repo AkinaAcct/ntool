@@ -41,8 +41,6 @@ while true; do
         else
             sudo mv ${HOME}/.local/ntool/ntbin/ntool /usr/bin/ntool
         fi
-        mkdir -p ${HOME}/.local/ntool/MaInPaTh
-        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version >"${HOME}/.local/ntool/MaInPaTh/.local_version"
         echo "NORMAL_MULIT-FILE_MODE" >"${HOME}/.local/ntool/.mode"
         echo "本项目使用的许可证为:Apache License 2.0"
         echo "完成"
