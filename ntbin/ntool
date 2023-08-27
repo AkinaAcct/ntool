@@ -6,6 +6,7 @@
 #:D
 if [[ "$(uname -o)" == "Android" ]]; then
     source "${HOME}/.local/ntool/basic/preload.sh"
+    start $*
 else
     source "${HOME}/.local/ntool/linux/preload.sh"
 fi
