@@ -1,0 +1,4 @@
+#!/bin/bash
+#This is a copy of ntool-termux.
+
+source "${HOME}/.local/ntool/linux/preload.sh"
