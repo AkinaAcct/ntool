@@ -28,7 +28,7 @@ while true; do
         rm ~/.ntool/local_version >/dev/null 2>&1
         rm -rf "${HOME}/.local/ntool"
         git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
-        if [[ "$(uname -O)" == "Android" ]]; then
+        if [[ "$(uname -o)" == "Android" ]]; then
             rm ${HOME}/.local/ntool/ntbin/ntool-linux
         else
             rm ${HOME}/.local/ntool/ntbin/ntool
