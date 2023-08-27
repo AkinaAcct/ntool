@@ -35,7 +35,7 @@ cli_shell(){
     local COMMAND="$(echo "${COMMAND}" | awk '{print $1}')"
     case "${COMMAND}" in
         exit|quit)
-            echo -e "${BLUE}I:Exited Process.${RESET}"
+            echo -e "${BLUE}I:Process exited.${RESET}"
             exit 0
             ;;
         help)
