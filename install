@@ -1,22 +1,11 @@
 #!/bin/bash
 
-if [ "$(uname -o)" == "Android" ];then
-   if command -v termux-info > /dev/null 2>&1;then
-        echo "环境通过,为termux环境."
-    else
-        echo "奇怪的环境...你是在非Termux软件的终端下执行的这个脚本吗?"
-    fi
-else
-    echo "你未在Android Termux环境中运行此脚本..."
-    exit 1
-fi
-
 clear
 
 printf "please wait...\n"
 
-for i in git wget curl python dialog bc jq gawk;do
-    if [ ! "$(command -v ${i})" ];then
+for i in git wget curl python dialog bc jq gawk; do
+    if [ ! "$(command -v ${i})" ]; then
         pkg install -y ${i}
     fi
 done
@@ -32,50 +21,30 @@ sleep 0.2
 printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
 #这里的字符是由 figlet 生成的
 
-add_starter(){
-cat << 'EOF' > "$PREFIX/bin/ntool"
-#!/bin/bash
-#there is nothing in this file.
-#all scripts are here:
-#${PREFIX}lib/ntool/
-#so this is just an start script
-#:D
-source ${PREFIX}/lib/ntool/basic/preload.sh
-#from 2023.4.5，ntool entered spilt file version
-start $*
-EOF
-}
-
-while true;do
-read -r -p "你确定要执行这个脚本吗？  [Y|N]" answer
-case $answer in
-	Y|y)
-		rm ~/.ntool/local_version > /dev/null 2>&1
-        if [ "$(uname -o)" == "Android" ];then
-            mkdir -p "${HOME}/.local/ntool"
-            rm -rf "${HOME}/.local/ntool"
-	        git clone https://github.com/nya-main/ntool "${HOME}/.local/ntool/"
-            add_starter
-            chmod +x "${PREFIX}/bin/ntool"
-	        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version > "${HOME}/.local/ntool/.local_version"
-            touch "${HOME}/.local/ntool/.mode"
-            echo "NORMAL_MULIT-FILE_MODE" > "${HOME}/.local/ntool/.mode"
-            echo "本项目使用:Apache License 2.0"
-        	echo "完成"
-            echo "输入ntool测试启动"
-        else
-            echo "你未在Android或termux环境中执行脚本."
-            exit 1
-        fi
-		break
-		;;
-	N|n)
-		echo "exiting..."
-		break
-		;;
-	*)
-		echo "未知的输入: \"$answer\" 请确认输入无误"
-		;;
-esac
+while true; do
+    read -r -p "你确定要执行这个脚本吗？  [Y|N]" answer
+    case $answer in
+    Y | y)
+        rm ~/.ntool/local_version >/dev/null 2>&1
+        rm -rf "${HOME}/.local/ntool"
+        git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
+        echo 'export PATH="${HOME}/.local/ntool/ntbin:${PATH}"' >> ${HOME}/.profile
+        curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version >"${HOME}/.local/ntool/.local_version"
+        touch "${HOME}/.local/ntool/.mode"
+        echo "NORMAL_MULIT-FILE_MODE" >"${HOME}/.local/ntool/.mode"
+        echo "本项目使用的许可证为:Apache License 2.0"
+        echo "完成"
+        echo "输入ntool测试启动"
+        echo "如果无法启动,请重启终端."
+        break
+        ;;
+    N | n)
+        echo "exiting..."
+        break
+        ;;
+    *)
+        echo "未知的输入: \"$answer\" 请确认输入无误"
+        ;;
+    esac
 done
 exit 0

@@ -1,0 +1,12 @@
+#!/bin/bash
+#there is nothing in this file.
+#all scripts are here:
+#${PREFIX}lib/ntool/
+#so this is just an start script
+#:D
+
+source ${HOME}/.local/ntool/basic/preload.sh
+#from 2023.4.5，ntool entered spilt file version
+
+start $*
+#EOF
