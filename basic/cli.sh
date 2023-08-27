@@ -34,6 +34,7 @@ function cli_crack() {
 }
 function cli_shell() {
     echo -e "${GREEN}welcome to ntool shell!${RESET}"
+    trap "" SIGINT
     while true; do
         read -r -p "nya@cli $ " COMMAND
         # while true;do
@@ -41,12 +42,11 @@ function cli_shell() {
         #     if [[ "${key}" == "$(printf "\004")" ]];then
         #         echo "CTRL-D"
         #     fi
-        # done  
-        # 
-        # check for CTRL-D 
+        # done
+        #
+        # check for CTRL-D
         CRACKPATH="$(echo "${COMMAND}" | awk '{print $2}')"
         local COMMAND="$(echo "${COMMAND}" | awk '{print $1}')"
-        trap "" SIGINT
         case "${COMMAND}" in
         exit | quit)
             echo -e "${BLUE}I:Process exited.${RESET}"
