@@ -35,15 +35,13 @@ while true; do
         rm ~/.ntool/local_version >/dev/null 2>&1
         rm -rf "${HOME}/.local/ntool"
         git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
+        chmod u+x ${HOME}/.local/ntool/ntbin/ntool*
         if [[ "$(uname -o)" == "Android" ]]; then
-            rm ${HOME}/.local/ntool/ntbin/ntool-linux
+            mv ${HOME}/.local/ntool/ntbin/ntool ${PREFIX}/bin
         else
-            rm ${HOME}/.local/ntool/ntbin/ntool
-            mv ntool-linux ntool
+            sudo mv ${HOME}/.local/ntool/ntbin/ntool-linux /usr/bin/ntool
         fi
-        echo 'export PATH="${HOME}/.local/ntool/ntbin:${PATH}"' >>${HOME}/.profile
         curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/version >"${HOME}/.local/ntool/.local_version"
-        touch "${HOME}/.local/ntool/.mode"
         echo "NORMAL_MULIT-FILE_MODE" >"${HOME}/.local/ntool/.mode"
         echo "本项目使用的许可证为:Apache License 2.0"
         echo "完成"
