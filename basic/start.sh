@@ -9,7 +9,7 @@ start() {
     fi
     case ${*} in
     -d | --debug)
-        echo ${TIME} >~/log.txt
+        echo "${TIME}" >~/log.txt
         exec 2>>~/log.txt
         set -x
         dialog --title "ntool-tui:WARNING" --msgbox "debug/set -x模式已启动 \n所有执行的命令都会被打印出来再执行\n 有一份命令复制保存在~/log.txt" 15 70
@@ -21,8 +21,8 @@ start() {
         termux_main_tui
         ;;
     -v | --version)
-        NTOOLVERSION="$(cat ${MAINPATH}/version 2>/dev/null)"
-        if [ -z ${NTOOLVERSION} ]; then
+        NTOOLVERSION="$(cat "${MAINPATH}"/version 2>/dev/null)"
+        if [ -z "${NTOOLVERSION}" ]; then
             echo -e "${RNTOOL}\n\tversion:${RED}ERR-FILE-NOT-FOUND${RESET}"
         else
             echo -e "${RNTOOL}\n\tversion:${BLUE}${NTOOLVERSION}${RESET}"
@@ -38,7 +38,7 @@ start() {
         check_and_update
         ;;
     -g | --github)
-        am start -a android.intent.action.VIEW -d ${GHREPO} >/dev/null 2>&1
+        am start -a android.intent.action.VIEW -d "${GHREPO}" >/dev/null 2>&1
         exit 0
         ;;
     --cli)
@@ -51,7 +51,6 @@ start() {
     --uninstall)
         source "${NTOOLLIB}/basic/uninstall.sh"
         uninstall_ntool
-        exit 0
         ;;
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"

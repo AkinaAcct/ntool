@@ -7,14 +7,14 @@ function rm_to_trash() {
     fi
     case ${EXITSTATUS} in
     0)
-        if [ $(cat ${PREFIX}/etc/profile | grep trash) ] && command -v trash-put >/dev/null 2>&1; then
+        if [ "$(cat "${PREFIX}/etc/profile | grep trash")" ] && command -v trash-put >/dev/null 2>&1; then
             dialog --title "ntool-tui:tips" --msgbox "你已经安装过啦!下面是一些使用提示: \nrm-文件转移到~/.trash \nrl-显示回收站里的文件 \nrm-restore-选择要从回收站里恢复的文件 \ntrash-empty-清除回收站" 15 70
             exit 0
         else
-            if [ ! $(command -v trash) ]; then
+            if [ ! "$(command -v trash)" ]; then
                 pip install trash-cli
             fi
-            cat >>${PREFIX}/etc/profile <<EOF
+            cat >>"${PREFIX}"/etc/profile <<EOF
 alias rm='trash-put --trash-dir ~/.trash'
 alias rl='trash-list --trash-dir ~/.trash'
 alias rm-restore='trash-restore --trash-dir ~/.trash'
@@ -24,7 +24,7 @@ EOF
         fi
         ;;
     1)
-        sed -i '/trash/d' ${PREFIX}/etc/profile
+        sed -i '/trash/d' "${PREFIX}"/etc/profile
         dialog --title "ntool-tui:tips" --msgbox "完成!" 15 70
         tool_tui
         ;;

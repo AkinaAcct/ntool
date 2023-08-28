@@ -17,7 +17,7 @@ function qrcode_tui() {
         if [ ${EXITSTATUS} != 0 ]; then
             qrencode -o - -t ANSI "${QRSPAWN}"
             echo -e "${GREEN}"
-            read -p "按回车继续"
+            read -r -p "按回车继续"
             echo -e "${RESET}"
             qrcode_tui
         else
@@ -25,15 +25,15 @@ function qrcode_tui() {
             EXITSTATUS=$?
             if [ ${EXITSTATUS} != 0 ]; then
                 qrcode_tui
-            elif [ -z ${QRSTOREPATH} ]; then
+            elif [ -z "${QRSTOREPATH}" ]; then
                 bad_empty_input
                 qrcode_tui
             fi
-            qrencode -t png -o ${QRSTOREPATH}/qrcode-${QRSPAWN}.png "${QRSPAWN}"
-            catimg ${QRSTOREPATH}/qrcode-${QRSPAWN}.png
+            qrencode -t png -o "${QRSTOREPATH}"/qrcode-"${QRSPAWN}".png "${QRSPAWN}"
+            catimg "${QRSTOREPATH}"/qrcode-"${QRSPAWN}".png
             echo -e "${GREEN}完成!保存在${BLUE}${QRSTOREPATH}/qrcode-${QRSPAWN}.png${RESET}"
             echo -e "${GREEN}"
-            read -p "按回车继续"
+            read -r -p "按回车继续"
             echo -e "${RESET}"
             qrcode_tui
         fi
@@ -41,15 +41,15 @@ function qrcode_tui() {
     1)
         QRUNCODEPATH=$(dialog --output-fd 1 --title "ntool-tui:qrcode uncode" --fselect "选择好文件后按空格选择(删掉我),或者直接输入完整路径" 15 70)
         EXITSTATUS=$?
-        if [ -z ${QRUNCODEPATH} ]; then
+        if [ -z "${QRUNCODEPATH}" ]; then
             bad_empty_input
             qrcode_tui
         elif [ ${EXITSTATUS} != 0 ]; then
             qrcode_tui
         fi
-        echo -e "${BLUE}结果${RESET}:$(zbarimg ${QRUNCODEPATH} | sed -n '1p')"
+        echo -e "${BLUE}结果${RESET}:$(zbarimg "${QRUNCODEPATH}" | sed -n '1p')"
         echo -e "${GREEN}"
-        read -p "按回车继续"
+        read -r -p "按回车继续"
         echo -e "${RESET}"
         qrcode_tui
         ;;

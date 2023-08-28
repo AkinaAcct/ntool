@@ -20,21 +20,21 @@ function tool_tui() { #这里是其它工具-工具类页面的function
         ;;
     00)
         print_author NTool nya
-        am start -a android.intent.action.VIEW -d ${GHREPO} >/dev/null 2>&1
+        am start -a android.intent.action.VIEW -d "${GHREPO}" >/dev/null 2>&1
         ;;
 
     1)
         if command -v ping >/dev/null 2>&1; then
             ip=$(dialog --output-fd 1 --title "ntool-tui:ping-ip" --inputbox "输入要进行ping的IP/域名(必填)"15 70)
-            time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
+            Time=$(dialog --output-fd 1 --title "ntool-tui:ping-time" --inputbox "输入要ping的次数(选填)" 15 70)
             speed=$(dialog --output-fd 1 --title "ntool-tui:ping-speed" --inputbox "输入ping的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
             size=$(dialog --output-fd 1 --title "ntool-tui:ping-packet-szie" --inputbox "输入ping包大小(选填)(以字节为单位，最大65507)" 15 70)
-            if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ]; then
+            if [ -z "$ip" ] || [ -z "$time" ] || [ -z "$speed" ] || [ -z "$size" ]; then
                 bad_empty_input
                 tool_tui
             else
                 echo -e "${BLUE}start ping${RESET}"
-                ping -i ${speed} -c${times} -s ${size} ${ip}
+                ping -i "${speed}" -c"${Time}" -s "${size}" "${ip}"
                 echo -e "${GREEN}stop ping${RESET}"
             fi
         else
@@ -49,12 +49,12 @@ function tool_tui() { #这里是其它工具-工具类页面的function
             time=$(dialog --output-fd 1 --title "ntool-tui:ping6-time" --inputbox "输入要ping6的次数(选填)" 15 70)
             speed=$(dialog --output-fd 1 --title "ntool-tui:ping6-speed" --inputbox "输入ping6的速度(选填)（以秒为单位，省略符号，无root最快0.2）" 15 70)
             size=$(dialog --output-fd 1 --title "ntool-tui:ping6-packet-szie" --inputbox "输入ping6包大小(选填)(以字节为单位，最大65507)" 15 70)
-            if [ -z $ip ] || [ -z $time ] || [ -z $speed ] || [ -z $size ]; then
+            if [ -z "$ip" ] || [ -z "$time" ] || [ -z "$speed" ] || [ -z "$size" ]; then
                 bad_empty_input
                 tool_tui
             else
                 echo -e "${BLUE}start ping${RESET}"
-                ping6 -i ${speed} -c${time} -s ${size} ${ip}
+                ping6 -i "${speed}" -c"${time}" -s "${size}" "${ip}"
                 echo -e "${GREEN}stop ping${RESET}"
             fi
         else
@@ -66,24 +66,24 @@ function tool_tui() { #这里是其它工具-工具类页面的function
     3)
         filename=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的文件:" 15 70)
         filepath=$(dialog --output-fd 1 --title "ntool-tui:find file" --inputbox "输入你要搜索的目录:" 15 70)
-        if [ -z $filename ] || [ -z $filepath ]; then
+        if [ -z "$filename" ] || [ -z "$filepath" ]; then
             bad_empty_input
         fi
         echo -e "${BLUE}搜索中${RESET}"
         echo -e "可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
         echo -e "${BLUE}搜索中${RESET}"
-        result=$(find -name ${filename} ${filepath})
+        result=$(find -name "${filename}" "${filepath}")
         echo "${result}" >~/filesearchresult
         echo -e "${GREEN}完成${RESET}"
         echo -e "${BLUE}结果:${RESET}\n${result}"
         echo -e "${GREEN}复制一份于~/filesearchresult"
-        read -p "按回车继续"
+        read -r -p "按回车继续"
         echo -e "$RESET"
         tool_tui
         ;;
     4)
         echo "只支持openjdk17"
-        read -p "按任意键以继续" #我好水啊（）
+        read -r -p "按任意键以继续" #我好水啊（）
         pkg install -y openjdk-17
         echo "安装完成"
         ;;

@@ -9,7 +9,7 @@ function ssh_check_install() {
 		pkg install -y openssh
 		echo -e "${GREEN}"
 		echo "完成"
-		read -p "按任意键以继续"
+		read -r -p "按任意键以继续"
 		echo -e "${RESET}"
 		ssh_check_install
 	fi
@@ -32,18 +32,18 @@ function ssh_tui() {
 	1)
 		sshd
 		echo -e "${GREEN}"
-		read -p "启动完成 按任意键继续"
+		read -r -p "启动完成 按任意键继续"
 		echo -e "${RESET}"
 		exit 0
 		;;
 	2)
 		if command -v sshpass; then
-			read -p "输入远程服务器ip/域名:" ssh_ip
-			read -p "输入要登陆的用户名:" ssh_user
-			read -p "输入ssh端口:" ssh_port
-			read -p "输入密码:" ssh_passwd
+			read -r -p "输入远程服务器ip/域名:" ssh_ip
+			read -r -p "输入要登陆的用户名:" ssh_user
+			read -r -p "输入ssh端口:" ssh_port
+			read -r -p "输入密码:" ssh_passwd
 			echo "please wait..."
-			sshpass -p ${ssh_passwd} ssh ${ssh_user}@${ssh_ip} -p ${ssh_port}
+			sshpass -p "${ssh_passwd}" ssh "${ssh_user}"@"${ssh_ip}" -p "${ssh_port}"
 		else
 			echo "sshpass未安装"
 			echo "installing..."
@@ -55,7 +55,7 @@ function ssh_tui() {
 		while true; do
 			EMAILINPUT=$(dialog --output-fd 1 --title "ntool-tui:keygen" --inputbox "使用RSA\n输入你的邮箱:" 15 70)
 			EXITSTATUS=$?
-			if [ -a EMAILINPUT ]; then
+			if [ -a "${EMAILINPUT}" ]; then
 				bad_empty_input
 			elif [ $EXITSTATUS != 0 ]; then
 				ssh_tui
@@ -65,9 +65,9 @@ function ssh_tui() {
 			fi
 		done
 		echo -e "${GREEN}接下来请一路回车${RESET}"
-		ssh-keygen -t rsa -C "$EmailInput"
+		ssh-keygen -t rsa -C "$EMAILINPUT"
 		echo -e "${GREEN}完成!\n公钥在:${HOME}/.ssh/id_rsa.pub\n私钥在:${HOME}/.ssh/id_rsa"
-		read -p "按任意键继续"
+		read -r -p "按任意键继续"
 		;;
 	esac
 }

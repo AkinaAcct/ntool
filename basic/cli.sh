@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 # Happy April Fool's Day
 #XD
 RED="\E[1;31m"
@@ -26,7 +25,7 @@ function cli_crack() {
         echo -e "${RED}E:No such file.Check the path of the file.${RESET}"
     else
         echo -e "${BLUE}T:Please wait.We need 10s to finish the hacking."
-        read -p "T:Press ENTER to continue."
+        read -r -p "T:Press ENTER to continue."
         echo -e "${BLUE}cracking...${RESET}"
         hexdump /dev/urandom &
         {
@@ -48,8 +47,7 @@ function cli_shell() {
         # done
         #
         # check for CTRL-D
-        CRACKPATH="$(echo "${COMMAND}" | awk '{print $2}')"
-        local COMMAND="$(echo "${COMMAND}" | awk '{print $1}')"
+        COMMAND="$(echo "${COMMAND}" | awk '{print $1}')"
         case "${COMMAND}" in
         exit | quit)
             echo -e "${BLUE}I:Process exited.${RESET}"
@@ -59,7 +57,8 @@ function cli_shell() {
             cli_help
             ;;
         crack)
-            cli_crack ${CRACKPATH}
+            CRACKPATH="$(echo "${COMMAND}" | awk '{print $2}')"
+            cli_crack "${CRACKPATH}"
             ;;
         *)
             ${COMMAND}

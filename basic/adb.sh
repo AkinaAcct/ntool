@@ -8,7 +8,7 @@ function check_vpn() {
     EXITSTATUS=$?
     if [ ${EXITSTATUS} = 0 ]; then
         echo -e "${RED}检测到VPN连接.停止运行"
-        read -p "按回车继续"
+        read -r -p "按回车继续"
         adb_main
     fi
 }
@@ -16,7 +16,7 @@ function check_vpn() {
 function adb_connect() {
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
     read -r -p "输入出现的端口: " PORT
-    adb connect 127.0.0.1:${PORT}
+    adb connect 127.0.0.1:"${PORT}"
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ]; then
         echo -e "${RED}出错了!请重新运行!${RESET}"
@@ -28,20 +28,20 @@ function adb_connect() {
 function adb_pair() {
     echo -e "${RED}警告!本功能仅支持能够使用无线adb并能够以配对码配对的的设备(Android 11+)!不支持无线adb的设备将无法使用!"
     echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
-    read -p "输入同时出现的端口: " PAIRPORT
+    read -r -p "输入同时出现的端口: " PAIRPORT
     echo -e "${YELLOW}确保你未使用VPN!${RESET}如果有使用,请${YELLOW}现在关闭.${RESET}"
-    read -p "按回车以继续"
+    read -r -p "按回车以继续"
     echo -e "${RESET}"
     check_vpn
     echo -e "${RESET}"
     echo -e "在下方输入配对码"
-    adb pair 127.0.0.1:${PAIRPORT}
+    adb pair 127.0.0.1:"${PAIRPORT}"
     EXITSTATUS=$?
     if [ ${EXITSTATUS} != 0 ]; then
         echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
         exit 1
     fi
-    touch .pair_success ${MAINPATH}
+    touch .pair_success "${MAINPATH}"
 }
 
 function adb_main() {
@@ -63,17 +63,17 @@ function adb_main() {
         ;;
     2)
         MAXPROCNMUM=$(dialog --output-fd 1 --title "ntool:adb" --inputbox "输入要修改的最大进程数\n最大为21474836473" 15 70)
-        if [ -z ${MAXPROCNMUM} ]; then
+        if [ -z "${MAXPROCNMUM}" ]; then
             bad_empty_input
             adb_main
             exit 0
         fi
         adb shell device_config set_sync_disabled_for_tests persistent
-        adb shell device_config put activity_manager max_phantom_processes ${MAXPROCNMUM}
+        adb shell device_config put activity_manager max_phantom_processes "${MAXPROCNMUM}"
         ;;
     3)
         echo -e "${BLUE}1. system\n2. recovery\n3. fastboot\n4. edl"
-        read -p "选择一个以继续: " REBOOTMODE
+        read -r -p "选择一个以继续: " REBOOTMODE
         echo -e "${RESET}"
         case ${REBOOTMODE} in
         1)
@@ -94,10 +94,10 @@ function adb_main() {
             ;;
         esac
         echo -e "${RED}"
-        read -p "你确定要继续吗?你将进入${MODE}模式!你未保存的工作数据将丢失! [Y|N]" CHOICE
+        read -r -p "你确定要继续吗?你将进入${MODE}模式!你未保存的工作数据将丢失! [Y|N]" CHOICE
         echo -e "${RESET}"
         if [[ "$CHOICE" == "Y" || "$CHOICE" == "y" ]]; then
-            adb reboot ${MODE}
+            adb reboot "${MODE}"
         else
             adb_main
         fi

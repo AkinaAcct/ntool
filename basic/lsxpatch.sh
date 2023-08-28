@@ -33,38 +33,38 @@ function patch_apk() {
     EXITSTATUS=$?
     if [ $EXITSTATUS != 0 ]; then
         patch_framework_choose
-    elif [ -z $APKPATH ]; then
+    elif [ -z "$APKPATH" ]; then
         bad_empty_input
         patch_apk
     fi
-    mkdir -p ${MAINPATH}/patch
+    mkdir -p "${MAINPATH}"/patch
     case ${PATCHFRAMEWORK} in
     xpatch)
         echo -e "${BLUE}获取最新版本号中${RESET}"
         TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/WindySha/Xpatch/releases/latest" | jq -r '.tag_name')
         echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-        wget https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar -O ${MAINPATH}/patch/xpatch.jar
+        wget "https://github.com/WindySha/Xpatch/releases/download/${TAG}/xpatch-${tag}.jar" -O "${MAINPATH}/patch/xpatch.jar"
         ;;
     lspatch)
         TAG=$(wget -qO- -t1 -T2 "https://api.github.com/repos/LSPosed/LSPatch/releases/latest" | jq -r '.tag_name')
         echo -e "${GREEN}${PATCHFRAME}最新版为${TAG}${RESET}"
-        wget https://github.com/LSPosed/LSPatch/releases/download/${TAG}/lspatch.jar -O ${MAINPATH}/patch/lspatch.jar
+        wget https://github.com/LSPosed/LSPatch/releases/download/"${TAG}"/lspatch.jar -O "${MAINPATH}"/patch/lspatch.jar
         ;;
     esac
-    if [ ! -f ${APKPATH} ]; then
+    if [ ! -f "${APKPATH}" ]; then
         dialog --title "ntool-tui:failed" --msgbox "无效的apk文件路径\n 检查是否输入错误或有无给予内置存储权限" 15 70
         patch_apk
     fi
     MODULEPATH=$(dialog --output-fd 1 --title "ntool-tui:选择模块" --inputbox "输入模块apk的完整路径\n 不是apk文件的上一级目录!!!" 15 70)
     echo -e "${BLUE}可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
     if [ "${PATCHFRAMEWORK}" == "xpatch" ]; then
-        java -jar ${MAINPATH}/patchedapks/xpatch.jar ${APKPATH} -xm ${MODULEPATH} -o /sdcard/xpatchedapk.apk
-        rm ${MAINPATH}/patchedapks/xpatch.jar
+        java -jar """${MAINPAT"H"}"/patchedapks/xpatch.jar "${APKPATH}" -xm "${MODULEPATH}" -o /sdcard/xpatchedapk.apk
+        rm "${MAINPATH}"/patchedapks/xpatch.jar
     else
-        java -jar ${MAINPATH}/patchedapks/lspatch.jar ${APKPATH} -m ${MODULEPATH} -o /sdcard
-        rm ${MAINPATH}/patchedapks/lspatch.jar
+        java -jar "${MAINPATH}"/patchedapks/lspatch.jar "${APKPATH}" -m "${MODULEPATH}" -o /sdcard
+        rm "${MAINPATH}"/patchedapks/lspatch.jar
     fi
     echo -e "${GREEN}完成!修改后的apk${BLUE}在这里↑↑↑↑↑上面${RESET}"
-    read -p "按回车继续"
+    read -r -p "按回车继续"
     exit 0
 }

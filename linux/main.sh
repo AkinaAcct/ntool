@@ -7,7 +7,7 @@ CHOICE=$(dialog --output-fd 1 --title "ntool" --menu "Welcome!Chose one to conti
 case ${CHOICE} in
 1)
     echo -e "${GREEN}T代表清华源,B代表北外源,U代表中科大源${RESET}"
-    read -p "选择你的捍卫者(划掉)  选择你要更改的镜像站: " answer
+    read -r -p "选择你的捍卫者(划掉)  选择你要更改的镜像站: " answer
     case ${answer} in
     T | t) STATION="mirrors.tuna.tsinghua.edu.cn" ;;
     B | b) STATION="mirrors.bfsu.edu.cn" ;;

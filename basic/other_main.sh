@@ -10,7 +10,7 @@ other_main_tui() {
         "0" "返回脚本主页")
     case ${MAINCHOICE} in
     1)
-        source ${NTOOLLIB}/other/termux-container.sh
+        source "${NTOOLLIB}"/other/termux-container.sh
         install_termux-container
         exit 0
         ;;
@@ -20,7 +20,7 @@ other_main_tui() {
         ;;
     3)
         echo -e "${YELLOW}注意!vim配置将不再更新!仅更新neovim配置!"
-        read -p "按回车以继续"
+        read -r -p "按回车以继续"
         echo -e "${RESET}"
         git clone https://github.com/nya-main/VimConfigBackup ~/vcb-nya
         mkdir -p ~/.config
@@ -28,7 +28,7 @@ other_main_tui() {
         exit 0
         ;;
     4)
-        source ${NTOOLLIB}/basic/adb.sh
+        source "${NTOOLLIB}"/basic/adb.sh
         adb_main
         ;;
     0)
