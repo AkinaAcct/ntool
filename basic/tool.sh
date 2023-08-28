@@ -72,7 +72,7 @@ function tool_tui() { #这里是其它工具-工具类页面的function
         echo -e "${BLUE}搜索中${RESET}"
         echo -e "可能${RED}较慢${RESET},请${GREEN}耐心等待${RESET}"
         echo -e "${BLUE}搜索中${RESET}"
-        result=$(find -name "${filename}" "${filepath}")
+        result=$(find "${filepath}" -name "${filename}")
         echo "${result}" >~/filesearchresult
         echo -e "${GREEN}完成${RESET}"
         echo -e "${BLUE}结果:${RESET}\n${result}"

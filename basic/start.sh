@@ -4,7 +4,7 @@ start() {
     if [ $# -gt 1 ]; then
         echo -e "${RED}more than one parameter had been inputted${RESET}"
         exit 1
-    elif [ $# -lt 1 ]; then
+    elif [ $# < 1 ]; then
         termux_main_tui
     fi
     case ${*} in
