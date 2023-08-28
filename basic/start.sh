@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 source "${NTOOLLIB}/ntmain"
 start() {
-    if [ $# > 1 ]; then
+    if [ $# -gt 1 ]; then
         echo -e "${RED}more than one parameter had been inputted${RESET}"
         exit 1
-    elif [ $# = 0 ]; then
+    elif [ $# < 1 ]; then
         termux_main_tui
     fi
     case ${*} in
