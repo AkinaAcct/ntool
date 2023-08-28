@@ -13,3 +13,10 @@
 ```bash
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
 ```
+
+Also, you can choose which branch to use.  Each branch has been **partially** tested and has better stability.  However, the main branch has **fewer tests**, including the latest functions and unknowable bugs.  If you like, use the following format to specify branch versions:  
+
+```bash
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) [BRANCH]
+
+```
