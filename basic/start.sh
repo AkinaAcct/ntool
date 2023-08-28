@@ -55,3 +55,4 @@ start() {
     esac
     echo -e "${RED}Unknown parameter:${*}${RESET}"
 }
+start ${ARG}
