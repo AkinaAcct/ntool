@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function rm_to_trash() {
     dialog --title "ntool-tui:按ESC退出" --yes-label "trash-cli" --no-label "rm" --yesno "trash-cli是一个适用于linux命令行下的回收站应用\n相对于rm的直接删除它更为安全,因为可以恢复\n删除后的文件将被保存在回收站\n真的是我的血的教训" 15 70
     EXITSTATUS=$?

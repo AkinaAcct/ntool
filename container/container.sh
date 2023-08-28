@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 container_testing_tui() {
     echo -e "${BLUE}Regardless of why you use the container installation function of this script, I recommend the project from moe-hacker:termux-container.It supports both chroot and proot containers.\n"
     read -r -p "which projects you want to install? [N:ntool T:termux-container] " CHOICE

@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+
 function backup_tui() { #备份页面function
     backup_tui_choice=$(dialog --output-fd 1 --title "ntool-tui:backup tui" --menu "选择一个以继续" 15 70 8 \
         "0" "返回脚本主页" \

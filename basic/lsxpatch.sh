@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+
 function patch_framework_choose() {
     if (dialog --title "ntool-tui:WARNING" --yesno "你在使用一个测试功能\n 你确定要继续吗" 15 70); then
         EXITSTATUS=$?

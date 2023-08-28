@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 source "${NTOOLLIB}/ntmain"
 start() {
     if [ $# -gt 1 ]; then

@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+
+
 other_main_tui() {
     MAINCHOICE=$(dialog --output-fd 1 --title "ntool" --menu "下面是一些其他大佬的项目和一些好van的\n:)" 15 70 8 \
         "1" "termux-container_moe-hacker" \

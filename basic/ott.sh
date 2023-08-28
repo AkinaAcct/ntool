@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function other_tool_tui() { #这里是其他功能页的function
     OTPC=$(dialog --output-fd 1 --title "ntool-tui:other tool tui" --menu "选择一个以继续" 15 70 8 \
         "1" "工具页面" \

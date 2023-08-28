@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CHOICE=$(dialog --output-fd 1 --title "ntool" --menu "Welcome!Chose one to continue." 15 70 8 \
     "1" "换源" \

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function ssh_check_install() {
 	if command -v ssh; then
 		dialog --title "ntool-tui:ssh check" --msgbox "ssh功能较少,BUG多多,慎用" 15 70

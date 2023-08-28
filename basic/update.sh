@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 check_and_update() {
     echo -e "${BLUE}正在拉取最新版本号...${RESET}"
     if [ "$(curl -s ${RAWURL}/MAINPATH/version)" != "$(cat ${MAINPATH}/version)" ]; then

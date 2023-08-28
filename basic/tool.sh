@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function tool_tui() { #这里是其它工具-工具类页面的function
     TPC=$(dialog --output-fd 1 --title "ntool-tui:tool tui" --menu "选择一个以继续" 15 70 8 \
         "1" "ping" \

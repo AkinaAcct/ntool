@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 print_help() {
     echo -e "${RNTOOL} help."
     echo -e "${GREEN}-h,--help${RESET} print this help."

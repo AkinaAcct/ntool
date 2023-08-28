@@ -1,4 +1,7 @@
-#事实上,这个功能的初衷是我自己要用XD
+#!/usr/bin/env bash
+
+
+#事实上,写这个功能是因为我自己要用XD
 
 function check_vpn() {
     ifconfig | awk '{print $1}' | grep tun

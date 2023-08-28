@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function qrcode_tui() {
     QRCHOICE=$(dialog --output-fd 1 --title "ntool-tui:按<ESC>返回上一页" --yes-label "生成" --no-label "解码" --yesno "使用 \nqrencode 和 zbar实现 \n选择一个以继续" 15 70)
     EXITSTATUS=$?

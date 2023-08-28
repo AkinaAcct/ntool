@@ -1,5 +1,7 @@
-#!/bin/bash
-#April fool's day
+#!/usr/bin/env bash
+
+
+# Happy April Fool's Day
 #XD
 RED="\E[1;31m"
 GREEN="\E[1;32m"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #from https://github.com/moe-hacker/termux-container
 
 install_termux-container() {

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #字体颜色
 BLACK="\e[30m"  #黑色
 RED="\e[31m"    #红色
