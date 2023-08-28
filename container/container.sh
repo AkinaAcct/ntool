@@ -37,7 +37,7 @@ container_testing_tui() {
         container_testing_tui
     else
         echo -e "${GREEN}正在从BFSU镜像站获取rootfs地址...${RESET}"
-        ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${LINUXNAME}/${LINUXVER}/${ARCH}/default/ 2>/dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
+        ROOTFSTIME=$(curl "https://mirrors.bfsu.edu.cn/lxc-images/images/${LINUXNAME}/${LINUXVER}/${ARCH}/default/" 2>/dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
         echo -e "${GREEN}检测获取的地址是否正确...${RESET}"
         if [ -z ${ROOTFSTIME} ]; then
             echo -e "${RED}"
@@ -281,7 +281,7 @@ function container_install() {
     ROOTFSTIME=$(curl https://mirrors.bfsu.edu.cn/lxc-images/images/${CONTAINER_OS}/${VERNAME}/${ARCH}/default/ 2>/dev/null | gawk '{print $3}' | tail -n 3 | head -n 1 | gawk -F '"' '{print $2}' | gawk -F '/' '{print $1}')
     echo -e "最新版(时间):${GREEN}${ROOTFSTIME}${RESET}"
     echo -e "请${GREEN}耐心${RESET}等待,而${RED}不要ctrl-c或其他方式终止${RESET}"
-    if [ -f ${CONTAINER_OS}-${VERNAME}*.tar.xz ]; then
+    if [ -f "${CONTAINER_OS}-${VERNAME}*.tar.xz" ]; then
         echo -e "${BLUE}发现存在的rootfs.为防止错误,删除中...${RESET}"
         rm ${CONTAINER_OS}-${VERNAME}*.tar.xz
     fi
@@ -298,7 +298,7 @@ function container_install() {
     echo -e "${GREEN}写入配置脚本中${RESET}"
     echo "bash setup.sh" >>${MAINPATH}/${CONTAINER_OS}-${VERNAME}/etc/profile
     write_groupadd_sh
-    if [ "$CONTAINER_OS" == "ubuntu" ] || [ "CONTAINER_OS" == "debian" ]; then
+    if [ "$CONTAINER_OS" == "ubuntu" ] || [ "$CONTAINER_OS" == "debian" ]; then
         write_setupdeb_sh
     fi
     sleep 0.3
