@@ -10,6 +10,8 @@
 
 ## Installation
 
+**THIS IS BRANCH V0.6.2 VERSION, NOT MAIN VERSION.YOU WILL BE NOT ABLE TO UPDATE BY CLI.**
+
 ```bash
-bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) v0.6.2
 ```
