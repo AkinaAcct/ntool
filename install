@@ -36,7 +36,7 @@ while true; do
     Y | y)
         rm ~/.ntool/local_version >/dev/null 2>&1
         rm -rf "${HOME}/.local/ntool"
-        if [[ -z ${BRANCH} ]];then
+        if [[ -z ${BRANCH} ]]; then
             git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
         else
             echo -e "分支已指定:${BRANCH}.安装中..."
