@@ -32,3 +32,4 @@ function main() {
     0) exit 0 ;;
     esac
 }
+main
