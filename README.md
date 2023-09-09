@@ -20,5 +20,4 @@ Also, you can choose which branch to use.  Each branch has been **partially** te
 
 ```bash
 bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) [BRANCH]
-
 ```
