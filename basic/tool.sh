@@ -8,6 +8,7 @@ function tool_tui() { #这里是其它工具-工具类页面的function
         "5" "ssh功能" \
         "6" "二维码功能" \
         "7" "rm防误删" \
+        "8" "pandoc文档转换格式" \
         "00" "打开该项目地址(?)" \
         "0" "返回上一页")
     EXITSTATUS=$?
@@ -105,6 +106,10 @@ function tool_tui() { #这里是其它工具-工具类页面的function
     7)
         source "${NTOOLLIB}/basic/trashbin.sh"
         rm_to_trash
+        ;;
+    8)
+        source "${NTOOLLIB}/basic/pandoc.sh"
+        ntool_pandoc
         ;;
     esac
     exit 0
