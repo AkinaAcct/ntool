@@ -16,7 +16,7 @@ def main_page():
         print("请稍等...")
         os.system("curl -s https://raw.githubusercontent.com/nnyyaa/ntool/main/install | bash -")
     if choice== "3":
-        os.system("wget https://blog.nnyyaa.eu.org/programs/md-epub.py")
+        os.system("wget https://blog.nnyyaa.eu.org/programs/pypandoc.py")
     if choice == "0":
         exit()
 
