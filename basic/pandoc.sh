@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
 function ntool_pandoc() {
-    read -p -r "输入源文件路径: " ORIGINPATH
-    read -p -r "输入输出文件路径: " OUTPUTPATH
-    read -p -r "输入源文件格式: " ORIGINFORMAT
-    read -p -r "输入输出文件格式: " OUTPUTFORMAT
+    echo "${GREEN}输入源文件路径:"
+    read ORIGINPATH
+    echo "输入输出文件路径:"
+    read OUTPUTPATH
+    echo "输入源文件格式:"
+    read ORIGINFORMAT
+    echo "输入输出文件格式:${RESET}"
+    read OUTPUTFORMAT
 
     echo -e "${BLUE}检测参数是否正确...${RESET}"
 
+    #下面是一连串的判断环境，参数与命令的if语句
     if [[ -z ${ORIGINPATH} || -z ${ORIGINFORMAT} || -z ${OUTPUTPATH} || -z ${OUTPUTFORMAT} ]]; then
         echo -e "${RED}参数有缺失。不予运行。${RESET}"
         sleep 2
