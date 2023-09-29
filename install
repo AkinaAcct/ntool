@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-BRANCH=$*
+if [[ $# -gt 1 ]]; then
+    echo -e "错误！多于一个的参数被输入了！"
+else
+    BRANCH=$1
+fi
 
 clear
 

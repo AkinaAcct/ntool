@@ -115,7 +115,7 @@ function termux_main_tui() { #主TUI
                 exit 123
             else
                 echo -e "${CYAN}好耶!${RESET}"
-                read -r -p "press enter please"
+                read -p "press enter please" heihei
                 termux_main_tui
             fi
         fi
