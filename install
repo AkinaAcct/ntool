@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 if [[ $# -gt 1 ]]; then
-    echo -e "错误！多于一个的参数被输入了！"
+	echo -e "错误！多于一个的参数被输入了！"
 else
-    BRANCH=$1
+	BRANCH=$1
 fi
 
 clear
@@ -11,60 +11,63 @@ clear
 printf "please wait...\n"
 
 for i in git wget curl python pip dialog bc jq gawk; do
-    if command -v ${i} >/dev/null; then
-        echo -e "软件包${i}已经安装过了!跳过...\n"
-        sleep 0.1
-    else
-        echo "软件包${i}并未安装!请手动安装!"
-        exit 127
-    fi
+	if command -v ${i} >/dev/null; then
+		echo -e "软件包${i}已经安装过了!跳过...\n"
+		sleep 0.1
+	else
+		echo "软件包${i}并未安装!请手动安装!"
+		exit 127
+	fi
 done
 
 echo -e "\n软件包检测通过."
 sleep 1.5
 
 clear
-printf "d8b   db d888888b  .d88b.   .d88b.  db\n"
-printf "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88\n"
-printf "88V8o 88    88    88    88 88    88 88\n"
-printf "88 V8o88    88    88    88 88    88 88\n"
-printf "88  V888    88    '8b  d8' '8b  d8' 88booo.\n"
-printf "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P\n"
+COLUMN=$(($(stty size | awk '{print $2}') / 2))
+printf "%${COLUMN}s\n" "d8b   db d888888b  .d88b.   .d88b.  db"
+printf "%${COLUMN}s\n" "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88"
+printf "%${COLUMN}s\n" "88V8o 88    88    88    88 88    88 88"
+printf "%${COLUMN}s\n" "88 V8o88    88    88    88 88    88 88"
+printf "%$(( $COLUMN + 5))s\n" "88  V888    88    '8b  d8' '8b  d8' 88booo."
+printf "%$(( $COLUMN + 5))s\n" "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P"
+unset COLUMN
 sleep 0.2
-printf "By Nya(https://github.com/nya-main/ntool)\n\n\n"
+printf 'By Nya(https://github.com/nya-main/ntool)\n\n\n'
+
 #这里的字符是由 figlet 生成的
 
 while true; do
-    read -r -p "你确定要执行这个脚本吗？  [Y|N]" answer
-    case $answer in
-    Y | y)
-        rm ~/.ntool/local_version >/dev/null 2>&1
-        rm -rf "${HOME}/.local/ntool"
-        if [[ -z ${BRANCH} ]]; then
-            git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
-        else
-            echo -e "分支已指定:${BRANCH}.安装中..."
-            git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool" -b ${BRANCH}
-        fi
-        chmod u+x "${HOME}"/.local/ntool/ntbin/ntool
-        if [[ "$(uname -o)" == "Android" ]]; then
-            mv "${HOME}"/.local/ntool/ntbin/ntool "${PREFIX}"/bin/ntool
-        else
-            sudo mv "${HOME}"/.local/ntool/ntbin/ntool /usr/bin/ntool
-        fi
-        echo "本项目使用的许可证为:Apache License 2.0"
-        echo "完成"
-        echo "输入ntool测试启动"
-        echo "如果无法启动,请重启终端."
-        break
-        ;;
-    N | n)
-        echo "exiting..."
-        break
-        ;;
-    *)
-        echo "未知的输入: \"$answer\" 请确认输入无误"
-        ;;
-    esac
+	read -r -p "你确定要执行这个脚本吗？  [Y|N]" answer
+	case $answer in
+	Y | y)
+		rm ~/.ntool/local_version >/dev/null 2>&1
+		rm -rf "${HOME}/.local/ntool"
+		if [[ -z ${BRANCH} ]]; then
+			git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool"
+		else
+			echo -e "分支已指定:${BRANCH}.安装中..."
+			git clone https://github.com/nya-main/ntool.git "${HOME}/.local/ntool" -b ${BRANCH}
+		fi
+		chmod u+x "${HOME}"/.local/ntool/ntbin/ntool
+		if [[ "$(uname -o)" == "Android" ]]; then
+			mv "${HOME}"/.local/ntool/ntbin/ntool "${PREFIX}"/bin/ntool
+		else
+			sudo mv "${HOME}"/.local/ntool/ntbin/ntool /usr/bin/ntool
+		fi
+		echo "本项目使用的许可证为:Apache License 2.0"
+		echo "完成"
+		echo "输入ntool测试启动"
+		echo "如果无法启动,请重启终端."
+		break
+		;;
+	N | n)
+		echo "exiting..."
+		break
+		;;
+	*)
+		echo "未知的输入: \"$answer\" 请确认输入无误"
+		;;
+	esac
 done
 exit 0
