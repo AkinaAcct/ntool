@@ -29,11 +29,11 @@ printf "%${COLUMN}s\n" "d8b   db d888888b  .d88b.   .d88b.  db"
 printf "%${COLUMN}s\n" "888o  88 '~~88~~' .8P  Y8. .8P  Y8. 88"
 printf "%${COLUMN}s\n" "88V8o 88    88    88    88 88    88 88"
 printf "%${COLUMN}s\n" "88 V8o88    88    88    88 88    88 88"
-printf "%$(( $COLUMN + 5))s\n" "88  V888    88    '8b  d8' '8b  d8' 88booo."
-printf "%$(( $COLUMN + 5))s\n" "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P"
-unset COLUMN
+printf "%$(($COLUMN + 5))s\n" "88  V888    88    '8b  d8' '8b  d8' 88booo."
+printf "%$(($COLUMN + 5))s\n" "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P"
 sleep 0.2
-printf 'By Nya(https://github.com/nya-main/ntool)\n\n\n'
+printf "%$(($COLUMN + 6))s\n" "By Nya(https://github.com/nya-main/ntool)\n\n"
+unset COLUMN
 
 #这里的字符是由 figlet 生成的
 
