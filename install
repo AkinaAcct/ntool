@@ -32,7 +32,7 @@ printf "%${COLUMN}s\n" "88 V8o88    88    88    88 88    88 88"
 printf "%$(($COLUMN + 5))s\n" "88  V888    88    '8b  d8' '8b  d8' 88booo."
 printf "%$(($COLUMN + 5))s\n" "VP   V8P    YP     'Y88P'   'Y88P'  Y88888P"
 sleep 0.2
-printf "%$(($COLUMN + 6))s\n" "By Nya(https://github.com/nya-main/ntool)\n\n"
+printf "%$(($COLUMN + 6))s\n\n\n" "By Nya(https://github.com/nya-main/ntool)"
 unset COLUMN
 
 #这里的字符是由 figlet 生成的
