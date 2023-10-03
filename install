@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 
+function print_help() {
+	echo -e "使用示例:\n  $0 v0.6.2  #安装分支v0.6.2版本\n  $0 main  #安装主分支版本"
+	echo -e "无参数下自动安装主分支版本\n仅支持一个参数!"
+}
+
 if [[ $# -gt 1 ]]; then
 	echo -e "错误！多于一个的参数被输入了！"
+	print_help
+	exit 1
 else
-	BRANCH=$1
+	ARG=$*
 fi
+case $ARG in
+--help) print_help && exit 0;;
+*) BRANCH=$ARG ;;
+esac
 
 clear
 
