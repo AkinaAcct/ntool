@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+#####################
+#   屎  山  代  码   #
+#####################
+#https://github.com/nya-main/ntool
+#这也(一)许(定)后会成为一个烂尾工程吧
+#chroot不会写(也许)(大概)(心虚)
+#嗯只要没有人催我就不写a_@
+
+function termux_main_tui() { #主TUI
+    MAINCHOICE=$(dialog --output-fd 1 --title "ntool-tui:main tui" --menu "$(whoami)欢迎!\n你的系统为:${OS}\n选择一个以继续" 15 70 8 \
+        "1" "已烂尾的容器功能" \
+        "2" "其它功能" \
+        "3" "备份功能" \
+        "4" "计算圆周率(好水)" \
+        "5" "一言" \
+        "6" "LSPatch/XPatch功能" \
+        "7" "ntafetch-使用ntafetch作为motd(测试)" \
+        "8" "反映一个BUG" \
+        "9" "卸载 ntool" \
+        "10" "一些好用的东西" \
+        "00" "更新" \
+        "0" "退出")
+    EXITSTATUS=$?
+    if [ $EXITSTATUS != 0 ]; then
+        echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
+        exit 0
+    fi
+    case $MAINCHOICE in
+    00)
+        check_and_update
+        ;;
+    0)
+        echo -e "${BLUE}b${GREEN}y${YELLOW}e${RESET}"
+        exit 0
+        ;;
+    1)
+        source "${NTOOLLIB}/container/container.sh"
+        container_tui
+        ;;
+    2)
+        source "${NTOOLLIB}/basic/ott.sh"
+        other_tool_tui
+        ;;
+    3)
+        source "${NTOOLLIB}/basic/backup.sh"
+        backup_tui
+        ;;
+    4)
+        if command -v bc >/dev/null; then
+            BC=$(dialog --output-fd 1 --title "ntool-tui:bc PI" --inputbox "输入计算位数    越往后面算的越慢" 15 70)
+            EXITSTATUS=$?
+            if [ $EXITSTATUS != 0 ]; then
+                termux_main_tui
+            fi
+            echo -e "${GREEN}请耐心等待...${RESET}"
+            echo "计算开始时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" >"${HOME}/pi.txt"
+            echo "scale=${BC}; 4*a(1)" | bc -l -q >>"${HOME}/pi.txt"
+            echo "计算结束时间:$(date '+%Y-%m-%d %H:%M:%S.%N')" >>"${HOME}/pi.txt"
+            dialog --title "ntool-tui:success" --textbox "${HOME}/pi.txt" 20 80
+            termux_main_tui
+        else
+            echo -e "${BLUE}正在安装bc计算器...${RESET}"
+            pkg install -y bc
+            echo -e "${GREEN}"
+            read -r -p "按回车返回"
+            echo -e "${RESET}"
+            termux_main_tui
+        fi
+        ;;
+    5)
+        dialog --title "ntool-一言" --msgbox "$(curl https://v1.hitokoto.cn/?encode=text 2>/dev/null)" 15 70
+        termux_main_tui
+        ;;
+    6)
+        source "${NTOOLLIB}/basic/lsxpatch.sh"
+        patch_framework_choose
+        ;;
+    7)
+        check_if_not_android_warning
+        function ntafetch_install() {
+            wget https://raw.githubusercontent.com/nya-main/ntafetch/main/ntafetch -O "${PREFIX}/bin/ntafetch"
+            chmod +x "${PREFIX}/bin/ntafetch"
+            mv "$PREFIX/etc/motd" "${PREFIX}/etc/motd.bak" >/dev/null 2>&1
+        }
+        if (dialog --title "ntool-tui:developing action" --defaultno --yesno "ntafetch由无数个echo -e组成\n写这个的主要原因是因为termux自带motd过于臃肿\n并不推荐使用，因为没有经过足够的测试" 15 70); then
+            ISINSTALLED="$(cat "${PREFIX}/etc/termux-login.sh" | grep ntafetch)"
+            if [ -n "$ISINSTALLED" ]; then
+                if (dialog --title "ntool-tui:WARNING" --defaultno --yesno "你已经安装过ntafetch了\n你确定要重装吗?" 15 70); then
+                    ntafetch_install
+                else
+                    termux_main_tui
+                fi
+            else
+                ntafetch_install
+                echo "ntafetch" >>"${PREFIX}/etc/termux-login.sh"
+            fi
+        else
+            termux_main_tui
+        fi
+        termux_main_tui
+        ;;
+    8)
+        dialog --title "ntool-tui:report" --yes-label "GitHub" --no-label "Blog" --yesno "你可以到ntool项目下提出issue \n或者到博客的关于页找我 \n我也会看的" 15 70
+        EXITSTATUS=$?
+        if [ ${EXITSTATUS} = 255 ]; then
+            termux_main_tui
+        elif [ ${EXITSTATUS} = 0 ]; then
+            am start -a android.intent.action.VIEW -d "${GHREPO}" >/dev/null 2>&1
+        elif [ ${EXITSTATUS} = 1 ]; then
+            dialog --title "ntool-tui:give me the money!" --yes-label "好的" --no-label "可以" --yesno "博客由于经营不善,倒闭了qwq\n我需要你的帮助(⁠≧⁠▽⁠≦⁠)\n你愿意v我50嘛?" 0 0
+            EXITSTATUS=$?
+            if [ ${EXITSTATUS} = 255 ]; then
+                echo -e "哼,连50都不愿意给我!!\n再也不见qwq"
+                exit 123
+            else
+                echo -e "${CYAN}好耶!${RESET}"
+                read -r -p "press enter please"
+                termux_main_tui
+            fi
+        fi
+        ;;
+    9)
+        source "${NTOOLLIB}/basic/uninstall.sh"
+        uninstall_ntool
+        ;;
+    10)
+        source "${NTOOLLIB}/basic/other_main.sh"
+        other_main_tui
+        ;;
+    esac
+    exit 0
+}
