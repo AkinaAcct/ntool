@@ -1,54 +1,29 @@
 #!/usr/bin/env bash
 
+adb pair(){
+    echo -e "${BLUE}注意！此版ntool所使用的配对方法为通知栏输入配对。${RESET}"
+    echo -e "${RED}请提前打开无线adb，并选择使用配对码配对。在接下来的20秒内，你将有十秒时间来进行输入。前十秒为配对码，后十秒为配对端口。填写时请拉下通知栏，在出现的termux消息中填写。注意不要填错或填反端口与配对码。${RESET}"
+    read -p "按回车以继续。"
+    echo -e "${BLUE}开始配对，正在生成通知...${RESET}"
+    termux-notification --button1 "输入配对码" --button1-action "echo \"\$REPLY\" > PAIRCODE"
+    echo "十秒后进行端口获取"
+    sleep 10
+    termux-notification --button1 "输入配对端口" --button1-action "echo \"\$REPLY\" > PAIRPORT"
+    echo "十秒后开始配对"
+    sleep 10
+    cat PAIRPORT
+    cat PAIRCODE
 
-#事实上,写这个功能是因为我自己要用XD
-
-function check_vpn() {
-    ifconfig | awk '{print $1}' | grep tun
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} = 0 ]; then
-        echo -e "${RED}检测到VPN连接.停止运行"
-        read -r -p "按回车继续"
-        adb_main
-    fi
-}
-
-function adb_connect() {
-    echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
-    read -r -p "输入出现的端口: " PORT
-    adb connect 127.0.0.1:"${PORT}"
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} != 0 ]; then
-        echo -e "${RED}出错了!请重新运行!${RESET}"
-        exit 1
-    fi
-    adb devices -l
-}
-
-function adb_pair() {
-    echo -e "${RED}警告!本功能仅支持能够使用无线adb并能够以配对码配对的的设备(Android 11+)!不支持无线adb的设备将无法使用!"
-    echo -e "${GREEN}请进入手机的开发者选项打开无线adb功能,并选择使用配对码配对."
-    read -r -p "输入同时出现的端口: " PAIRPORT
-    echo -e "${YELLOW}确保你未使用VPN!${RESET}如果有使用,请${YELLOW}现在关闭.${RESET}"
-    read -r -p "按回车以继续"
-    echo -e "${RESET}"
-    check_vpn
-    echo -e "${RESET}"
-    echo -e "在下方输入配对码"
-    adb pair 127.0.0.1:"${PAIRPORT}"
-    EXITSTATUS=$?
-    if [ ${EXITSTATUS} != 0 ]; then
-        echo -e "${RED}配对出错了!如果你还是不知道如何配对,请参考${BLUE}shizuku${RED}的配对方法.${RESET}"
-        exit 1
-    fi
-    touch .pair_success "${MAINPATH}"
+    adb pair 127.0.0.1:$(cat PAIRPORT) $(cat PAIRCODE)
+    touch ${MAINPATH}/.pair_success
 }
 
 function adb_main() {
     if [ ! -f "${MAINPATH}/.pair_success" ]; then
         adb_pair
     fi
-    adb_connect
+    read -p "输入adb连接端口: " ADBPORT
+    adb connect 127.0.0.1:${ADBPORT}
     CHOICE=$(dialog --output-fd 1 --title "ntool:adb_main" --menu "本页面所有功能仅供支持无线adb的设备使用!\n选择一个以继续" 15 70 8 \
         "1" "修复类原生ROM网络连接受限" \
         "2" "修改安卓进程限制(保后台)" \
@@ -77,7 +52,7 @@ function adb_main() {
         echo -e "${RESET}"
         case ${REBOOTMODE} in
         1)
-            MODE=
+            MODE=""
             ;;
         2)
             MODE=recovery
