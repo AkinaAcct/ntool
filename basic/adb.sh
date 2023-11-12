@@ -14,9 +14,9 @@ adb pair(){
     cat PAIRPORT
     cat PAIRCODE
 
-    adb pair 127.0.0.1:$(cat PAIRPORT) $(cat PAIRCODE)
-    touch ${MAINPATH}/.pair_success
-}
+    adb pair 127.0.0.1:$(cat PAIRPORT) $(cat PAIRCODE) && touch ${MAINPATH}/.pair_success || echo "${RED}配对错误!${RESET}" exit 114
+
+  }
 
 function adb_main() {
     if [ ! -f "${MAINPATH}/.pair_success" ]; then
