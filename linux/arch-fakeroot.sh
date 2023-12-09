@@ -17,6 +17,11 @@ for i in wget tar make; do
 	fi
 done
 
+if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
+	echo -e "简单的./运行就可以了！"
+	exit 0
+fi
+
 #获取源码
 mkdir ${SOLVERTMP} -p
 wget ${DOWNURL} -O ${SOLVERTMP}/fr.tgz || echo "Download failed.Check your network please." && exit 1
@@ -25,7 +30,7 @@ tar xvf ${SOLVERTMP}/fr.tgz -C ${SOLVERTMP} || echo "Uncompress failed.Please re
 #编译临时fakeroot
 cd ${SOLVERTMP}/fakeroot-1.25.3/ || exit 1
 ./bootstrap
-./configure --prefix=${SOLVERTMP} --libdir=/opt/fakeroot/libs --disable-static --with-ipc=tcp
+./configure --prefix=${SOLVERTMP} --libdir=${SOLVERTMP}/fakeroot/libs --disable-static --with-ipc=tcp
 make -j"$(nproc)"
 sudo make install
 
