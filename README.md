@@ -10,8 +10,10 @@
 
 ## Installation
 
+**THIS IS BRANCH V0.7.0 VERSION.YOU WILL BE NOT ABLE TO UPDATE DIRECTLY BY CLI.**
+
 ```bash
-bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install)
+bash <(curl https://raw.githubusercontent.com/nnyyaa/ntool/main/install) v0.7.0
 ```
 
 Also, you can choose which branch to use.  Each branch has been **partially** tested and has better stability.  By contrast, the main branch has **fewer tests**, including the latest functions and unknowable bugs.  If you like, use the following format to specify branch versions:  
