@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-
 other_main_tui() {
     MAINCHOICE=$(dialog --output-fd 1 --title "ntool" --menu "下面是一些其他大佬的项目和一些好van的\n:)" 15 70 8 \
         "1" "termux-container_moe-hacker" \
         "2" "xbtooln_myxuebi" \
-        "3" "NeoVim-Config_nya" \
-        "4" "wireless-adb-tools_nya" \
+        "3" "NeoVim-Config_AtopesSayuri" \
+        "4" "wireless-adb-tools_AtopesSayuri" \
+        "5" "APatchPatchTool_AtopesSayuri" \
         "0" "返回脚本主页")
     case ${MAINCHOICE} in
     1)
@@ -30,6 +30,10 @@ other_main_tui() {
     4)
         source "${NTOOLLIB}"/basic/adb.sh
         adb_main
+        ;;
+    5)
+        source "${NTOOLLIB}"/other/APatchAutoPatchTool.sh
+        installer
         ;;
     0)
         termux_main_tui
